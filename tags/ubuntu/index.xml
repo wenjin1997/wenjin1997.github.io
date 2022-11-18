@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>ubuntu on Huabing Blog</title>
+    <link>https://zhaohuabing.com/tags/ubuntu/</link>
+    <description>Recent content in ubuntu on Huabing Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 24 May 2018 00:00:00 +0000</lastBuildDate><atom:link href="https://zhaohuabing.com/tags/ubuntu/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Everything about Setting Up My Ubuntu Desktop</title>
+      <link>https://zhaohuabing.com/2018/05/24/set_up_my_ubuntu_desktop/</link>
+      <pubDate>Thu, 24 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://zhaohuabing.com/2018/05/24/set_up_my_ubuntu_desktop/</guid>
+      <description>Generate SSH Key Pair ssh-keygen -C &amp;#34;zhaohuabing@gmail.com&amp;#34; Shadowsocks Install shadowsokcs sudo apt-get install python3-pip sudo pip3 install shadowsocks Create config at config/shadowsocks.json, with the following content: { &amp;#34;server&amp;#34;:&amp;#34;remote-shadowsocks-server-ip-addr&amp;#34;, &amp;#34;server_port&amp;#34;:443, &amp;#34;local_address&amp;#34;:&amp;#34;127.0.0.1&amp;#34;, &amp;#34;local_port&amp;#34;:1080, &amp;#34;password&amp;#34;:&amp;#34;your-passwd&amp;#34;, &amp;#34;timeout&amp;#34;:300, &amp;#34;method&amp;#34;:&amp;#34;aes-256-cfb&amp;#34;, &amp;#34;fast_open&amp;#34;:false, &amp;#34;workers&amp;#34;:1 } Start a local socks proxy sudo sslocal -c config/shadowsocks.json -d start In case there is an openssl error, modify shadowsocks source file. sudo vi /usr/local/lib/python3.6/dist-packages/shadowsocks/crypto/openssl.py :%s/cleanup/reset/gc Convert shadowsocks socks proxy to http proxy</description>
+    </item>
+    
+  </channel>
+</rss>
