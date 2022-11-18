@@ -2,140 +2,71 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://zhaohuabing.com/post/readme/</loc>
-    <lastmod>2019-01-09T00:00:00+00:00</lastmod>
+    <loc>https://wenjin1997.github.io/categories/</loc>
+    <lastmod>2022-11-16T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://zhaohuabing.com/</loc>
-    <lastmod>2019-01-09T00:00:00+00:00</lastmod>
+    <loc>https://wenjin1997.github.io/post/</loc>
+    <lastmod>2022-11-16T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://zhaohuabing.com/post/</loc>
-    <lastmod>2019-01-09T00:00:00+00:00</lastmod>
+    <loc>https://wenjin1997.github.io/tags/</loc>
+    <lastmod>2022-11-16T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://zhaohuabing.com/categories/</loc>
-    <lastmod>2018-06-04T00:00:00+00:00</lastmod>
+    <loc>https://wenjin1997.github.io/2022/11/16/Zero-Knowledge-Proofs-An-illustrated-primer/</loc>
+    <lastmod>2022-11-16T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://zhaohuabing.com/tags/istio/</loc>
-    <lastmod>2018-06-04T00:00:00+00:00</lastmod>
+    <loc>https://wenjin1997.github.io/tags/zkp/</loc>
+    <lastmod>2022-11-16T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://zhaohuabing.com/2018/06/04/introducing-the-istio-v1alpha3-routing-api/</loc>
-    <lastmod>2018-06-04T00:00:00+00:00</lastmod>
+    <loc>https://wenjin1997.github.io/categories/zkp/</loc>
+    <lastmod>2022-11-16T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://zhaohuabing.com/tags/</loc>
-    <lastmod>2018-06-04T00:00:00+00:00</lastmod>
+    <loc>https://wenjin1997.github.io/</loc>
+    <lastmod>2022-11-16T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://zhaohuabing.com/categories/tech/</loc>
-    <lastmod>2018-06-04T00:00:00+00:00</lastmod>
+    <loc>https://wenjin1997.github.io/tags/%E7%AC%94%E8%AE%B0/</loc>
+    <lastmod>2022-11-16T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://zhaohuabing.com/2018/06/02/istio08/</loc>
-    <lastmod>2018-06-02T00:00:00+00:00</lastmod>
+    <loc>https://wenjin1997.github.io/tags/java/</loc>
+    <lastmod>2022-03-28T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://zhaohuabing.com/2018/05/24/set_up_my_ubuntu_desktop/</loc>
-    <lastmod>2018-05-24T00:00:00+00:00</lastmod>
+    <loc>https://wenjin1997.github.io/2022/03/28/The-Art-of-Java-Concurrency-Programming/</loc>
+    <lastmod>2022-03-28T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://zhaohuabing.com/categories/tips/</loc>
-    <lastmod>2018-05-24T00:00:00+00:00</lastmod>
+    <loc>https://wenjin1997.github.io/categories/tech/</loc>
+    <lastmod>2022-03-28T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://zhaohuabing.com/tags/ubuntu/</loc>
-    <lastmod>2018-05-24T00:00:00+00:00</lastmod>
+    <loc>https://wenjin1997.github.io/tags/%E5%B9%B6%E5%8F%91/</loc>
+    <lastmod>2022-03-28T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://zhaohuabing.com/tags/microservice/</loc>
-    <lastmod>2018-05-23T18:00:00+00:00</lastmod>
+    <loc>https://wenjin1997.github.io/tags/%E5%BE%AE%E5%88%86%E6%96%B9%E7%A8%8B%E6%95%B0%E5%80%BC%E8%A7%A3/</loc>
+    <lastmod>2021-03-11T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://zhaohuabing.com/tags/security/</loc>
-    <lastmod>2018-05-23T18:00:00+00:00</lastmod>
+    <loc>https://wenjin1997.github.io/tags/%E6%95%B0%E5%80%BC%E5%88%86%E6%9E%90/</loc>
+    <lastmod>2021-03-11T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://zhaohuabing.com/2018/05/23/external_system_auth/</loc>
-    <lastmod>2018-05-23T18:00:00+00:00</lastmod>
+    <loc>https://wenjin1997.github.io/tags/%E6%AC%A7%E6%8B%89%E6%96%B9%E6%B3%95/</loc>
+    <lastmod>2021-03-11T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://zhaohuabing.com/2018/05/23/service_2_service_auth/</loc>
-    <lastmod>2018-05-23T15:00:00+00:00</lastmod>
+    <loc>https://wenjin1997.github.io/2021/03/11/euler-method/</loc>
+    <lastmod>2021-03-11T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://zhaohuabing.com/2018/05/22/user_authentication_authorization/</loc>
-    <lastmod>2018-05-23T10:00:00+00:00</lastmod>
+    <loc>https://wenjin1997.github.io/tags/%E9%9A%90%E5%BC%8F%E6%AC%A7%E6%8B%89%E6%96%B9%E6%B3%95/</loc>
+    <lastmod>2021-03-11T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://zhaohuabing.com/2018/05/23/istio-auto-injection-with-webhook/</loc>
-    <lastmod>2018-05-23T00:00:00+00:00</lastmod>
+    <loc>https://wenjin1997.github.io/tags/git/</loc>
+    <lastmod>2021-01-24T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://zhaohuabing.com/tags/kubernetes/</loc>
-    <lastmod>2018-05-23T00:00:00+00:00</lastmod>
+    <loc>https://wenjin1997.github.io/2021/01/24/git/</loc>
+    <lastmod>2021-01-24T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://zhaohuabing.com/categories/life/</loc>
-    <lastmod>2018-05-01T00:00:00+00:00</lastmod>
+    <loc>https://wenjin1997.github.io/about/</loc>
   </url><url>
-    <loc>https://zhaohuabing.com/tags/travel/</loc>
-    <lastmod>2018-05-01T00:00:00+00:00</lastmod>
+    <loc>https://wenjin1997.github.io/notes/</loc>
   </url><url>
-    <loc>https://zhaohuabing.com/2018/05/01/may-day-jiulonghu/</loc>
-    <lastmod>2018-05-01T00:00:00+00:00</lastmod>
+    <loc>https://wenjin1997.github.io/search/placeholder/</loc>
   </url><url>
-    <loc>https://zhaohuabing.com/tags/helm/</loc>
-    <lastmod>2018-04-16T15:00:00+00:00</lastmod>
+    <loc>https://wenjin1997.github.io/archive/</loc>
   </url><url>
-    <loc>https://zhaohuabing.com/2018/04/16/using-helm-to-deploy-to-kubernetes/</loc>
-    <lastmod>2018-04-16T15:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://zhaohuabing.com/tags/api-gateway/</loc>
-    <lastmod>2018-04-11T09:32:00+00:00</lastmod>
-  </url><url>
-    <loc>https://zhaohuabing.com/tags/service-mesh/</loc>
-    <lastmod>2018-04-11T09:32:00+00:00</lastmod>
-  </url><url>
-    <loc>https://zhaohuabing.com/2018/04/11/service-mesh-vs-api-gateway/</loc>
-    <lastmod>2018-04-11T09:32:00+00:00</lastmod>
-  </url><url>
-    <loc>https://zhaohuabing.com/2018/03/29/what-is-service-mesh-and-istio/</loc>
-    <lastmod>2018-03-29T12:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://zhaohuabing.com/tags/docker/</loc>
-    <lastmod>2018-03-13T18:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://zhaohuabing.com/tags/tips/</loc>
-    <lastmod>2018-03-13T18:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://zhaohuabing.com/2018/03/13/use-docker-behind-http-proxy/</loc>
-    <lastmod>2018-03-13T18:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://zhaohuabing.com/tags/vim/</loc>
-    <lastmod>2018-02-09T11:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://zhaohuabing.com/2018/02/09/vim-tips/</loc>
-    <lastmod>2018-02-09T11:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://zhaohuabing.com/2018/02/09/docker-without-sudo/</loc>
-    <lastmod>2018-02-09T10:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://zhaohuabing.com/2018/05/22/user_authentication_authorization/</loc>
-    <lastmod>2018-02-03T12:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://zhaohuabing.com/tags/nginmesh/</loc>
-    <lastmod>2018-01-02T12:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://zhaohuabing.com/2018/01/02/nginmesh-install/</loc>
-    <lastmod>2018-01-02T12:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://zhaohuabing.com/2017/11/28/access-application-from-outside/</loc>
-    <lastmod>2017-11-28T12:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://zhaohuabing.com/2017/11/08/istio-canary-release/</loc>
-    <lastmod>2017-11-08T15:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://zhaohuabing.com/2017/11/07/istio-traffic-shifting/</loc>
-    <lastmod>2017-11-07T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://zhaohuabing.com/2017/11/04/istio-install_and_example/</loc>
-    <lastmod>2017-11-04T12:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://zhaohuabing.com/2017/11/03/hello-world/</loc>
-    <lastmod>2017-11-04T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://zhaohuabing.com/about/</loc>
-  </url><url>
-    <loc>https://zhaohuabing.com/notes/</loc>
-  </url><url>
-    <loc>https://zhaohuabing.com/search/placeholder/</loc>
-  </url><url>
-    <loc>https://zhaohuabing.com/archive/</loc>
-  </url><url>
-    <loc>https://zhaohuabing.com/search/</loc>
+    <loc>https://wenjin1997.github.io/search/</loc>
   </url>
 </urlset>

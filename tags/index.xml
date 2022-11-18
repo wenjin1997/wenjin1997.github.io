@@ -1,126 +1,90 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Tags on Huabing Blog</title>
-    <link>https://zhaohuabing.com/tags/</link>
-    <description>Recent content in Tags on Huabing Blog</description>
+    <title>Tags on 水水獭的QQ空间</title>
+    <link>https://wenjin1997.github.io/tags/</link>
+    <description>Recent content in Tags on 水水獭的QQ空间</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 04 Jun 2018 00:00:00 +0000</lastBuildDate><atom:link href="https://zhaohuabing.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 16 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://wenjin1997.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Istio</title>
-      <link>https://zhaohuabing.com/tags/istio/</link>
-      <pubDate>Mon, 04 Jun 2018 00:00:00 +0000</pubDate>
+      <title>ZKP</title>
+      <link>https://wenjin1997.github.io/tags/zkp/</link>
+      <pubDate>Wed, 16 Nov 2022 00:00:00 +0000</pubDate>
       
-      <guid>https://zhaohuabing.com/tags/istio/</guid>
+      <guid>https://wenjin1997.github.io/tags/zkp/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>ubuntu</title>
-      <link>https://zhaohuabing.com/tags/ubuntu/</link>
-      <pubDate>Thu, 24 May 2018 00:00:00 +0000</pubDate>
+      <title>笔记</title>
+      <link>https://wenjin1997.github.io/tags/%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Wed, 16 Nov 2022 00:00:00 +0000</pubDate>
       
-      <guid>https://zhaohuabing.com/tags/ubuntu/</guid>
+      <guid>https://wenjin1997.github.io/tags/%E7%AC%94%E8%AE%B0/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>Microservice</title>
-      <link>https://zhaohuabing.com/tags/microservice/</link>
-      <pubDate>Wed, 23 May 2018 18:00:00 +0000</pubDate>
+      <title>Java</title>
+      <link>https://wenjin1997.github.io/tags/java/</link>
+      <pubDate>Mon, 28 Mar 2022 00:00:00 +0000</pubDate>
       
-      <guid>https://zhaohuabing.com/tags/microservice/</guid>
+      <guid>https://wenjin1997.github.io/tags/java/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>Security</title>
-      <link>https://zhaohuabing.com/tags/security/</link>
-      <pubDate>Wed, 23 May 2018 18:00:00 +0000</pubDate>
+      <title>并发</title>
+      <link>https://wenjin1997.github.io/tags/%E5%B9%B6%E5%8F%91/</link>
+      <pubDate>Mon, 28 Mar 2022 00:00:00 +0000</pubDate>
       
-      <guid>https://zhaohuabing.com/tags/security/</guid>
+      <guid>https://wenjin1997.github.io/tags/%E5%B9%B6%E5%8F%91/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>Kubernetes</title>
-      <link>https://zhaohuabing.com/tags/kubernetes/</link>
-      <pubDate>Wed, 23 May 2018 00:00:00 +0000</pubDate>
+      <title>微分方程数值解</title>
+      <link>https://wenjin1997.github.io/tags/%E5%BE%AE%E5%88%86%E6%96%B9%E7%A8%8B%E6%95%B0%E5%80%BC%E8%A7%A3/</link>
+      <pubDate>Thu, 11 Mar 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://zhaohuabing.com/tags/kubernetes/</guid>
+      <guid>https://wenjin1997.github.io/tags/%E5%BE%AE%E5%88%86%E6%96%B9%E7%A8%8B%E6%95%B0%E5%80%BC%E8%A7%A3/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>Travel</title>
-      <link>https://zhaohuabing.com/tags/travel/</link>
-      <pubDate>Tue, 01 May 2018 00:00:00 +0000</pubDate>
+      <title>数值分析</title>
+      <link>https://wenjin1997.github.io/tags/%E6%95%B0%E5%80%BC%E5%88%86%E6%9E%90/</link>
+      <pubDate>Thu, 11 Mar 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://zhaohuabing.com/tags/travel/</guid>
+      <guid>https://wenjin1997.github.io/tags/%E6%95%B0%E5%80%BC%E5%88%86%E6%9E%90/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>Helm</title>
-      <link>https://zhaohuabing.com/tags/helm/</link>
-      <pubDate>Mon, 16 Apr 2018 15:00:00 +0000</pubDate>
+      <title>欧拉方法</title>
+      <link>https://wenjin1997.github.io/tags/%E6%AC%A7%E6%8B%89%E6%96%B9%E6%B3%95/</link>
+      <pubDate>Thu, 11 Mar 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://zhaohuabing.com/tags/helm/</guid>
+      <guid>https://wenjin1997.github.io/tags/%E6%AC%A7%E6%8B%89%E6%96%B9%E6%B3%95/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>API Gateway</title>
-      <link>https://zhaohuabing.com/tags/api-gateway/</link>
-      <pubDate>Wed, 11 Apr 2018 09:32:00 +0000</pubDate>
+      <title>隐式欧拉方法</title>
+      <link>https://wenjin1997.github.io/tags/%E9%9A%90%E5%BC%8F%E6%AC%A7%E6%8B%89%E6%96%B9%E6%B3%95/</link>
+      <pubDate>Thu, 11 Mar 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://zhaohuabing.com/tags/api-gateway/</guid>
+      <guid>https://wenjin1997.github.io/tags/%E9%9A%90%E5%BC%8F%E6%AC%A7%E6%8B%89%E6%96%B9%E6%B3%95/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>service Mesh</title>
-      <link>https://zhaohuabing.com/tags/service-mesh/</link>
-      <pubDate>Wed, 11 Apr 2018 09:32:00 +0000</pubDate>
+      <title>git</title>
+      <link>https://wenjin1997.github.io/tags/git/</link>
+      <pubDate>Sun, 24 Jan 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://zhaohuabing.com/tags/service-mesh/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Docker</title>
-      <link>https://zhaohuabing.com/tags/docker/</link>
-      <pubDate>Tue, 13 Mar 2018 18:00:00 +0000</pubDate>
-      
-      <guid>https://zhaohuabing.com/tags/docker/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Tips</title>
-      <link>https://zhaohuabing.com/tags/tips/</link>
-      <pubDate>Tue, 13 Mar 2018 18:00:00 +0000</pubDate>
-      
-      <guid>https://zhaohuabing.com/tags/tips/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Vim</title>
-      <link>https://zhaohuabing.com/tags/vim/</link>
-      <pubDate>Fri, 09 Feb 2018 11:00:00 +0000</pubDate>
-      
-      <guid>https://zhaohuabing.com/tags/vim/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>nginmesh</title>
-      <link>https://zhaohuabing.com/tags/nginmesh/</link>
-      <pubDate>Tue, 02 Jan 2018 12:00:00 +0000</pubDate>
-      
-      <guid>https://zhaohuabing.com/tags/nginmesh/</guid>
+      <guid>https://wenjin1997.github.io/tags/git/</guid>
       <description></description>
     </item>
     
