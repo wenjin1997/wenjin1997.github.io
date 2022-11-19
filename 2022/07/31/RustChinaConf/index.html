@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="Wenjin Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://wenjin1997.github.io/img/home-bg-stars.jpg">
+    <meta property="twitter:image" content="https://wenjin1997.github.io/img/home-bg-stars.jpg" />
+    
+
+    
+    <meta name="title" content="Rust开发者大会" />
+    <meta property="og:title" content="Rust开发者大会" />
+    <meta property="twitter:title" content="Rust开发者大会" />
+    
+
+    
+    <meta name="description" content="记录2022Rust开发者大会一些演讲的笔记。">
+    <meta property="og:description" content="记录2022Rust开发者大会一些演讲的笔记。" />
+    <meta property="twitter:description" content="记录2022Rust开发者大会一些演讲的笔记。" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Rust开发者大会 | 文进的博客</title>
+
+    <link rel="canonical" href="/2022/07/31/RustChinaConf/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    <script src="/js/lazysizes.min.js"></script>
+
+    
+    
+
+</head>
+
+
+<script type="text/javascript"
+        async
+        src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Wenjin Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/math">math</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/reading">reading</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/about/">ABOUT</a></li>
+                    
+		            <li>
+                        <a href="/search"><i class="fa fa-search"></i></a>
+		           </li>
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/home-bg-stars.jpg')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/rust" title="Rust">
+                            Rust
+                        </a>
+                        
+                        <a class="tag" href="/tags/%E7%AC%94%E8%AE%B0" title="笔记">
+                            笔记
+                        </a>
+                        
+                    </div>
+                    <h1>Rust开发者大会</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                      &#34;谢文进&#34;
+                             
+                            on 
+                            Thursday, July 7, 2022
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <h2 id="rustdoc你可以用它做什么以及它的未来">Rustdoc：你可以用它做什么，以及它的未来</h2>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731091034869.png" alt="image-20220731091034869">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731091100532.png" alt="image-20220731091100532">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731091430701.png" alt="image-20220731091430701">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731091521094.png" alt="image-20220731091521094">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731091806721.png" alt="image-20220731091806721">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731092315229.png" alt="image-20220731092315229">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731092426371.png" alt="image-20220731092426371">
+
+</p>
+<h2 id="rust-计算加速技术解读及高性能代码重构实践">Rust 计算加速技术解读及高性能代码重构实践</h2>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731092727921.png" alt="image-20220731092727921">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731092828681.png" alt="image-20220731092828681">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731092919521.png" alt="image-20220731092919521">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731093235281.png" alt="image-20220731093235281">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731093347151.png" alt="image-20220731093347151">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731093727975.png" alt="image-20220731093727975">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731093919749.png" alt="image-20220731093919749">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731094105340.png" alt="image-20220731094105340">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731094239849.png" alt="image-20220731094239849">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731094313221.png" alt="image-20220731094313221">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731094448917.png" alt="image-20220731094448917">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731094545016.png" alt="image-20220731094545016">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731094703530.png" alt="image-20220731094703530">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731094746130.png" alt="image-20220731094746130">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731094931102.png" alt="image-20220731094931102">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731095105687.png" alt="image-20220731095105687">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731095140335.png" alt="image-20220731095140335">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731095222117.png" alt="image-20220731095222117">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731095251258.png" alt="image-20220731095251258">
+
+</p>
+<h2 id="从零开始实现rust-fuzzer从零开始实现rust-fuzzer">从零开始实现Rust Fuzzer从零开始实现Rust Fuzzer</h2>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731100802290.png" alt="image-20220731100802290">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731100858793.png" alt="image-20220731100858793">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731101052964.png" alt="image-20220731101052964">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731101108684.png" alt="image-20220731101108684">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731101152673.png" alt="image-20220731101152673">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731101301531.png" alt="image-20220731101301531">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731101348078.png" alt="image-20220731101348078">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731101412070.png" alt="image-20220731101412070">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731101503214.png" alt="image-20220731101503214">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731101611315.png" alt="image-20220731101611315">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731101617693.png" alt="image-20220731101617693">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731101701919.png" alt="image-20220731101701919">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731101832442.png" alt="image-20220731101832442">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731101947189.png" alt="image-20220731101947189">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731102015235.png" alt="image-20220731102015235">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731102154008.png" alt="image-20220731102154008">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731102242684.png" alt="image-20220731102242684">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731102412549.png" alt="image-20220731102412549">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731102520682.png" alt="image-20220731102520682">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731102534607.png" alt="image-20220731102534607">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731102659728.png" alt="image-20220731102659728">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731102742775.png" alt="image-20220731102742775">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731102830755.png" alt="image-20220731102830755">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731102935124.png" alt="image-20220731102935124">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731103055445.png" alt="image-20220731103055445">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731103229032.png" alt="image-20220731103229032">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731103346454.png" alt="image-20220731103346454">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731103442336.png" alt="image-20220731103442336">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731103531626.png" alt="image-20220731103531626">
+
+</p>
+<h2 id="复杂-rust-开源项目的维护">复杂 Rust 开源项目的维护</h2>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731104633768.png" alt="image-20220731104633768">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731104634881.png" alt="image-20220731104634881">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731104726335.png" alt="image-20220731104726335">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731104815249.png" alt="image-20220731104815249">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731105001044.png" alt="image-20220731105001044">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731105111235.png" alt="image-20220731105111235">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731105300603.png" alt="image-20220731105300603">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731105310077.png" alt="image-20220731105310077">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731105448472.png" alt="image-20220731105448472">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731105651909.png" alt="image-20220731105651909">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731105700999.png" alt="image-20220731105700999">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731105926107.png" alt="image-20220731105926107">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731110059295.png" alt="image-20220731110059295">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731110335455.png" alt="image-20220731110335455">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731110351448.png" alt="image-20220731110351448">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731110647351.png" alt="image-20220731110647351">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731111109249.png" alt="image-20220731111109249">
+
+</p>
+<h2 id="基于llvm-rust代码混淆设计与实现">基于LLVM Rust代码混淆设计与实现</h2>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731133449859.png" alt="image-20220731133449859">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731133506773.png" alt="image-20220731133506773">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731133511610.png" alt="image-20220731133511610">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731133624267.png" alt="image-20220731133624267">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731133631447.png" alt="image-20220731133631447">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731133815789.png" alt="image-20220731133815789">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731133926858.png" alt="image-20220731133926858">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731134118235.png" alt="image-20220731134118235">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731134229393.png" alt="image-20220731134229393">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731134331178.png" alt="image-20220731134331178">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731134507784.png" alt="image-20220731134507784">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731134636190.png" alt="image-20220731134636190">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731134802636.png" alt="image-20220731134802636">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731134859722.png" alt="image-20220731134859722">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731134950706.png" alt="image-20220731134950706">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731135028573.png" alt="image-20220731135028573">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731135035939.png" alt="image-20220731135035939">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731135055839.png" alt="image-20220731135055839">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731135204104.png" alt="image-20220731135204104">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731135310076.png" alt="image-20220731135310076">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731135429533.png" alt="image-20220731135429533">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731135625688.png" alt="image-20220731135625688">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731135754991.png" alt="image-20220731135754991">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731135935667.png" alt="image-20220731135935667">
+
+</p>
+<h2 id="rust-api可靠性分析与验证">Rust API可靠性分析与验证</h2>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731141110280.png" alt="image-20220731141110280">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731141115692.png" alt="image-20220731141115692">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731141146654.png" alt="image-20220731141146654">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731141311818.png" alt="image-20220731141311818">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731141629634.png" alt="image-20220731141629634">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731141805536.png" alt="image-20220731141805536">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731142027074.png" alt="image-20220731142027074">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731142431576.png" alt="image-20220731142431576">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731142717062.png" alt="image-20220731142717062">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731142833826.png" alt="image-20220731142833826">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731143319843.png" alt="image-20220731143319843">
+
+</p>
+<h2 id="你为什么需要rust-编码规范">你为什么需要「Rust 编码规范」</h2>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731144558561.png" alt="image-20220731144558561">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731144606305.png" alt="image-20220731144606305">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731144647528.png" alt="image-20220731144647528">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731144708296.png" alt="image-20220731144708296">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731144742623.png" alt="image-20220731144742623">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731144749990.png" alt="image-20220731144749990">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731144842637.png" alt="image-20220731144842637">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731144919996.png" alt="image-20220731144919996">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731145011907.png" alt="image-20220731145011907">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731145044742.png" alt="image-20220731145044742">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731145120801.png" alt="image-20220731145120801">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731145128175.png" alt="image-20220731145128175">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731145148510.png" alt="image-20220731145148510">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731145233867.png" alt="image-20220731145233867">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731145257898.png" alt="image-20220731145257898">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731145324467.png" alt="image-20220731145324467">
+
+</p>
+<p>
+  <img src="/img/2022-07-31-RustChinaConf/image-20220731145552860.png" alt="image-20220731145552860">
+
+</p>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2022/07/07/Rust-async/" data-toggle="tooltip" data-placement="top" title="Rust异步编程">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2022/08/01/Linux-ssh/" data-toggle="tooltip" data-placement="top" title="Mac用ssh远程连接服务器">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/linux" title="linux">
+                            linux
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/rust" title="rust">
+                            rust
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E5%8D%9A%E5%AE%A2" title="博客">
+                            博客
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E5%BC%82%E6%AD%A5" title="异步">
+                            异步
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%BE%AE%E5%88%86%E6%96%B9%E7%A8%8B%E6%95%B0%E5%80%BC%E8%A7%A3" title="微分方程数值解">
+                            微分方程数值解
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E5%80%BC%E5%88%86%E6%9E%90" title="数值分析">
+                            数值分析
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8" title="服务器">
+                            服务器
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%AC%94%E8%AE%B0" title="笔记">
+                            笔记
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E7%AE%97%E6%B3%95" title="算法">
+                            算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E9%9D%A2%E8%AF%95" title="面试">
+                            面试
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://magiconch.github.io/">小旱獭的QQ空间</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:wenjinsmail@163.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/wenjin1997">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="Wenjin Blog" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; Wenjin Blog 2022
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

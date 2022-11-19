@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>图 on Wenjin Blog</title>
+    <link>https://wenjin1997.github.io/tags/%E5%9B%BE/</link>
+    <description>Recent content in 图 on Wenjin Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 06 May 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://wenjin1997.github.io/tags/%E5%9B%BE/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>图相关算法</title>
+      <link>https://wenjin1997.github.io/2022/05/06/Algorithms-graph/</link>
+      <pubDate>Fri, 06 May 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2022/05/06/Algorithms-graph/</guid>
+      <description>图的遍历 // 记录被遍历过的节点 boolean[] visited; // 记录从起点到当前节点的路径 boolean[] onPath; /* 图遍历框架 */ void traverse(Graph graph, int s) { if (visited[s]) return; // 经过节点 s，标记为已遍历 visited[s] = true; // 做选择：标</description>
+    </item>
+    
+  </channel>
+</rss>

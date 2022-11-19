@@ -1,0 +1,2289 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="Wenjin Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://wenjin1997.github.io/img/home-bg-stars.jpg">
+    <meta property="twitter:image" content="https://wenjin1997.github.io/img/home-bg-stars.jpg" />
+    
+
+    
+    <meta name="title" content="Rust异步编程" />
+    <meta property="og:title" content="Rust异步编程" />
+    <meta property="twitter:title" content="Rust异步编程" />
+    
+
+    
+    <meta name="description" content="记录学习Rust异步编程的笔记。">
+    <meta property="og:description" content="记录学习Rust异步编程的笔记。" />
+    <meta property="twitter:description" content="记录学习Rust异步编程的笔记。" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Rust异步编程 | 文进的博客</title>
+
+    <link rel="canonical" href="/2022/07/07/Rust-async/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    <script src="/js/lazysizes.min.js"></script>
+
+    
+    
+
+</head>
+
+
+<script type="text/javascript"
+        async
+        src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Wenjin Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/math">math</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/reading">reading</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/about/">ABOUT</a></li>
+                    
+		            <li>
+                        <a href="/search"><i class="fa fa-search"></i></a>
+		           </li>
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/home-bg-stars.jpg')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/rust" title="Rust">
+                            Rust
+                        </a>
+                        
+                        <a class="tag" href="/tags/%E5%BC%82%E6%AD%A5" title="异步">
+                            异步
+                        </a>
+                        
+                    </div>
+                    <h1>Rust异步编程</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                      &#34;谢文进&#34;
+                             
+                            on 
+                            Thursday, July 7, 2022
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <p>本章至下而上的方式来带领大家理解异步编程:</p>
+<ol>
+<li>异步 I/O 模型</li>
+<li>异步编程模型：
+<ul>
+<li>事件驱动模型</li>
+<li>Futures</li>
+<li>生成器 与 Pin</li>
+<li>async/await</li>
+<li>异步运行时介绍：async-std、tokio、bastion、smol</li>
+</ul>
+</li>
+</ol>
+<h2 id="异步io模型">异步IO模型</h2>
+<h3 id="基本概念">基本概念</h3>
+<ul>
+<li>同步和异步，关注的是消息通信机制。（调用者视角）结合烧开水的例子。
+<ul>
+<li>同步，发出一个调用，在没有得到结果之前不返回。水没烧好不离开。</li>
+<li>异步，发出一个调用，在没有得到结果之前返回。水没烧好时，可以先去干别的。</li>
+</ul>
+</li>
+<li>阻塞和非阻塞，关注的是程序等待调用结果的状态。（被调用者视角）
+<ul>
+<li>阻塞，在调用结果返回之前，线程被挂起。</li>
+<li>非阻塞，在调用结果返回之前，线程不会被挂起。</li>
+</ul>
+</li>
+</ul>
+<p>阻塞，与系统调用有关。</p>
+<h3 id="io模型">I/O模型</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>                                 +-+ 阻 塞 I/O (BIO)
+</span></span><span style="display:flex;"><span>                                 |
+</span></span><span style="display:flex;"><span>                                 +-+ 非 阻 塞 I/O (NIO)
+</span></span><span style="display:flex;"><span>                                 |
+</span></span><span style="display:flex;"><span>              +----+ 同 步 I/O +--+
+</span></span><span style="display:flex;"><span>              |                  |
+</span></span><span style="display:flex;"><span>              |                  +-+ I/O 多 路 复 用
+</span></span><span style="display:flex;"><span>              |                  |
+</span></span><span style="display:flex;"><span>              |                  +-+ 信 号 驱 动 I/O
+</span></span><span style="display:flex;"><span>I/O 模 型  +---+
+</span></span><span style="display:flex;"><span>              |
+</span></span><span style="display:flex;"><span>              |
+</span></span><span style="display:flex;"><span>              |                  +-+ Linux (AIO)
+</span></span><span style="display:flex;"><span>              |                  |         (io_uring)
+</span></span><span style="display:flex;"><span>              +----+ 异 步 I/O +--+
+</span></span><span style="display:flex;"><span>                                 |
+</span></span><span style="display:flex;"><span>                                 +-+ windows (IOCP)
+</span></span></code></pre></div><h3 id="同步阻塞io">同步阻塞I/O</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Application               kernel
+</span></span><span style="display:flex;"><span>+---------+            +-----------+  +---+
+</span></span><span style="display:flex;"><span>|         |   syscall  | no        |      |
+</span></span><span style="display:flex;"><span>|   Read  | +--------&gt; | datagram  |      |
+</span></span><span style="display:flex;"><span>| recvfrom|            | ready     |      |
+</span></span><span style="display:flex;"><span>|         |            |    +      |      +-+ wait for
+</span></span><span style="display:flex;"><span>|         |            |    |      |      +-+ data
+</span></span><span style="display:flex;"><span>|         |            |    v      |      |
+</span></span><span style="display:flex;"><span>|         |            | datagram  |      |
+</span></span><span style="display:flex;"><span>|         |            | ready     |  +---+
+</span></span><span style="display:flex;"><span>|         |            |           |
+</span></span><span style="display:flex;"><span>|         |            | copy      |  +---+
+</span></span><span style="display:flex;"><span>|         |            | datagram  |      |
+</span></span><span style="display:flex;"><span>|process  |            |    +      |      +-+ copy data
+</span></span><span style="display:flex;"><span>|datagram |   return   |    |      |      +-+ from kernel to user
+</span></span><span style="display:flex;"><span>|         | &lt;--------+ |    v      |      |
+</span></span><span style="display:flex;"><span>|         |            |  copy     |  +---+
+</span></span><span style="display:flex;"><span>|         |            |  complete |
+</span></span><span style="display:flex;"><span>+---------+            +-----------+
+</span></span></code></pre></div><p>输入操作两个阶段：</p>
+<ol>
+<li>进程等待内核把数据准备好；这个阶段可以阻塞也可非阻塞，设置socket属性。
+<ul>
+<li>阻塞： recvfrom 阻塞线程直到返回数据就绪的结果。</li>
+<li>非阻塞：立即返回一个错误，轮询直到数据就绪。</li>
+</ul>
+</li>
+<li>从内核缓冲区向进程缓冲区复制数据。（一直阻塞）</li>
+</ol>
+<p>异步I/O，recvfrom总是立即返回，两个阶段都由内核完成。</p>
+<h3 id="io多路复用">I/O多路复用</h3>
+<p>IO多路复用是一种同步IO模型，实现一个线程可以监视多个文件句柄。</p>
+<p>支持I/O多路复用的系统调用有 select/pselect/poll/epoll，本质都是 同步 I/O，因为数据拷贝都是阻塞的。 通过 select/epoll 来判断数据报是否准备好，即判断可读可写状态。</p>
+<h3 id="补充资料">补充资料</h3>
+<p>I/O模型和I/O调用是不是分不清楚，参考<a href="https://cloud.tencent.com/developer/article/1684951">理解一下5种IO模型、阻塞IO和非阻塞IO、同步IO和异步IO</a>。</p>
+<p>先理解什么是IO：</p>
+<p>
+  <img src="/img/2022-07-07-Rust-async/image-20220815091311443.png" alt="image-20220815091311443">
+
+</p>
+<p>要输入输出数据分为两个阶段：用户进程空间&lt;&ndash;&gt;内核空间、内核空间&lt;&ndash;&gt;设备空间（磁盘、网络等）。</p>
+<ol>
+<li>
+<p>阻塞IO模型</p>
+<p>
+  <img src="/img/2022-07-07-Rust-async/image-20220815091553220.png" alt="image-20220815091553220">
+
+</p>
+<p>进程发起IO系统调用后，进程被阻塞，转到内核空间处理，整个IO处理完毕后返回进程。操作成功则进程获取到数据。</p>
+</li>
+<li>
+<p>非阻塞IO模型</p>
+<p>
+  <img src="/img/2022-07-07-Rust-async/image-20220815091819969.png" alt="image-20220815091819969">
+
+</p>
+<p>进程发起IO系统调用后，如果内核缓冲区没有数据，需要到IO设备中读取，进程返回一个错误而不会被阻塞；进程发起IO系统调用后，如果内核缓冲区有数据，内核就会把数据返回进程。</p>
+</li>
+<li>
+<p>IO复用模型</p>
+<p>
+  <img src="/img/2022-07-07-Rust-async/image-20220815092054045.png" alt="image-20220815092054045">
+
+</p>
+<p>多个进程的IO可以注册到一个复用器（select）上，然后用一个进程调用该select，select会监听所有注册进来的IO；</p>
+<p>如果select没有监听的IO在内核缓冲区都没有可读数据，select调用进程会被阻塞；而当任一IO在内核缓冲区中有可用数据时，select调用就会返回；</p>
+<p>而后select调用进程可以自己或通知另外的进程（注册进程）来再次发起读取IO，读取内核中准备好的数据。</p>
+<p>select、poll、epoll</p>
+<ul>
+<li>Linux中IO复用的实现方式主要有select、poll和epoll。</li>
+<li>Select: 注册IO、阻塞扫描，监听的IO最大连接数不能多于FD_SIZE。</li>
+<li>Poll: 原理和Select相似，没有数量限制，但IO数量大扫描线性性能下降。</li>
+<li>Epoll：事件驱动不阻塞，mmap实现内核与用户空间的消息传递，数量很大，Linux2.6后内核支持。</li>
+</ul>
+</li>
+<li>
+<p>信号驱动IO模型</p>
+<p>
+  <img src="/img/2022-07-07-Rust-async/image-20220815093027374.png" alt="image-20220815093027374">
+
+</p>
+<p>当进程发起一个IO操作，会向内核注册一个信号处理函数，然后进程返回不阻塞；当内核数据就绪时会发生一个信号给进程，进程便在信号处理函数中调用IO读取数据。</p>
+<p>特点：回调机制，实现、开发应用难度大。</p>
+</li>
+<li>
+<p>异步IO模型</p>
+<p>
+  <img src="/img/2022-07-07-Rust-async/image-20220815093324750.png" alt="image-20220815093324750">
+
+</p>
+<p>当进程发起一个IO操作，进程返回（不阻塞），但也不能返回结果；内核把整个IO处理完后，会通知进程结果。如果IO操作成功则进程直接获取到数据。</p>
+</li>
+</ol>
+<p>一图总结：</p>
+<p>
+  <img src="/img/2022-07-07-Rust-async/rust_async_I:O_model.png" alt="img">
+
+</p>
+<h2 id="epoll">epoll</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>                        +--------------------------------+     +-------------------------+
+</span></span><span style="display:flex;"><span>                        | epoll_ctl                      |     | epoll_wait              |
+</span></span><span style="display:flex;"><span>                        |                                |     |                         |
+</span></span><span style="display:flex;"><span>                        |                                |     |         +----+          |
+</span></span><span style="display:flex;"><span>                        |                 +---+          |     |         |    |          |
+</span></span><span style="display:flex;"><span>                        |                 |   |          |     |         |    |          |
+</span></span><span style="display:flex;"><span>                        |               +-+---+--+       |     |         +--+-+          |
+</span></span><span style="display:flex;"><span>                        |               |        |       |     |            |            |
+</span></span><span style="display:flex;"><span>                        |            +--++     +-++      |     |            |            |
+</span></span><span style="display:flex;"><span>epoll_create  +----&gt;    |            |   |     |  |      |     |         +--+-+          |
+</span></span><span style="display:flex;"><span>                        |            +-+-+     +--+      +----&gt;+         |    |          |
+</span></span><span style="display:flex;"><span>                        |              |                 |event|         |    |          |
+</span></span><span style="display:flex;"><span>                        |         +----+--+              |     |         +--+-+          |
+</span></span><span style="display:flex;"><span>                        |         |       |              |     |            |            |
+</span></span><span style="display:flex;"><span>                        |         ++      |              |     |            |            |
+</span></span><span style="display:flex;"><span>                        |        +--+   +-+-+            |     |         +--+-+          |
+</span></span><span style="display:flex;"><span>                        |        |  |   |   |            |     |         |    |          |
+</span></span><span style="display:flex;"><span>                        |        +--+   +---+            |     |         |    |          |
+</span></span><span style="display:flex;"><span>                        |                                |     |         +----+          |
+</span></span><span style="display:flex;"><span>                        |                    红 黑 树     |     |                 链 表    |
+</span></span><span style="display:flex;"><span>                        +--------------------------------+     +-------------------------+
+</span></span></code></pre></div><ul>
+<li>epoll_create(int size) : 内核产生一个epoll实例数据结构，并返回一个epfd</li>
+<li>epoll_ctl(int epfd, int op, int fd, struct epoll_event *event)：将被监听的描述符添加到红黑树或从红黑树中删除或者对监听事件进行修改。</li>
+<li>epoll_wait(int epfd, struct epoll_event *events, int maxevents, int timeout): 阻塞等待注册的事件发生，返回事件的数目，并将触发的事件写入events数组中</li>
+</ul>
+<p>epoll 两种触发机制：</p>
+<ul>
+<li>水平触发机制（LT)。缓冲区只要有数据就触发读写。epoll 默认工作方式。select/poll只支持该方式。</li>
+<li>边缘触发机制（ET)。缓冲区空或满的状态才触发读写。nginx 使用该方式，避免频繁读写。</li>
+</ul>
+<p>惊群问题：</p>
+<p>当多个进程/线程调用epoll_wait时会阻塞等待，当内核触发可读写事件，所有进程/线程都会进行响应，但是实际上只有一个进程/线程真实处理这些事件。 Liux 4.5 通过引入 EPOLLEXCLUSIVE 标识来保证一个事件发生时候只有一个线程会被唤醒，以避免多侦听下的惊群问题。</p>
+<h3 id="补充资料-1">补充资料</h3>
+<p><a href="https://www.cnblogs.com/lojunren/p/3856290.html">Linux下的I/O复用与epoll详解</a></p>
+<p>select、poll、epoll</p>
+<ul>
+<li>Linux中IO复用的实现方式主要有select、poll和epoll：</li>
+<li>Select：注册IO、阻塞扫描，监听的IO最大连接数不能多于FD_SIZE；</li>
+<li>Poll：原理和Select相似，没有数量限制，但IO数量大扫描线性性能下降；</li>
+<li>Epoll ：事件驱动不阻塞，mmap实现内核与用户空间的消息传递，数量很大，Linux2.6后内核支持。</li>
+</ul>
+<p>select的缺陷：</p>
+<ul>
+<li>select预估错误了一件事，当数十万并发连接存在时，可能每一毫秒只有数百个活跃的连接，同时其余数十万连接在这一毫秒是非活跃的。</li>
+<li>在Linux内核中，select所用到的FD_SET是有限的，即内核中有个参数__FD_SETSIZE定义了每个FD_SET的句柄个数。</li>
+<li>内核中实现 select是用<strong>轮询</strong>方法，即每次检测都会遍历所有FD_SET中的句柄，显然，select函数执行时间与FD_SET中的句柄个数有一个比例关系，即 select要检测的句柄数越多就会越费时。</li>
+</ul>
+<p>相比于select机制，poll只是取消了最大监控文件描述符数限制，并没有从根本上解决select存在的问题。</p>
+<p>epoll精巧的使用了3个方法来实现select方法要做的事：</p>
+<ol>
+<li>新建epoll描述符==epoll_create()</li>
+<li>epoll_ctl(epoll描述符，添加或者删除所有待监控的连接)</li>
+<li>返回的活跃连接 ==epoll_wait（ epoll描述符 ）</li>
+</ol>
+<p>与select相比，epoll分清了频繁调用和不频繁调用的操作。例如，epoll_ctl是不太频繁调用的，而epoll_wait是非常频繁调用的。这时，epoll_wait却几乎没有入参，这比select的效率高出一大截，而且，它也不会随着并发连接的增加使得入参越发多起来，导致内核执行效率下降。</p>
+<p>要深刻理解epoll，首先得了解epoll的三大关键要素：<strong>mmap、红黑树、链表</strong>。</p>
+<p>epoll是通过内核与用户空间mmap同一块内存实现的。mmap将用户空间的一块地址和内核空间的一块地址同时映射到相同的一块物理内存地址（不管是用户空间还是内核空间都是虚拟地址，最终要通过地址映射映射到物理地址），使得这块物理内存对内核和对用户均可见，减少用户态和内核态之间的数据交换。内核可以直接看到epoll监听的句柄，效率高。</p>
+<p><a href="https://zh.m.wikipedia.org/zh/%E7%BA%A2%E9%BB%91%E6%A0%91">红黑树</a>将存储epoll所监听的套接字。上面mmap出来的内存如何保存epoll所监听的套接字，必然也得有一套数据结构，epoll在实现上采用红黑树去存储所有套接字，当添加或者删除一个套接字时（epoll_ctl），都在红黑树上去处理，红黑树本身插入和删除性能比较好，时间复杂度O(logN)。</p>
+<p>通过epoll_ctl函数添加进来的事件都会被放在红黑树的某个节点内，所以，重复添加是没有用的。当把事件添加进来的时候时候会完成关键的一步，那就是该事件都会与相应的设备（网卡）驱动程序建立回调关系，当相应的事件发生后，就会调用这个回调函数，该回调函数在内核中被称为：ep_poll_callback,<strong>这个回调函数其实就所把这个事件添加到rdllist这个双向链表中</strong>。一旦有事件发生，epoll就会将该事件添加到双向链表中。那么当我们调用epoll_wait时，epoll_wait只需要检查rdlist双向链表中是否有存在注册的事件，效率非常可观。这里也需要将发生了的事件复制到用户态内存中即可。</p>
+<p>
+  <img src="/img/2022-07-07-Rust-async/rust_async_epoll.jpeg" alt="img">
+
+</p>
+<p>epoll_wait的工作流程：</p>
+<ol>
+<li>epoll_wait调用ep_poll，当rdlist为空（无就绪fd）时挂起当前进程，直到rdlist不空时进程才被唤醒。</li>
+<li>文件fd状态改变（buffer由不可读变为可读或由不可写变为可写），导致相应fd上的回调函数ep_poll_callback()被调用。</li>
+<li>ep_poll_callback将相应fd对应epitem加入rdlist，导致rdlist不空，进程被唤醒，epoll_wait得以继续执行。</li>
+<li>ep_events_transfer函数将rdlist中的epitem拷贝到txlist中，并将rdlist清空。</li>
+<li>ep_send_events函数（很关键），它扫描txlist中的每个epitem，调用其关联fd对用的poll方法。此时对poll的调用仅仅是取得fd上较新的events（防止之前events被更新），之后将取得的events和相应的fd发送到用户空间（封装在struct epoll_event，从epoll_wait返回）。</li>
+</ol>
+<p>select、poll和epoll三种I/O复用模式的比较：</p>
+<table>
+<thead>
+<tr>
+<th>系统调用</th>
+<th>select</th>
+<th>poll</th>
+<th>epoll</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>事件集合</td>
+<td>用户通过3个参数分别传入感兴趣的可读，可写及异常等事件内核通过对这些参数的在线修改来反馈其中的就绪事件这使得用户每次调用select都要重置这3个参数</td>
+<td>统一处理所有事件类型，因此只需要一个事件集参数。用户通过pollfd.events传入感兴趣的事件，内核通过修改pollfd.revents反馈其中就绪的事件</td>
+<td>内核通过一个事件表直接管理用户感兴趣的所有事件。因此每次调用epoll_wait时，无需反复传入用户感兴趣的事件。epoll_wait系统调用的参数events仅用来反馈就绪的事件</td>
+</tr>
+<tr>
+<td>应用程序索引就绪文件描述符的时间复杂度</td>
+<td>O(n)</td>
+<td>O(n)</td>
+<td>O(1)</td>
+</tr>
+<tr>
+<td>最大支持文件描述符数</td>
+<td>一般有最大值限制</td>
+<td>65535</td>
+<td>65535</td>
+</tr>
+<tr>
+<td>工作模式</td>
+<td>LT</td>
+<td>LT</td>
+<td>支持ET高效模式</td>
+</tr>
+<tr>
+<td>内核实现和工作效率</td>
+<td>采用轮询方式检测就绪事件，时间复杂度：O(n)</td>
+<td>采用轮询方式检测就绪事件，时间复杂度：O(n)</td>
+<td>采用回调方式检测就绪事件，时间复杂度：O(1)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="io_uring-异步-io-模型">io_uring 异步 I/O 模型</h2>
+<p>Linux AIO 实现的并不理想，所以引入了新的异步I/O接口 io_uring。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>+----+ Head  +---------+               +----------+ Head
+</span></span><span style="display:flex;"><span>|            |         |               |          |
+</span></span><span style="display:flex;"><span>|            |         |               |          |
+</span></span><span style="display:flex;"><span>|            +---------+               +----------+
+</span></span><span style="display:flex;"><span>|            |         |               |          |
+</span></span><span style="display:flex;"><span>|            |         |               |          |
+</span></span><span style="display:flex;"><span>|            +---------+               +----------+
+</span></span><span style="display:flex;"><span>|            |         |               |          |
+</span></span><span style="display:flex;"><span>|            |         |               |          |
+</span></span><span style="display:flex;"><span>|            +---------+               +----------+
+</span></span><span style="display:flex;"><span>|            |         |               |          |
+</span></span><span style="display:flex;"><span>|      Tail  +---------+               +----------+ Tail &lt;--+
+</span></span><span style="display:flex;"><span>|        +--------------------------------------------+     |
+</span></span><span style="display:flex;"><span>|        | Kernel                                     |     |
+</span></span><span style="display:flex;"><span>|        |                                            |     |
+</span></span><span style="display:flex;"><span>|        |        +-------+              +-------+    |     |
+</span></span><span style="display:flex;"><span>|        |        |       |              |       |    |     |
+</span></span><span style="display:flex;"><span>+---------------&gt; | SQ    |              |  CQ   | +--------+
+</span></span><span style="display:flex;"><span>         |        |       |              |       |    |
+</span></span><span style="display:flex;"><span>         |        +-------+              +-------+    |
+</span></span><span style="display:flex;"><span>         |                                            |
+</span></span><span style="display:flex;"><span>         +--------------------------------------------+
+</span></span></code></pre></div><p>io_uring接口通过两个主要数据结构工作：</p>
+<ul>
+<li>提交队列条目（sqe）</li>
+<li>完成队列条目（cqe）</li>
+</ul>
+<p>这些结构的实例位于内核和应用程序之间的<strong>共享内存</strong>单生产者单消费者环形缓冲区中。</p>
+<p>参考：</p>
+<ul>
+<li><a href="https://thenewstack.io/how-io_uring-and-ebpf-will-revolutionize-programming-in-linux/">How io_uring and eBPF Will Revolutionize Programming in Linux</a></li>
+<li><a href="https://cor3ntin.github.io/posts/iouring/#io_uring">A Universal I/O Abstraction for C++</a></li>
+</ul>
+<p>
+  <img src="/img/2022-07-07-Rust-async/image-20220815104458456.png" alt="image-20220815104458456">
+
+</p>
+<h2 id="事件驱动编程模型">事件驱动编程模型</h2>
+<p>因为处理 I/O 复用的编程模型相当复杂，为了简化编程，引入了下面两种模型。</p>
+<ul>
+<li>Reactor（反应器） 模式，对应同步I/O，被动的事件分离和分发模型。服务等待请求事件的到来，再通过不受间断的同步处理事件，从而做出反应。</li>
+<li>Preactor（主动器） 模式，对应异步I/O，主动的事件分离和分发模型。这种设计允许多个任务并发的执行，从而提高吞吐量；并可执行耗时长的任务（各个任务间互不影响）。</li>
+</ul>
+<p>Reactor Model:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>                                                     +----------------+
+</span></span><span style="display:flex;"><span>req                                        Dispatch  |                |
+</span></span><span style="display:flex;"><span>+------+                                  +--------&gt; | req handler    |
+</span></span><span style="display:flex;"><span>|      |                                  |          +----------------+
+</span></span><span style="display:flex;"><span>|      | +----+                           |
+</span></span><span style="display:flex;"><span>+------+      | event    +------------+   |
+</span></span><span style="display:flex;"><span>              |          |            |   |
+</span></span><span style="display:flex;"><span>              +--------&gt; |  Service   |   |Dispatch  +----------------+
+</span></span><span style="display:flex;"><span>                         |  Handler   +------------&gt; |                |
+</span></span><span style="display:flex;"><span>req          +---------&gt; |            |   |          | req handler    |
+</span></span><span style="display:flex;"><span>+------+     |           +------------+   |          +----------------+
+</span></span><span style="display:flex;"><span>|      |     | event                      |
+</span></span><span style="display:flex;"><span>|      +----+                             |
+</span></span><span style="display:flex;"><span>+------+                                  | Dispatch +----------------+
+</span></span><span style="display:flex;"><span>                                          +---------&gt;+                |
+</span></span><span style="display:flex;"><span>                                                     | req handler    |
+</span></span><span style="display:flex;"><span>                                                     +----------------+
+</span></span></code></pre></div><p>三种实现方式：</p>
+<ul>
+<li>单线程模式。 accept()、read()、write()以及connect()操作 都在同一线程。</li>
+<li>工作者线程池模式。非 I/O 操作交给线程池处理</li>
+<li>多线程模式。主Reactor (master) ，负责网络监听 ， 子Reactor(worker) 读写网络数据。</li>
+</ul>
+<p>读写操作流程：</p>
+<ol>
+<li>应用注册读写就绪事件和相关联的事件处理器</li>
+<li>事件分离器等待事件发生</li>
+<li>当发生读写就绪事件，事件分离器调用已注册的事件处理器</li>
+<li>事件处理器执行读写操作</li>
+</ol>
+<p>参与者：</p>
+<ol>
+<li>描述符（handle）：操作系统提供的资源，识别 socket等。</li>
+<li>同步事件多路分离器。开启事件循环，等待事件的发生。封装了 多路复用函数 select/poll/epoll等。</li>
+<li>事件处理器。提供回调函数，用于描述与应用程序相关的某个事件的操作。</li>
+<li>具体的事件处理器。事件处理器接口的具体实现。使用描述符来识别事件和程序提供的服务。</li>
+<li>Reactor 管理器。事件处理器的调度核心。分离每个事件，调度事件管理器，调用具体的函数处理某个事件。</li>
+</ol>
+<h3 id="补充资料-2">补充资料</h3>
+<p><a href="https://segmentfault.com/a/1190000022048085">事件驱动及其设计模式</a></p>
+<p>从事件角度说，事件驱动程序的基本结构是由一个事件收集器、一个事件发送器和一个事件处理器组成。</p>
+<p><strong>事件循环器的实现</strong></p>
+<p>事件循环器不断接受来自客户端（Client）的请求，事件循环器把请求转交给注册了某类事件的工作线程（Worker）处理。</p>
+<p>
+  <img src="/img/2022-07-07-Rust-async/image-20220815105703262.png" alt="image-20220815105703262">
+
+</p>
+<p>根据实现的方式不同，在网络编程中基于事件驱动主要有两种设计模式：Reactor和Proactor。</p>
+<p><strong>Reactor模式框架</strong></p>
+<p>使用Reactor模型，必备的几个组件：事件源、Reactor框架、事件多路复用机制和事件处理程序，先来看看Reactor模型的整体框架，接下来再对每个组件做逐一说明。</p>
+<p>1）事件源：Linux上是文件描述符，Windows上就是Socket或者Handle了，这里统一称为“句柄集”；程序在指定的句柄上注册关心的事件，比如I/O事件。</p>
+<p>2）事件多路复用机制：由操作系统提供的I/O多路复用机制，比如select和epoll。程序首先将其关心的句柄（事件源）及其事件注册到多路复用机制上。当有事件到达时，事件多路复用机制会发出通知“在已经注册的句柄集中，一个或多个句柄的事件已经就绪”。程序收到通知后，就可以在非阻塞的情况下对事件进行处理了。</p>
+<p>3） Reactor。是事件管理的接口，内部使用事件多路复用机制注册、注销事件；并运行事件循环，当有事件进入“就绪”状态时，调用注册事件的回调函数处理事件。</p>
+<p>4）事件处理程序。事件处理程序提供了一组接口，每个接口对应了一种类型的事件，供Reactor在相应的事件发生时调用，执行相应的事件处理。通常它会绑定一个有效的句柄。</p>
+<p>使用Reactor模式后，事件控制流是什么样子呢？可以参见下面的序列图。</p>
+<p>
+  <img src="/img/2022-07-07-Rust-async/rust_async_reactor.webp" alt="img">
+
+</p>
+<p>我们分别以读操作和写操作为例来看看Reactor中的具体步骤：</p>
+<ol>
+<li>
+<p>应用程序注册读就绪事件和相关联的事件处理器；</p>
+</li>
+<li>
+<p>事件分离器等待事件的发生；</p>
+</li>
+<li>
+<p>当发生读就绪事件的时候，事件分离器调用第一步注册的事件处理器；</p>
+</li>
+<li>
+<p>事件处理器首先执行实际的读取操作，然后根据读取到的内容进行进一步的处理。</p>
+</li>
+</ol>
+<p>写入操作类似于读取操作，只不过第一步注册的是写就绪事件。</p>
+<p><strong>Proactor</strong></p>
+<p>我们来看看Proactor模式中读取操作和写入操作的过程：</p>
+<ol>
+<li>
+<p>应用程序初始化一个异步读取操作，然后注册相应的事件处理器，此时事件处理器不关注读取就绪事件，而是关注读取完成事件，这是区别于Reactor的关键。</p>
+</li>
+<li>
+<p>事件分离器等待读取操作完成事件。</p>
+</li>
+<li>
+<p>在事件分离器等待读取操作完成的时候，操作系统调用内核线程完成读取操作（异步I/O都是操作系统负责将数据读写到应用传递进来的缓冲区供应用程序操作），并将读取的内容放入用户传递过来的缓存区中。这也是区别于Reactor的一点。</p>
+</li>
+<li>
+<p>事件分离器捕获到读取完成事件后，激活应用程序注册的事件处理器，事件处理器直接从缓存区读取数据，而不需要进行实际的读取操作。</p>
+</li>
+</ol>
+<p>Proactor中写入操作和读取操作，只不过感兴趣的事件是写入完成事件。</p>
+<p>从上面可以看出，Reactor和Proactor模式的主要区别就是真正的读取和写入操作是由谁来完成的，Reactor中需要应用程序自己读取或者写入数据，而Proactor模式中，应用程序不需要进行实际的读写过程，它只需要从缓存区读取或者写入即可，操作系统会读取缓存区或者写入缓存区到真正的I/O设备。</p>
+<h2 id="epoll代码实践">epoll代码实践</h2>
+<p>参见<a href="https://github.com/zupzup/rust-epoll-example/blob/main/src/main.rs">rust-epoll-example</a>。</p>
+<h2 id="reactor代码实践">Reactor代码实践</h2>
+<p>参见<a href="https://github.com/zupzup/rust-reactor-executor-example">rust-reactore-executor-example</a>。</p>
+<h2 id="minimio代码实践">MiniMio代码实践</h2>
+<p>epoll只支持在Linux系统下使用，而<a href="https://github.com/cfsamson/examples-minimio">minimio</a>实现了跨平台。</p>
+<p>会将各个平台的命令拿出来。比如Selector做了抽象，每个平台实际上不同。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">#[cfg(target_os = </span><span style="color:#f1fa8c">&#34;windows&#34;</span><span style="color:#ff79c6">)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">mod</span> windows;
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[cfg(target_os = </span><span style="color:#f1fa8c">&#34;windows&#34;</span><span style="color:#ff79c6">)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">use</span> windows::{Event, Registrator, Selector, TcpStream};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[cfg(target_os = </span><span style="color:#f1fa8c">&#34;macos&#34;</span><span style="color:#ff79c6">)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">mod</span> macos;
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[cfg(target_os = </span><span style="color:#f1fa8c">&#34;macos&#34;</span><span style="color:#ff79c6">)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">use</span> macos::{Event, Registrator, Selector, TcpStream};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[cfg(target_os = </span><span style="color:#f1fa8c">&#34;linux&#34;</span><span style="color:#ff79c6">)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">mod</span> linux;
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[cfg(target_os = </span><span style="color:#f1fa8c">&#34;linux&#34;</span><span style="color:#ff79c6">)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">use</span> linux::{Event, Registrator, Selector, TcpStream};
+</span></span></code></pre></div><p>在lib.rs中抽象出跨平台的结构Poll。代表事件队列。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">#[derive(Debug)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">Poll</span> {
+</span></span><span style="display:flex;"><span>    registry: <span style="color:#50fa7b">Registry</span>,
+</span></span><span style="display:flex;"><span>    is_poll_dead: <span style="color:#50fa7b">Arc</span><span style="color:#ff79c6">&lt;</span>AtomicBool<span style="color:#ff79c6">&gt;</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Poll有一个轮询方法poll。在实际调用时已经实现了跨平台。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">poll</span>(<span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">mut</span> self, events: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">mut</span> Events, timeout_ms: <span style="color:#8be9fd;font-style:italic">Option</span><span style="color:#ff79c6">&lt;</span><span style="color:#8be9fd">i32</span><span style="color:#ff79c6">&gt;</span>) -&gt; <span style="color:#50fa7b">io</span>::<span style="color:#8be9fd;font-style:italic">Result</span><span style="color:#ff79c6">&lt;</span><span style="color:#8be9fd">usize</span><span style="color:#ff79c6">&gt;</span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#6272a4">// ...
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>}
+</span></span></code></pre></div><h2 id="mio代码实践">Mio代码实践</h2>
+<p>生产环境中的多路复用跨平台代码<a href="https://github.com/tokio-rs/mio">mio</a>。</p>
+<p>其中抽象出了<a href="https://docs.rs/mio/0.8.4/mio/struct.Poll.html">Poll</a>结构体。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">Poll</span> {
+</span></span><span style="display:flex;"><span>    registry: <span style="color:#50fa7b">Registry</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>这里用到了设计模式——外观模式，外观模式相关知识见<a href="https://www.runoob.com/design-pattern/facade-pattern.html">这里</a>。</p>
+<p>外观模式（Facade Pattern）隐藏系统的复杂性，并向客户端提供了一个客户端可以访问系统的接口。这种类型的设计模式属于结构型模式，它向现有的系统添加一个接口，来隐藏系统的复杂性。</p>
+<p>这种模式涉及到一个单一的类，该类提供了客户端请求的简化方法和对现有系统类方法的委托调用。</p>
+<h2 id="异步编程模型概要">异步编程模型概要</h2>
+<p>让我们先从建立异步编程模型的整体概念框架开始，先不深入细节。</p>
+<p><strong>Rust 提供的异步并发相比于其他语言有什么特点？</strong></p>
+<ol>
+<li>Rust 语言只是提供一个零成本的异步编程抽象，而不内置运行时。</li>
+<li>基于 Generator 实现的 Future，在 Future 基础上 提供 async/await 语法糖。本质是一个状态机。</li>
+</ol>
+<p>查看 README 和其他编程语言比较的图示。</p>
+<p>
+  <img src="/img/2022-07-07-Rust-async/node_async.png" alt="node">
+
+</p>
+<p>
+  <img src="/img/2022-07-07-Rust-async/go_async.png" alt="go">
+
+</p>
+<p>
+  <img src="/img/2022-07-07-Rust-async/rust_async_01.png" alt="rust">
+
+</p>
+<p>
+  <img src="/img/2022-07-07-Rust-async/async_01.png" alt="rustasync">
+
+</p>
+<p><strong>为什么需要异步？</strong></p>
+<ol>
+<li>对极致性能的追求。</li>
+<li>对编程体验的追求。</li>
+</ol>
+<p><strong>异步编程模型发展阶段：</strong></p>
+<ol>
+<li>Callback</li>
+<li>Promise/Future</li>
+<li>async/await</li>
+</ol>
+<p>可在项目 README 查看回调地狱示例图。</p>
+<p>
+  <img src="/img/2022-07-07-Rust-async/callback-hell.gif" alt="callback_hell">
+
+</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>A
+</span></span><span style="display:flex;"><span>+------+
+</span></span><span style="display:flex;"><span>|      |
+</span></span><span style="display:flex;"><span>|      |
+</span></span><span style="display:flex;"><span>|      +-------------------+
+</span></span><span style="display:flex;"><span>|      |                   |
+</span></span><span style="display:flex;"><span>|      |                   |
+</span></span><span style="display:flex;"><span>|      |                  Bv
+</span></span><span style="display:flex;"><span>+------+                +-----+
+</span></span><span style="display:flex;"><span>|      |                |     |
+</span></span><span style="display:flex;"><span>|      |                | do1 |
+</span></span><span style="display:flex;"><span>|      |                |     |
+</span></span><span style="display:flex;"><span>|      |                +-----+
+</span></span><span style="display:flex;"><span>|      |                |     |
+</span></span><span style="display:flex;"><span>|      |                | do2 |
+</span></span><span style="display:flex;"><span>|      |                +-+---+
+</span></span><span style="display:flex;"><span>|      |                  |
+</span></span><span style="display:flex;"><span>|      |                  |
+</span></span><span style="display:flex;"><span>| A    |                  |
+</span></span><span style="display:flex;"><span>+------+                  |
+</span></span><span style="display:flex;"><span>|      |                  |
+</span></span><span style="display:flex;"><span>|      |                  |
+</span></span><span style="display:flex;"><span>|      |                  |
+</span></span><span style="display:flex;"><span>|      | &lt;----------------+
+</span></span><span style="display:flex;"><span>|      |
+</span></span><span style="display:flex;"><span>|      |
+</span></span><span style="display:flex;"><span>|      |
+</span></span><span style="display:flex;"><span>+------+
+</span></span></code></pre></div><p>早期 Rust 异步写法示意：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> future <span style="color:#ff79c6">=</span> id_rpc(<span style="color:#ff79c6">&amp;</span>my_server).and_then(<span style="color:#ff79c6">|</span>id<span style="color:#ff79c6">|</span> {
+</span></span><span style="display:flex;"><span>    get_row(id)
+</span></span><span style="display:flex;"><span>}).map(<span style="color:#ff79c6">|</span>row<span style="color:#ff79c6">|</span> {
+</span></span><span style="display:flex;"><span>    json::encode(row)
+</span></span><span style="display:flex;"><span>}).and_then(<span style="color:#ff79c6">|</span>encoded<span style="color:#ff79c6">|</span> {
+</span></span><span style="display:flex;"><span>    write_string(my_socket, encoded)
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>这样写会存在大量内嵌 Future，开发体验不好。</p>
+<p>引入 async/await 之后：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> id <span style="color:#ff79c6">=</span> id_rpc(<span style="color:#ff79c6">&amp;</span>my_server).<span style="color:#ff79c6">await</span>;
+</span></span><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> row <span style="color:#ff79c6">=</span> get_row(id).<span style="color:#ff79c6">await</span>;
+</span></span><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> encoded <span style="color:#ff79c6">=</span> json::encode(row);
+</span></span><span style="display:flex;"><span>write_string(my_socket, encoded).<span style="color:#ff79c6">await</span>;
+</span></span></code></pre></div><p>拥有了和同步代码一致的体验。</p>
+<p><strong>异步任务可看作是一种绿色线程</strong></p>
+<p>查看 README 相关图示</p>
+<p>
+  <img src="/img/2022-07-07-Rust-async/process_thread_coroutine.png" alt="process">
+
+</p>
+<p>
+  <img src="/img/2022-07-07-Rust-async/swap_problem.jpg" alt="process">
+
+</p>
+<p>可以说，异步任务的行为是模仿 线程 来抽象。</p>
+<ol>
+<li>线程在进程内，异步任务在线程内。</li>
+<li>线程可被调度切换（Linux默认抢占式），异步任务也可以被调度（协作式而非抢占式）。区别在于，异步任务只在用户态，没有线程的上下文切换开销。</li>
+<li>线程有上下文信息，异步任务也有上下文信息。</li>
+<li>线程间可以通信，异步任务之间也可以通信。</li>
+<li>线程间有竞争，异步任务之间也有竞争。</li>
+</ol>
+<p>整个异步编程概念，包括异步语法、异步运行时都是围绕如何建立这种「绿色线程」抽象而成的。</p>
+<p>什么是<a href="https://zh.m.wikipedia.org/zh-hans/%E7%BB%BF%E8%89%B2%E7%BA%BF%E7%A8%8B">绿色线程</a>？</p>
+<blockquote>
+<p>在计算机程序设计中，<strong>绿色线程</strong>是一种由<a href="https://zh.m.wikipedia.org/wiki/%E8%BF%90%E8%A1%8C%E6%97%B6%E7%B3%BB%E7%BB%9F">运行环境</a>或<a href="https://zh.m.wikipedia.org/wiki/%E8%99%9B%E6%93%AC%E6%A9%9F%E5%99%A8">虚拟机</a>调度，而不是由本地底层操作系统调度的线程。绿色线程并不依赖底层的系统功能，模拟实现了多线程的运行，这种线程的管理调配发生在用户空间而不是内核空间，所以它们可以在没有原生线程支持的环境中工作。</p>
+</blockquote>
+<h2 id="future和futures-rs介绍">Future和Futures-rs介绍</h2>
+<p><a href="https://doc.rust-lang.org/std/future/index.html">Future</a>：提供了异步计算。</p>
+<p>Future trait：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">trait</span> Future {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">type</span> <span style="color:#50fa7b">Output</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">poll</span>(self: <span style="color:#50fa7b">Pin</span><span style="color:#ff79c6">&lt;&amp;</span><span style="color:#ff79c6">mut</span> Self<span style="color:#ff79c6">&gt;</span>, cx: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">mut</span> Context<span style="color:#ff79c6">&lt;&#39;</span><span style="color:#8be9fd;font-style:italic">_</span><span style="color:#ff79c6">&gt;</span>) -&gt; <span style="color:#50fa7b">Poll</span><span style="color:#ff79c6">&lt;</span>Self::Output<span style="color:#ff79c6">&gt;</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>其中poll方法很重要，尝试去将future得到一个最终的值。如果最终的值没有准备好，也不会进行阻塞。</p>
+<p><a href="https://doc.rust-lang.org/std/task/index.html">task</a>：可以理解为创建绿色线程。</p>
+<p>其中重要的是Enum <a href="https://doc.rust-lang.org/std/index.html">std</a>::<a href="https://doc.rust-lang.org/std/task/index.html">task</a>::<a href="https://doc.rust-lang.org/std/task/enum.Poll.html#">Poll</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">enum</span> <span style="color:#50fa7b">Poll</span><span style="color:#ff79c6">&lt;</span>T<span style="color:#ff79c6">&gt;</span> {
+</span></span><span style="display:flex;"><span>    Ready(T),
+</span></span><span style="display:flex;"><span>    Pending,
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><a href="https://github.com/rust-lang/futures-rs">futures-rs</a>：对future做了扩展。</p>
+<h2 id="编写异步echo服务">编写异步echo服务</h2>
+<p>什么是<a href="https://zh.m.wikipedia.org/zh-hans/%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6">文件描述符</a>？</p>
+<blockquote>
+<p><strong>文件描述符</strong>（File descriptor）是计算机科学中的一个术语，是一个用于表述指向<a href="https://zh.m.wikipedia.org/wiki/%E6%96%87%E4%BB%B6">文件</a>的引用的抽象化概念。</p>
+<p>文件描述符在形式上是一个非负整数。实际上，它是一个索引值，指向<a href="https://zh.m.wikipedia.org/wiki/%E5%86%85%E6%A0%B8">内核</a>为每一个<a href="https://zh.m.wikipedia.org/wiki/%E8%BF%9B%E7%A8%8B">进程</a>所维护的该进程打开文件的记录表。当程序打开一个现有文件或者创建一个新文件时，内核向进程返回一个文件描述符。在<a href="https://zh.m.wikipedia.org/wiki/%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1">程序设计</a>中，一些涉及底层的程序编写往往会围绕着文件描述符展开。但是文件描述符这一概念往往只适用于<a href="https://zh.m.wikipedia.org/wiki/UNIX">UNIX</a>、<a href="https://zh.m.wikipedia.org/wiki/Linux">Linux</a>这样的操作系统。</p>
+</blockquote>
+<p>代码见<a href="https://github.com/ZhangHanDong/inviting-rust/tree/master/async-echo-server">async-echo-server</a>。</p>
+<p>流程图：</p>
+<p>
+  <img src="/img/2022-07-07-Rust-async/image-20220816104218814.png" alt="image-20220816104218814">
+
+</p>
+<p>先看看文件的结构：</p>
+<ul>
+<li>main</li>
+<li>epoll</li>
+<li>tcp_listener</li>
+<li>executor</li>
+<li>reactor</li>
+<li>util</li>
+</ul>
+<p>tcp_listener:</p>
+<p>
+  <img src="/img/2022-07-07-Rust-async/image-20220816104414073.png" alt="image-20220816104414073">
+
+</p>
+<p>这里主要是几个异步计算的实现，也就是AccpectFuture、ReadFuture、WriteFuture。</p>
+<p>epoll：Linux下epoll的封装。</p>
+<p>
+  <img src="/img/2022-07-07-Rust-async/image-20220816104808295.png" alt="image-20220816104808295">
+
+</p>
+<p>主要就是调用系统调用，重要的是epoll的三个方法epoll_create、epoll_ctl、epoll_wait。</p>
+<p>executor：执行器，怎样调度这些绿色线程，如何执行任务。</p>
+<p>
+  <img src="/img/2022-07-07-Rust-async/image-20220816105016908.png" alt="image-20220816105016908">
+
+</p>
+<p>reactor：添加事件，检测到事件后唤醒事件，让执行器去执行。</p>
+<p>
+  <img src="/img/2022-07-07-Rust-async/image-20220816105146577.png" alt="image-20220816105146577">
+
+</p>
+<h2 id="深入理解异步task模型">深入理解异步Task模型</h2>
+<p>回顾 Rust 异步 task 模型</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>    +------------------------------------------------------------------+
+</span></span><span style="display:flex;"><span>    |                                                                  |
+</span></span><span style="display:flex;"><span>    |    +--------------------------------------------------------+    |
+</span></span><span style="display:flex;"><span>    |    |                                                        |    |
+</span></span><span style="display:flex;"><span>    |    |   +-------------------------------------------------+  |    |
+</span></span><span style="display:flex;"><span>    |    |   |-------------+ +----------+ +--------------+     |  |    |
+</span></span><span style="display:flex;"><span>    |    |   || futureobj  | | futureobj| |  futureobj   |     |  |    |
+</span></span><span style="display:flex;"><span>    |    |   +-------------+ +----------+ +--------------+     |  |    |
+</span></span><span style="display:flex;"><span>    |    |   | 协 程  task                                      |  |    |
+</span></span><span style="display:flex;"><span>    |    |   +-------------------------------------------------+  |    |
+</span></span><span style="display:flex;"><span>    |    |                                                        |    |
+</span></span><span style="display:flex;"><span>    |    | 线 程                                                   |    |
+</span></span><span style="display:flex;"><span>    |    +--------------------------------------------------------+    |
+</span></span><span style="display:flex;"><span>    |                                                                  |
+</span></span><span style="display:flex;"><span>    |                                                                  |
+</span></span><span style="display:flex;"><span>    |    +--------------------------------------------------------+    |
+</span></span><span style="display:flex;"><span>    |    |  +--------------------------------------------------+  |    |
+</span></span><span style="display:flex;"><span>    |    |  |                                                  |  |    |
+</span></span><span style="display:flex;"><span>    |    |  |   +------------+ +-------------------------------+  |    |
+</span></span><span style="display:flex;"><span>    |    |  |   | futureobj  | |  futureobj      || futureobj ||  |    |
+</span></span><span style="display:flex;"><span>    |    |  |   +------------+ +-------------------------------+  |    |
+</span></span><span style="display:flex;"><span>    |    |  |  协 程 task                                      |  |    |
+</span></span><span style="display:flex;"><span>    |    |  +--------------------------------------------------+  |    |
+</span></span><span style="display:flex;"><span>    |    | 线 程                                                   |    |
+</span></span><span style="display:flex;"><span>    |    +--------------------------------------------------------+    |
+</span></span><span style="display:flex;"><span>    |                                                                  |
+</span></span><span style="display:flex;"><span>    | 进  程                                                            |
+</span></span><span style="display:flex;"><span>    +------------------------------------------------------------------+
+</span></span></code></pre></div><p>什么是<a href="https://zh.m.wikipedia.org/zh-hans/%E5%8D%8F%E7%A8%8B">协程</a>？</p>
+<blockquote>
+<p><strong>协程</strong>（英语：coroutine）是计算机程序的一类组件，推广了<a href="https://zh.m.wikipedia.org/wiki/%E5%8D%8F%E4%BD%9C%E5%BC%8F%E5%A4%9A%E4%BB%BB%E5%8A%A1">协作式多任务</a>的<a href="https://zh.m.wikipedia.org/wiki/%E5%AD%90%E4%BE%8B%E7%A8%8B">子例程</a>，允许执行被挂起与被恢复。相对子例程而言，协程更为一般和灵活，但在实践中使用没有子例程那样广泛。协程更适合于用来实现彼此熟悉的程序组件，如<a href="https://zh.m.wikipedia.org/wiki/%E5%8D%8F%E4%BD%9C%E5%BC%8F%E5%A4%9A%E4%BB%BB%E5%8A%A1">协作式多任务</a>、<a href="https://zh.m.wikipedia.org/wiki/%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86">异常处理</a>、<a href="https://zh.m.wikipedia.org/wiki/%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF">事件循环</a>、<a href="https://zh.m.wikipedia.org/wiki/%E8%BF%AD%E4%BB%A3%E5%99%A8">迭代器</a>、<a href="https://zh.m.wikipedia.org/wiki/%E6%83%B0%E6%80%A7%E6%B1%82%E5%80%BC">无限列表</a>和<a href="https://zh.m.wikipedia.org/wiki/%E7%AE%A1%E9%81%93_(%E8%BD%AF%E4%BB%B6)">管道</a>。</p>
+</blockquote>
+<p>同线程的比较</p>
+<blockquote>
+<p>协程非常类似于<a href="https://zh.m.wikipedia.org/wiki/%E7%BA%BF%E7%A8%8B">线程</a>。但是协程是<a href="https://zh.m.wikipedia.org/wiki/%E5%8D%8F%E4%BD%9C%E5%BC%8F%E5%A4%9A%E4%BB%BB%E5%8A%A1">协作式</a>多任务的，而线程典型是<a href="https://zh.m.wikipedia.org/wiki/%E6%8A%A2%E5%8D%A0%E5%BC%8F%E5%A4%9A%E4%BB%BB%E5%8A%A1">抢占式</a><a href="https://zh.m.wikipedia.org/wiki/%E5%A4%9A%E4%BB%BB%E5%8A%A1">多任务</a>的。这意味着协程提供<a href="https://zh.m.wikipedia.org/wiki/%E5%B9%B6%E5%8F%91%E6%80%A7">并发性</a>而非<a href="https://zh.m.wikipedia.org/wiki/%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97">并行性</a>。协程超过线程的好处是它们可以用于<a href="https://zh.m.wikipedia.org/wiki/%E5%AE%9E%E6%97%B6%E8%AE%A1%E7%AE%97">硬性实时</a>的语境（在协程之间的<a href="https://zh.m.wikipedia.org/wiki/%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2">切换</a>不需要涉及任何<a href="https://zh.m.wikipedia.org/wiki/%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8">系统调用</a>或任何<a href="https://zh.m.wikipedia.org/wiki/%E9%98%BB%E5%A1%9E_(%E8%AE%A1%E7%AE%97)">阻塞</a>调用），这里不需要用来守卫<a href="https://zh.m.wikipedia.org/wiki/%E5%85%B3%E9%94%AE%E5%8C%BA%E6%AE%B5">关键区段</a>的同步性原语（primitive）比如<a href="https://zh.m.wikipedia.org/wiki/%E4%BA%92%E6%96%A5%E9%94%81">互斥锁</a>、信号量等，并且不需要来自操作系统的支持。有可能以一种对调用代码透明的方式，使用抢占式调度的线程实现协程，但是会失去某些利益（特别是对硬性实时操作的适合性和相对廉价的相互之间切换）。</p>
+<p><a href="https://zh.m.wikipedia.org/wiki/%E7%BA%BF%E7%A8%8B">线程</a>是<a href="https://zh.m.wikipedia.org/wiki/%E5%8D%8F%E4%BD%9C%E5%BC%8F%E5%A4%9A%E4%BB%BB%E5%8A%A1">协作式</a>多任务的轻量级线程，本质上描述了同协程一样的概念。其区别，如果一定要说有的话，是协程是语言层级的构造，可看作一种形式的<a href="https://zh.m.wikipedia.org/wiki/%E6%8E%A7%E5%88%B6%E6%B5%81">控制流</a>，而线程是系统层级的构造，可看作恰巧没有并行运行的线程。这两个概念谁有优先权是争议性的：线程可看作为协程的一种实现[<a href="https://zh.m.wikipedia.org/zh-hans/%E5%8D%8F%E7%A8%8B#cite_note-flounder-6">6]</a>，也可看作实现协程的基底[<a href="https://zh.m.wikipedia.org/zh-hans/%E5%8D%8F%E7%A8%8B#cite_note-msdn-wrap-7">7]</a>。</p>
+</blockquote>
+<ol>
+<li>理解 leaf-futures vs Non-leaf-futures (async/await)
+<ul>
+<li>叶子futures：像代码示例中的AccpectFuture、ReadFuture、WriteFuture，要和Reactor打交道，比较底层。</li>
+<li>非叶子futures：用async或者await实现，业务层面的。</li>
+</ul>
+</li>
+<li>理解 Waker：</li>
+</ol>
+<blockquote>
+<p>当事件源注册该Future将在某个事件上等待时，它必须存储唤醒程序，以便以后可以调用唤醒来开始唤醒阶段。 为了引入并发性，能够同时等待多个事件非常重要，因此唤醒器不可能由单个事件源唯一拥有。 结果，Waker类型需要是实现 Clone 的。</p>
+</blockquote>
+<ul>
+<li>
+<p>Struct <a href="https://doc.rust-lang.org/std/index.html">std</a>::<a href="https://doc.rust-lang.org/std/task/index.html">task</a>::<a href="https://doc.rust-lang.org/std/task/struct.Waker.html#">Waker</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">#[repr(transparent)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[stable(feature = </span><span style="color:#f1fa8c">&#34;futures_api&#34;</span><span style="color:#ff79c6">, since = </span><span style="color:#f1fa8c">&#34;1.36.0&#34;</span><span style="color:#ff79c6">)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">Waker</span> {
+</span></span><span style="display:flex;"><span>    waker: <span style="color:#50fa7b">RawWaker</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Waker 可以唤醒一个任务，通过通知执行器。</p>
+<p>Waker实现了一些trait。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">#[stable(feature = </span><span style="color:#f1fa8c">&#34;futures_api&#34;</span><span style="color:#ff79c6">, since = </span><span style="color:#f1fa8c">&#34;1.36.0&#34;</span><span style="color:#ff79c6">)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">impl</span> <span style="color:#8be9fd;font-style:italic">Unpin</span> <span style="color:#ff79c6">for</span> Waker {}
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[stable(feature = </span><span style="color:#f1fa8c">&#34;futures_api&#34;</span><span style="color:#ff79c6">, since = </span><span style="color:#f1fa8c">&#34;1.36.0&#34;</span><span style="color:#ff79c6">)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">unsafe</span> <span style="color:#ff79c6">impl</span> <span style="color:#8be9fd;font-style:italic">Send</span> <span style="color:#ff79c6">for</span> Waker {}
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[stable(feature = </span><span style="color:#f1fa8c">&#34;futures_api&#34;</span><span style="color:#ff79c6">, since = </span><span style="color:#f1fa8c">&#34;1.36.0&#34;</span><span style="color:#ff79c6">)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">unsafe</span> <span style="color:#ff79c6">impl</span> <span style="color:#8be9fd;font-style:italic">Sync</span> <span style="color:#ff79c6">for</span> Waker {}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">#[derive(PartialEq, Debug)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[stable(feature = </span><span style="color:#f1fa8c">&#34;futures_api&#34;</span><span style="color:#ff79c6">, since = </span><span style="color:#f1fa8c">&#34;1.36.0&#34;</span><span style="color:#ff79c6">)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">RawWaker</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// A data pointer, which can be used to store arbitrary data as required
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// by the executor. This could be e.g. a type-erased pointer to an `Arc`
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// that is associated with the task.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// The value of this field gets passed to all functions that are part of
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// the vtable as the first parameter.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    data: <span style="color:#ff79c6">*</span><span style="color:#ff79c6">const</span> (),
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// Virtual function pointer table that customizes the behavior of this waker.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    vtable: <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&#39;</span><span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#50fa7b">RawWakerVTable</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>这里Rawwaker有两个内容，一个data可以保存上下文，一个vtable是虚表。</p>
+</li>
+</ul>
+<ol start="3">
+<li>理解并发（waker 并发 和 poll 并发）</li>
+</ol>
+<p>深入 Futures-rs:</p>
+<ul>
+<li><a href="https://doc.rust-lang.org/std/future/index.html">Future</a> and <a href="https://doc.rust-lang.org/std/task/index.html">task</a></li>
+<li><a href="https://github.com/rust-lang/futures-rs">futures-rs</a></li>
+<li><a href="https://github.com/smol-rs/futures-lite">futures-lite</a></li>
+</ul>
+<h2 id="async-await语法背后">async-await语法背后</h2>
+<h3 id="历史">历史</h3>
+<p>处理异步事件的三种方式：</p>
+<ul>
+<li>Callback</li>
+<li>Promise/Future</li>
+<li>async/await</li>
+</ul>
+<p>async/await 是目前体验最好的方式，Rust 要支持它并不容易。</p>
+<h3 id="asyncawait-语法介绍">async/await 语法介绍</h3>
+<p>参考：<a href="https://rust-lang.github.io/async-book/01_getting_started/01_chapter.html">Asynchronous Programming in Rust</a></p>
+<p><code>async</code> 两种用法：<code>async fn </code> 函数 和 <code>async {}</code> 块。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#6272a4">// async 函数，真正会返回 `Future&lt;Output = u8&gt;`，而不是表面看上去的 `u8`
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span><span style="color:#ff79c6">async</span> <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">foo</span>() -&gt; <span style="color:#8be9fd">u8</span> { <span style="color:#bd93f9">5</span> }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">// async 块用法，返回 `impl Future&lt;Output = u8&gt;`
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">bar</span>() -&gt; <span style="color:#50fa7b">impl</span> Future<span style="color:#ff79c6">&lt;</span>Output <span style="color:#ff79c6">=</span> <span style="color:#8be9fd">u8</span><span style="color:#ff79c6">&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// 这里 `async` 块返回  `impl Future&lt;Output = u8&gt;`
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">async</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">let</span> x: <span style="color:#8be9fd">u8</span> <span style="color:#ff79c6">=</span> foo().<span style="color:#ff79c6">await</span>;
+</span></span><span style="display:flex;"><span>        x <span style="color:#ff79c6">+</span> <span style="color:#bd93f9">5</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><code>await</code> 将暂停当前函数的执行，直到执行者将 Future 结束为止。这为其他 Future 任务提供了计算的机会。</p>
+<h2 id="生成器">生成器</h2>
+<p>Future 底层实现依赖于 生成器。 <code>async/await</code> 对应底层生成器 <code>resume/yield</code> 。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">#![feature(generators, generator_trait)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">use</span> std::ops::Generator;
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">use</span> std::pin::Pin;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> gen <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">||</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">yield</span> <span style="color:#bd93f9">1</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">yield</span> <span style="color:#bd93f9">2</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">yield</span> <span style="color:#bd93f9">3</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">return</span> <span style="color:#bd93f9">4</span>;
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// for _ in 0..4 {
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    <span style="color:#6272a4">//     // 为了给嵌入式支持异步，多传入了一个空的unit给resume方法
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    <span style="color:#6272a4">//     let c = Pin::new(&amp;mut gen).resume(());
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    <span style="color:#6272a4">//     println!(&#34;{:?}&#34;, c);
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    <span style="color:#6272a4">// }
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> c <span style="color:#ff79c6">=</span> Pin::new(<span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">mut</span> gen).resume(());
+</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;{:?}&#34;</span>, c);
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> c <span style="color:#ff79c6">=</span> Pin::new(<span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">mut</span> gen).resume(());
+</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;{:?}&#34;</span>, c);
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> c <span style="color:#ff79c6">=</span> Pin::new(<span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">mut</span> gen).resume(());
+</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;{:?}&#34;</span>, c);
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> c <span style="color:#ff79c6">=</span> Pin::new(<span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">mut</span> gen).resume(());
+</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;{:?}&#34;</span>, c);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>生成等价代码：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">#![allow(unused)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#![feature(generators, generator_trait)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">use</span> std::ops::{Generator, GeneratorState};
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">use</span> std::pin::Pin;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">enum</span> <span style="color:#50fa7b">__Gen</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// (0) 初始状态
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    Start,
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// (1) resume方法执行以后
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    State1(State1),
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// (2) resume方法执行以后
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    State2(State2),
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// (3) resume方法执行以后
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    State3(State3),
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// (4) resume方法执行以后，正好完成
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    Done
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">State1</span> { x: <span style="color:#8be9fd">u64</span> }
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">State2</span> { x: <span style="color:#8be9fd">u64</span> }
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">State3</span> { x: <span style="color:#8be9fd">u64</span> }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">impl</span> Generator <span style="color:#ff79c6">for</span> __Gen {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">type</span> <span style="color:#50fa7b">Yield</span> <span style="color:#ff79c6">=</span> <span style="color:#8be9fd">u64</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">type</span> <span style="color:#50fa7b">Return</span> <span style="color:#ff79c6">=</span> <span style="color:#8be9fd">u64</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">resume</span>(self: <span style="color:#50fa7b">Pin</span><span style="color:#ff79c6">&lt;&amp;</span><span style="color:#ff79c6">mut</span> Self<span style="color:#ff79c6">&gt;</span>, _: ()) -&gt; <span style="color:#50fa7b">GeneratorState</span><span style="color:#ff79c6">&lt;</span><span style="color:#8be9fd">u64</span>, <span style="color:#8be9fd">u64</span><span style="color:#ff79c6">&gt;</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">let</span> mut_ref <span style="color:#ff79c6">=</span> self.get_mut();
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">match</span> std::mem::replace(mut_ref, __Gen::Done) {
+</span></span><span style="display:flex;"><span>            __Gen::Start <span style="color:#ff79c6">=&gt;</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">*</span>mut_ref <span style="color:#ff79c6">=</span> __Gen::State1(State1{x: <span style="color:#bd93f9">1</span>});
+</span></span><span style="display:flex;"><span>                GeneratorState::Yielded(<span style="color:#bd93f9">1</span>)
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            __Gen::State1(State1{x: <span style="color:#bd93f9">1</span>}) <span style="color:#ff79c6">=&gt;</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">*</span>mut_ref  <span style="color:#ff79c6">=</span> __Gen::State2(State2{x: <span style="color:#bd93f9">2</span>});
+</span></span><span style="display:flex;"><span>                GeneratorState::Yielded(<span style="color:#bd93f9">2</span>)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>            __Gen::State2(State2{x: <span style="color:#bd93f9">2</span>}) <span style="color:#ff79c6">=&gt;</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">*</span>mut_ref <span style="color:#ff79c6">=</span> __Gen::State3(State3{x: <span style="color:#bd93f9">3</span>});
+</span></span><span style="display:flex;"><span>                GeneratorState::Yielded(<span style="color:#bd93f9">3</span>)
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            __Gen::State3(State3{x: <span style="color:#bd93f9">3</span>}) <span style="color:#ff79c6">=&gt;</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">*</span>mut_ref  <span style="color:#ff79c6">=</span> __Gen::Done;
+</span></span><span style="display:flex;"><span>                GeneratorState::Complete(<span style="color:#bd93f9">4</span>)
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            _ <span style="color:#ff79c6">=&gt;</span> {
+</span></span><span style="display:flex;"><span>                panic!(<span style="color:#f1fa8c">&#34;generator resumed after completion&#34;</span>)
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">main</span>(){
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> gen <span style="color:#ff79c6">=</span> {
+</span></span><span style="display:flex;"><span>        __Gen::Start
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">for</span> _ <span style="color:#ff79c6">in</span> <span style="color:#bd93f9">0</span><span style="color:#ff79c6">..</span><span style="color:#bd93f9">4</span> {
+</span></span><span style="display:flex;"><span>        println!(<span style="color:#f1fa8c">&#34;{:?}&#34;</span>, <span style="color:#ff79c6">unsafe</span>{ Pin::new(<span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">mut</span> gen).resume(())});
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>生成器基本用法：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">#![allow(unused)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#![feature(generators, generator_trait)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">use</span> std::pin::Pin;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">use</span> std::ops::Generator;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">up_to</span>(limit: <span style="color:#8be9fd">u64</span>) -&gt; <span style="color:#50fa7b">impl</span> Generator<span style="color:#ff79c6">&lt;</span>Yield <span style="color:#ff79c6">=</span> <span style="color:#8be9fd">u64</span>, Return <span style="color:#ff79c6">=</span> <span style="color:#8be9fd">u64</span><span style="color:#ff79c6">&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">move</span> <span style="color:#ff79c6">||</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">for</span> x <span style="color:#ff79c6">in</span> <span style="color:#bd93f9">0</span><span style="color:#ff79c6">..</span>limit {
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">yield</span> x;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">return</span> limit;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">main</span>(){
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> a <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">10</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> b <span style="color:#ff79c6">=</span> up_to(a);
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">unsafe</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">for</span> _ <span style="color:#ff79c6">in</span> <span style="color:#bd93f9">0</span><span style="color:#ff79c6">..=</span><span style="color:#bd93f9">10</span>{
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> c <span style="color:#ff79c6">=</span> Pin::new(<span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">mut</span> b).resume(());
+</span></span><span style="display:flex;"><span>            println!(<span style="color:#f1fa8c">&#34;{:?}&#34;</span>, c);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>生成器变身为迭代器：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">#![allow(unused)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#![feature(generators, generator_trait)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">use</span> std::pin::Pin;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">use</span> std::ops::{Generator, GeneratorState};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">up_to</span>() -&gt; <span style="color:#50fa7b">impl</span> Generator<span style="color:#ff79c6">&lt;</span>Yield <span style="color:#ff79c6">=</span> <span style="color:#8be9fd">u64</span>, Return <span style="color:#ff79c6">=</span> ()<span style="color:#ff79c6">&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">move</span> <span style="color:#ff79c6">||</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> x <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">loop</span> {
+</span></span><span style="display:flex;"><span>            x <span style="color:#ff79c6">+=</span> <span style="color:#bd93f9">1</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">yield</span> x;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">return</span> ();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">main</span>(){
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> gen <span style="color:#ff79c6">=</span> up_to();
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">unsafe</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">for</span> _ <span style="color:#ff79c6">in</span> <span style="color:#bd93f9">0</span><span style="color:#ff79c6">..</span><span style="color:#bd93f9">10</span>{
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">match</span> Pin::new(<span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">mut</span> gen).resume(()) {
+</span></span><span style="display:flex;"><span>            GeneratorState::Yielded(i) <span style="color:#ff79c6">=&gt;</span> println!(<span style="color:#f1fa8c">&#34;{:?}&#34;</span>, i),
+</span></span><span style="display:flex;"><span>            _ <span style="color:#ff79c6">=&gt;</span> println!(<span style="color:#f1fa8c">&#34;Completed&#34;</span>),
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>生成器变身为 Future:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">#![allow(unused)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#![feature(generators, generator_trait)]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">use</span> std::ops::{Generator, GeneratorState};
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">use</span> std::pin::Pin;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">up_to</span>(limit: <span style="color:#8be9fd">u64</span>) -&gt; <span style="color:#50fa7b">impl</span> Generator<span style="color:#ff79c6">&lt;</span>Yield <span style="color:#ff79c6">=</span> (), Return <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">Result</span><span style="color:#ff79c6">&lt;</span><span style="color:#8be9fd">u64</span>, ()<span style="color:#ff79c6">&gt;&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">move</span> <span style="color:#ff79c6">||</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">for</span> x <span style="color:#ff79c6">in</span> <span style="color:#bd93f9">0</span><span style="color:#ff79c6">..</span>limit {
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">yield</span> ();
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">Ok</span>(limit);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">main</span>(){
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> limit <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">2</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> gen <span style="color:#ff79c6">=</span> up_to(limit);
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">unsafe</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">for</span> i <span style="color:#ff79c6">in</span> <span style="color:#bd93f9">0</span><span style="color:#ff79c6">..=</span>limit{
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">match</span> Pin::new(<span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">mut</span> gen).resume(()) {
+</span></span><span style="display:flex;"><span>            GeneratorState::Yielded(v) <span style="color:#ff79c6">=&gt;</span> println!(<span style="color:#f1fa8c">&#34;resume {:?} : Pending&#34;</span>, i),
+</span></span><span style="display:flex;"><span>            GeneratorState::Complete(v) <span style="color:#ff79c6">=&gt;</span> println!(<span style="color:#f1fa8c">&#34;resume {:?} : Ready&#34;</span>, i),
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>在标准库Future内部，可以从Generator转换为Future。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">#[lang = </span><span style="color:#f1fa8c">&#34;from_generator&#34;</span><span style="color:#ff79c6">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[doc(hidden)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[unstable(feature = </span><span style="color:#f1fa8c">&#34;gen_future&#34;</span><span style="color:#ff79c6">, issue = </span><span style="color:#f1fa8c">&#34;50547&#34;</span><span style="color:#ff79c6">)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[rustc_const_unstable(feature = </span><span style="color:#f1fa8c">&#34;gen_future&#34;</span><span style="color:#ff79c6">, issue = </span><span style="color:#f1fa8c">&#34;50547&#34;</span><span style="color:#ff79c6">)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[inline]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">const</span> <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">from_generator</span><span style="color:#ff79c6">&lt;</span>T<span style="color:#ff79c6">&gt;</span>(gen: <span style="color:#50fa7b">T</span>) -&gt; <span style="color:#50fa7b">impl</span> Future<span style="color:#ff79c6">&lt;</span>Output <span style="color:#ff79c6">=</span> T::Return<span style="color:#ff79c6">&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">where</span>
+</span></span><span style="display:flex;"><span>    T: <span style="color:#50fa7b">Generator</span><span style="color:#ff79c6">&lt;</span>ResumeTy, Yield <span style="color:#ff79c6">=</span> ()<span style="color:#ff79c6">&gt;</span>,
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">#[rustc_diagnostic_item = </span><span style="color:#f1fa8c">&#34;gen_future&#34;</span><span style="color:#ff79c6">]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">GenFuture</span><span style="color:#ff79c6">&lt;</span>T: <span style="color:#50fa7b">Generator</span><span style="color:#ff79c6">&lt;</span>ResumeTy, Yield <span style="color:#ff79c6">=</span> ()<span style="color:#ff79c6">&gt;&gt;</span>(T);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// We rely on the fact that async/await futures are immovable in order to create
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    <span style="color:#6272a4">// self-referential borrows in the underlying generator.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">impl</span><span style="color:#ff79c6">&lt;</span>T: <span style="color:#50fa7b">Generator</span><span style="color:#ff79c6">&lt;</span>ResumeTy, Yield <span style="color:#ff79c6">=</span> ()<span style="color:#ff79c6">&gt;&gt;</span> <span style="color:#ff79c6">!</span><span style="color:#8be9fd;font-style:italic">Unpin</span> <span style="color:#ff79c6">for</span> GenFuture<span style="color:#ff79c6">&lt;</span>T<span style="color:#ff79c6">&gt;</span> {}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">impl</span><span style="color:#ff79c6">&lt;</span>T: <span style="color:#50fa7b">Generator</span><span style="color:#ff79c6">&lt;</span>ResumeTy, Yield <span style="color:#ff79c6">=</span> ()<span style="color:#ff79c6">&gt;&gt;</span> Future <span style="color:#ff79c6">for</span> GenFuture<span style="color:#ff79c6">&lt;</span>T<span style="color:#ff79c6">&gt;</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">type</span> <span style="color:#50fa7b">Output</span> <span style="color:#ff79c6">=</span> T::Return;
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">poll</span>(self: <span style="color:#50fa7b">Pin</span><span style="color:#ff79c6">&lt;&amp;</span><span style="color:#ff79c6">mut</span> Self<span style="color:#ff79c6">&gt;</span>, cx: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">mut</span> Context<span style="color:#ff79c6">&lt;&#39;</span><span style="color:#8be9fd;font-style:italic">_</span><span style="color:#ff79c6">&gt;</span>) -&gt; <span style="color:#50fa7b">Poll</span><span style="color:#ff79c6">&lt;</span>Self::Output<span style="color:#ff79c6">&gt;</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#6272a4">// SAFETY: Safe because we&#39;re !Unpin + !Drop, and this is just a field projection.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>            <span style="color:#8be9fd;font-style:italic">let</span> gen <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">unsafe</span> { Pin::map_unchecked_mut(self, <span style="color:#ff79c6">|</span>s<span style="color:#ff79c6">|</span> <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">mut</span> s.<span style="color:#bd93f9">0</span>) };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#6272a4">// Resume the generator, turning the `&amp;mut Context` into a `NonNull` raw pointer. The
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>            <span style="color:#6272a4">// `.await` lowering will safely cast that back to a `&amp;mut Context`.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>            <span style="color:#ff79c6">match</span> gen.resume(ResumeTy(NonNull::from(cx).cast::<span style="color:#ff79c6">&lt;</span>Context<span style="color:#ff79c6">&lt;&#39;</span><span style="color:#8be9fd;font-style:italic">static</span><span style="color:#ff79c6">&gt;&gt;</span>())) {
+</span></span><span style="display:flex;"><span>                GeneratorState::Yielded(()) <span style="color:#ff79c6">=&gt;</span> Poll::Pending,
+</span></span><span style="display:flex;"><span>                GeneratorState::Complete(x) <span style="color:#ff79c6">=&gt;</span> Poll::Ready(x),
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    GenFuture(gen)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="no-std异步生态介绍">no-std异步生态介绍</h2>
+<ul>
+<li><a href="https://github.com/irrustible/futures-micro">futures-micro</a>  对futures的最小的实现</li>
+<li><a href="https://github.com/embassy-rs/embassy">embassy</a> 嵌入式生态</li>
+<li><a href="https://github.com/richardanaya/executor">executor for no-std</a> no-std的执行器，可以用在嵌入式及WebAssembly上</li>
+</ul>
+<h2 id="一个异步缓存代码实现">一个异步缓存代码实现</h2>
+<p>代码见<a href="https://github.com/ChaosStudyGroup/retainer">retainer</a>。</p>
+<p>下面分析下代码结构，首先是 entry.rs。</p>
+<p>缓存的entry结构：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">#[derive(Debug)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">CacheEntry</span><span style="color:#ff79c6">&lt;</span>V<span style="color:#ff79c6">&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">crate</span>) value: <span style="color:#50fa7b">V</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">crate</span>) expiration: <span style="color:#8be9fd;font-style:italic">Option</span><span style="color:#ff79c6">&lt;</span>CacheExpiration<span style="color:#ff79c6">&gt;</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>有相应的值value以及过期时间expiration，这里过期时间是一个Option，因为有的可以没有过期时间。</p>
+<p>CacheExpiration：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">#[derive(Debug)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">CacheExpiration</span> {
+</span></span><span style="display:flex;"><span>    instant: <span style="color:#50fa7b">Instant</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>代表缓存中的过期时间，这里对Instant有一个包装，方便实现一些方法。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">#[derive(Debug)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">CacheEntryReadGuard</span><span style="color:#ff79c6">&lt;&#39;</span><span style="color:#50fa7b">a</span>, V<span style="color:#ff79c6">&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">crate</span>) entry: <span style="color:#ff79c6">*</span><span style="color:#ff79c6">const</span> CacheEntry<span style="color:#ff79c6">&lt;</span>V<span style="color:#ff79c6">&gt;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">crate</span>) marker: <span style="color:#50fa7b">PhantomData</span><span style="color:#ff79c6">&lt;&amp;&#39;</span><span style="color:#50fa7b">a</span> CacheEntry<span style="color:#ff79c6">&lt;</span>V<span style="color:#ff79c6">&gt;&gt;</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>对底层缓存结构的引用的一个读保护。当使用锁的时候，这个结构可以返回一个指向内部缓存 entries 的引用，也就是一个指针。同时CacheEntryReadGuard实现了Send和Sync。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#6272a4">// Stores a raw pointer to `T`, so if `T` is `Sync`, the lock guard over `T` is `Send`.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span><span style="color:#ff79c6">unsafe</span> <span style="color:#ff79c6">impl</span><span style="color:#ff79c6">&lt;</span>V<span style="color:#ff79c6">&gt;</span> <span style="color:#8be9fd;font-style:italic">Send</span> <span style="color:#ff79c6">for</span> CacheEntryReadGuard<span style="color:#ff79c6">&lt;&#39;</span><span style="color:#8be9fd;font-style:italic">_</span>, V<span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">where</span> V: <span style="color:#8be9fd;font-style:italic">Sized</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">Sync</span> {}
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">unsafe</span> <span style="color:#ff79c6">impl</span><span style="color:#ff79c6">&lt;</span>V<span style="color:#ff79c6">&gt;</span> <span style="color:#8be9fd;font-style:italic">Sync</span> <span style="color:#ff79c6">for</span> CacheEntryReadGuard<span style="color:#ff79c6">&lt;&#39;</span><span style="color:#8be9fd;font-style:italic">_</span>, V<span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">where</span> V: <span style="color:#8be9fd;font-style:italic">Sized</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">Send</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">Sync</span> {}
+</span></span></code></pre></div><p>cache.rs</p>
+<p>缓存结构：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">Cache</span><span style="color:#ff79c6">&lt;</span>K, V<span style="color:#ff79c6">&gt;</span> {
+</span></span><span style="display:flex;"><span>    store: <span style="color:#50fa7b">RwLock</span><span style="color:#ff79c6">&lt;</span>BTreeMap<span style="color:#ff79c6">&lt;</span>K, CacheEntry<span style="color:#ff79c6">&lt;</span>V<span style="color:#ff79c6">&gt;&gt;&gt;</span>,
+</span></span><span style="display:flex;"><span>    label: <span style="color:#8be9fd;font-style:italic">String</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>监控是否有过期缓存：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">async</span> <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">monitor</span>(<span style="color:#ff79c6">&amp;</span>self, sample: <span style="color:#8be9fd">usize</span>, threshold: <span style="color:#8be9fd">f64</span>, frequency: <span style="color:#50fa7b">Duration</span>) {
+</span></span><span style="display:flex;"><span>  <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> interval <span style="color:#ff79c6">=</span> Interval::platform_new(frequency);
+</span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">loop</span> {
+</span></span><span style="display:flex;"><span>    interval.as_mut().<span style="color:#ff79c6">await</span>;
+</span></span><span style="display:flex;"><span>    self.purge(sample, threshold).<span style="color:#ff79c6">await</span>;
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>可以看到 purge 函数最终实现异步清理。</p>
+<p>这里说下Redis的缓存过期处理方式：</p>
+<ul>
+<li>惰性删除。当查找一个key，过期时删除。</li>
+<li>定期删除。每隔一段时间，随机取一定数量的key，看看缓存中是否存在，如果到达一定的阈值比如20%已经过期了，则进行删除，如果没有到达该阈值，则不删除。</li>
+</ul>
+<p>关于Redis缓存，参见<a href="https://segmentfault.com/a/1190000039020626">Redis缓存总结：淘汰机制、缓存雪崩、数据不一致&hellip;.</a>。</p>
+<h2 id="异步运行时生态">异步运行时生态</h2>
+<ul>
+<li>tokio 和rust异步标准有些差异，成熟</li>
+<li>async-std 让开发者顺利编写异步，对标准库的异步</li>
+<li>smol 轻量级，比较通用</li>
+<li>glommio 生产级应用</li>
+<li>bastion 高可用分布式容错框架</li>
+</ul>
+<h2 id="smol运行时">smol运行时</h2>
+<p>先看看smol中的Cargo.toml。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-toml" data-lang="toml"><span style="display:flex;"><span>[dependencies]
+</span></span><span style="display:flex;"><span>async-channel = <span style="color:#f1fa8c">&#34;1.4.2&#34;</span>
+</span></span><span style="display:flex;"><span>async-executor = <span style="color:#f1fa8c">&#34;1.3.0&#34;</span>
+</span></span><span style="display:flex;"><span>async-fs = <span style="color:#f1fa8c">&#34;1.3.0&#34;</span>
+</span></span><span style="display:flex;"><span>async-io = <span style="color:#f1fa8c">&#34;1.1.2&#34;</span>
+</span></span><span style="display:flex;"><span>async-lock = <span style="color:#f1fa8c">&#34;2.3.0&#34;</span>
+</span></span><span style="display:flex;"><span>async-net = <span style="color:#f1fa8c">&#34;1.4.3&#34;</span>
+</span></span><span style="display:flex;"><span>async-process = <span style="color:#f1fa8c">&#34;1.0.0&#34;</span>
+</span></span><span style="display:flex;"><span>blocking = <span style="color:#f1fa8c">&#34;1.0.0&#34;</span>
+</span></span><span style="display:flex;"><span>futures-lite = <span style="color:#f1fa8c">&#34;1.11.0&#34;</span>
+</span></span><span style="display:flex;"><span>once_cell = <span style="color:#f1fa8c">&#34;1.4.1&#34;</span>
+</span></span></code></pre></div><p>smol对这些组件做了一个整合，这些组件也可以单独使用。</p>
+<h3 id="smol文档httpsdocsrssmollatestsmol"><a href="https://docs.rs/smol/latest/smol/">smol文档</a></h3>
+<p><a href="https://docs.rs/smol/latest/smol/#modules">Modules</a></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://docs.rs/smol/latest/smol/channel/index.html">channel</a></td>
+<td>An async multi-producer multi-consumer channel.</td>
+</tr>
+<tr>
+<td><a href="https://docs.rs/smol/latest/smol/fs/index.html">fs</a></td>
+<td>Async filesystem primitives.</td>
+</tr>
+<tr>
+<td><a href="https://docs.rs/smol/latest/smol/future/index.html">future</a></td>
+<td>Combinators for the <a href="https://docs.rs/smol/latest/smol/prelude/trait.Future.html"><code>Future</code></a> trait.</td>
+</tr>
+<tr>
+<td><a href="https://docs.rs/smol/latest/smol/io/index.html">io</a></td>
+<td>Tools and combinators for I/O.</td>
+</tr>
+<tr>
+<td><a href="https://docs.rs/smol/latest/smol/lock/index.html">lock</a></td>
+<td>Async synchronization primitives.</td>
+</tr>
+<tr>
+<td><a href="https://docs.rs/smol/latest/smol/net/index.html">net</a></td>
+<td>Async networking primitives for TCP/UDP/Unix communication.</td>
+</tr>
+<tr>
+<td><a href="https://docs.rs/smol/latest/smol/prelude/index.html">prelude</a></td>
+<td>Traits <a href="https://docs.rs/smol/latest/smol/prelude/trait.Future.html"><code>Future</code></a>, <a href="https://docs.rs/smol/latest/smol/stream/trait.Stream.html"><code>Stream</code></a>, <a href="https://docs.rs/smol/latest/smol/prelude/trait.AsyncRead.html"><code>AsyncRead</code></a>, <a href="https://docs.rs/smol/latest/smol/prelude/trait.AsyncWrite.html"><code>AsyncWrite</code></a>, <a href="https://docs.rs/smol/latest/smol/prelude/trait.AsyncBufRead.html"><code>AsyncBufRead</code></a>, <a href="https://docs.rs/smol/latest/smol/prelude/trait.AsyncSeek.html"><code>AsyncSeek</code></a>, and their extensions.</td>
+</tr>
+<tr>
+<td><a href="https://docs.rs/smol/latest/smol/process/index.html">process</a></td>
+<td>Async interface for working with processes.</td>
+</tr>
+<tr>
+<td><a href="https://docs.rs/smol/latest/smol/stream/index.html">stream</a></td>
+<td>Combinators for the <a href="https://docs.rs/smol/latest/smol/stream/trait.Stream.html"><code>Stream</code></a> trait.</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://docs.rs/smol/latest/smol/#structs">Structs</a></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><a href="https://docs.rs/smol/latest/smol/struct.Async.html">Async</a></td>
+<td>Async adapter for I/O types. 异步适配器，可以将阻塞IO变为非阻塞IO。</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://docs.rs/smol/latest/smol/struct.Executor.html">Executor</a></td>
+<td>An async executor. 异步执行器。</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://docs.rs/smol/latest/smol/struct.LocalExecutor.html">LocalExecutor</a></td>
+<td>A thread-local executor. 单线程执行器。</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://docs.rs/smol/latest/smol/struct.Task.html">Task</a></td>
+<td>A spawned task. 任务。</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://docs.rs/smol/latest/smol/struct.Timer.html">Timer</a></td>
+<td>A future that expires at a point in time.</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://docs.rs/smol/latest/smol/struct.Unblock.html">Unblock</a></td>
+<td>Runs blocking I/O on a thread pool.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="smol源码">smol源码</h3>
+<p>src/spawn.rs</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">use</span> once_cell::sync::Lazy;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f1fa8c">/// 将异步任务加入到 task 中，交给 Global 执行器
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">spawn</span><span style="color:#ff79c6">&lt;</span>T: <span style="color:#8be9fd;font-style:italic">Send</span> <span style="color:#ff79c6">+</span> <span style="color:#ff79c6">&#39;</span><span style="color:#8be9fd;font-style:italic">static</span><span style="color:#ff79c6">&gt;</span>(future: <span style="color:#50fa7b">impl</span> Future<span style="color:#ff79c6">&lt;</span>Output <span style="color:#ff79c6">=</span> T<span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">Send</span> <span style="color:#ff79c6">+</span> <span style="color:#ff79c6">&#39;</span><span style="color:#8be9fd;font-style:italic">static</span>) -&gt; <span style="color:#50fa7b">Task</span><span style="color:#ff79c6">&lt;</span>T<span style="color:#ff79c6">&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">static</span> GLOBAL: <span style="color:#50fa7b">Lazy</span><span style="color:#ff79c6">&lt;</span>Executor<span style="color:#ff79c6">&lt;&#39;</span><span style="color:#8be9fd;font-style:italic">_</span><span style="color:#ff79c6">&gt;&gt;</span> <span style="color:#ff79c6">=</span> Lazy::new(<span style="color:#ff79c6">||</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">let</span> num_threads <span style="color:#ff79c6">=</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#6272a4">// Parse SMOL_THREADS or default to 1.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>            std::env::var(<span style="color:#f1fa8c">&#34;SMOL_THREADS&#34;</span>)
+</span></span><span style="display:flex;"><span>                .ok()
+</span></span><span style="display:flex;"><span>                .and_then(<span style="color:#ff79c6">|</span>s<span style="color:#ff79c6">|</span> s.parse().ok())
+</span></span><span style="display:flex;"><span>                .unwrap_or(<span style="color:#bd93f9">1</span>)
+</span></span><span style="display:flex;"><span>        };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">for</span> n <span style="color:#ff79c6">in</span> <span style="color:#bd93f9">1</span><span style="color:#ff79c6">..=</span>num_threads {
+</span></span><span style="display:flex;"><span>            thread::Builder::new()
+</span></span><span style="display:flex;"><span>                .name(format!(<span style="color:#f1fa8c">&#34;smol-{}&#34;</span>, n))
+</span></span><span style="display:flex;"><span>                .spawn(<span style="color:#ff79c6">||</span> <span style="color:#ff79c6">loop</span> {
+</span></span><span style="display:flex;"><span>                    <span style="color:#6272a4">// catch_unwind 方法
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>                    <span style="color:#6272a4">// 可以捕获栈展开，运行panic线程存活并继续运行。使用标准库中的std::panic::catch_unwind()函数。
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>                    catch_unwind(<span style="color:#ff79c6">||</span> block_on(GLOBAL.run(future::pending::<span style="color:#ff79c6">&lt;</span>()<span style="color:#ff79c6">&gt;</span>()))).ok();
+</span></span><span style="display:flex;"><span>                })
+</span></span><span style="display:flex;"><span>                .expect(<span style="color:#f1fa8c">&#34;cannot spawn executor thread&#34;</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        Executor::new()
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    GLOBAL.spawn(future)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="聊天框例子">聊天框例子</h3>
+<h4 id="chat-server">chat-server</h4>
+<p>聊天框服务器的事件：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#f1fa8c">/// An event on the chat server.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span><span style="color:#ff79c6">enum</span> <span style="color:#50fa7b">Event</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// A client has joined.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    Join(SocketAddr, Arc<span style="color:#ff79c6">&lt;</span>Async<span style="color:#ff79c6">&lt;</span>TcpStream<span style="color:#ff79c6">&gt;&gt;</span>),
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// A client has left.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    Leave(SocketAddr),
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// A client sent a message.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    Message(SocketAddr, <span style="color:#8be9fd;font-style:italic">String</span>),
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>向客户端分发事件：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#f1fa8c">/// Dispatches events to clients.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span><span style="color:#ff79c6">async</span> <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">dispatch</span>(receiver: <span style="color:#50fa7b">Receiver</span><span style="color:#ff79c6">&lt;</span>Event<span style="color:#ff79c6">&gt;</span>) -&gt; <span style="color:#50fa7b">io</span>::<span style="color:#8be9fd;font-style:italic">Result</span><span style="color:#ff79c6">&lt;</span>()<span style="color:#ff79c6">&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// Currently active clients.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> map <span style="color:#ff79c6">=</span> HashMap::<span style="color:#ff79c6">&lt;</span>SocketAddr, Arc<span style="color:#ff79c6">&lt;</span>Async<span style="color:#ff79c6">&lt;</span>TcpStream<span style="color:#ff79c6">&gt;&gt;&gt;</span>::new();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// Receive incoming events.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    <span style="color:#ff79c6">while</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">Ok</span>(event) <span style="color:#ff79c6">=</span> receiver.recv().<span style="color:#ff79c6">await</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">// Process the event and format a message to send to clients.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>        <span style="color:#8be9fd;font-style:italic">let</span> output <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">match</span> event {
+</span></span><span style="display:flex;"><span>            Event::Join(addr, stream) <span style="color:#ff79c6">=&gt;</span> {
+</span></span><span style="display:flex;"><span>                map.insert(addr, stream);
+</span></span><span style="display:flex;"><span>                format!(<span style="color:#f1fa8c">&#34;{} has joined\n&#34;</span>, addr)
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            Event::Leave(addr) <span style="color:#ff79c6">=&gt;</span> {
+</span></span><span style="display:flex;"><span>                map.remove(<span style="color:#ff79c6">&amp;</span>addr);
+</span></span><span style="display:flex;"><span>                format!(<span style="color:#f1fa8c">&#34;{} has left\n&#34;</span>, addr)
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            Event::Message(addr, msg) <span style="color:#ff79c6">=&gt;</span> format!(<span style="color:#f1fa8c">&#34;{} says: {}\n&#34;</span>, addr, msg),
+</span></span><span style="display:flex;"><span>        };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">// Display the event in the server process.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>        print!(<span style="color:#f1fa8c">&#34;{}&#34;</span>, output);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">// Send the event to all active clients.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">for</span> stream <span style="color:#ff79c6">in</span> map.values_mut() {
+</span></span><span style="display:flex;"><span>            <span style="color:#6272a4">// Ignore errors because the client might disconnect at any point.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>            stream.write_all(output.as_bytes()).<span style="color:#ff79c6">await</span>.ok();
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">Ok</span>(())
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>服务端 main 函数：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">main</span>() -&gt; <span style="color:#50fa7b">io</span>::<span style="color:#8be9fd;font-style:italic">Result</span><span style="color:#ff79c6">&lt;</span>()<span style="color:#ff79c6">&gt;</span> {
+</span></span><span style="display:flex;"><span>    smol::block_on(<span style="color:#ff79c6">async</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">// Create a listener for incoming client connections.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>        <span style="color:#8be9fd;font-style:italic">let</span> listener <span style="color:#ff79c6">=</span> Async::<span style="color:#ff79c6">&lt;</span>TcpListener<span style="color:#ff79c6">&gt;</span>::bind(([<span style="color:#bd93f9">127</span>, <span style="color:#bd93f9">0</span>, <span style="color:#bd93f9">0</span>, <span style="color:#bd93f9">1</span>], <span style="color:#bd93f9">6000</span>))<span style="color:#ff79c6">?</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">// Intro messages.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>        println!(<span style="color:#f1fa8c">&#34;Listening on {}&#34;</span>, listener.get_ref().local_addr()<span style="color:#ff79c6">?</span>);
+</span></span><span style="display:flex;"><span>        println!(<span style="color:#f1fa8c">&#34;Start a chat client now!\n&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">// Spawn a background task that dispatches events to clients.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>        <span style="color:#6272a4">// 通过 channel 实现消息传递
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>        <span style="color:#8be9fd;font-style:italic">let</span> (sender, receiver) <span style="color:#ff79c6">=</span> bounded(<span style="color:#bd93f9">100</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">// detach 函数
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>        <span style="color:#6272a4">// 分离任务，让它在后台运行
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>        smol::spawn(dispatch(receiver)).detach();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">loop</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#6272a4">// Accept the next connection.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>            <span style="color:#8be9fd;font-style:italic">let</span> (stream, addr) <span style="color:#ff79c6">=</span> listener.accept().<span style="color:#ff79c6">await</span><span style="color:#ff79c6">?</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> client <span style="color:#ff79c6">=</span> Arc::new(stream);
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> sender <span style="color:#ff79c6">=</span> sender.clone();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#6272a4">// Spawn a background task reading messages from the client.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>            smol::spawn(<span style="color:#ff79c6">async</span> <span style="color:#ff79c6">move</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#6272a4">// Client starts with a `Join` event.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>                sender.send(Event::Join(addr, client.clone())).<span style="color:#ff79c6">await</span>.ok();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                <span style="color:#6272a4">// Read messages from the client and ignore I/O errors when the client quits.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>                read_messages(sender.clone(), client).<span style="color:#ff79c6">await</span>.ok();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                <span style="color:#6272a4">// Client ends with a `Leave` event.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>                sender.send(Event::Leave(addr)).<span style="color:#ff79c6">await</span>.ok();
+</span></span><span style="display:flex;"><span>            })
+</span></span><span style="display:flex;"><span>            .detach();
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    })
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h4 id="chat-client">chat-client</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">main</span>() -&gt; <span style="color:#50fa7b">io</span>::<span style="color:#8be9fd;font-style:italic">Result</span><span style="color:#ff79c6">&lt;</span>()<span style="color:#ff79c6">&gt;</span> {
+</span></span><span style="display:flex;"><span>    smol::block_on(<span style="color:#ff79c6">async</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">// Connect to the server and create async stdin and stdout.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>        <span style="color:#8be9fd;font-style:italic">let</span> stream <span style="color:#ff79c6">=</span> Async::<span style="color:#ff79c6">&lt;</span>TcpStream<span style="color:#ff79c6">&gt;</span>::connect(([<span style="color:#bd93f9">127</span>, <span style="color:#bd93f9">0</span>, <span style="color:#bd93f9">0</span>, <span style="color:#bd93f9">1</span>], <span style="color:#bd93f9">6000</span>)).<span style="color:#ff79c6">await</span><span style="color:#ff79c6">?</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">let</span> stdin <span style="color:#ff79c6">=</span> Unblock::new(std::io::stdin());
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> stdout <span style="color:#ff79c6">=</span> Unblock::new(std::io::stdout());
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">// Intro messages.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>        println!(<span style="color:#f1fa8c">&#34;Connected to {}&#34;</span>, stream.get_ref().peer_addr()<span style="color:#ff79c6">?</span>);
+</span></span><span style="display:flex;"><span>        println!(<span style="color:#f1fa8c">&#34;My nickname: {}&#34;</span>, stream.get_ref().local_addr()<span style="color:#ff79c6">?</span>);
+</span></span><span style="display:flex;"><span>        println!(<span style="color:#f1fa8c">&#34;Type a message and hit enter!\n&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">let</span> reader <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">&amp;</span>stream;
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> writer <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">&amp;</span>stream;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">// Wait until the standard input is closed or the connection is closed.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>        future::race(
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">async</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#8be9fd;font-style:italic">let</span> res <span style="color:#ff79c6">=</span> io::copy(stdin, <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">mut</span> writer).<span style="color:#ff79c6">await</span>;
+</span></span><span style="display:flex;"><span>                println!(<span style="color:#f1fa8c">&#34;Quit!&#34;</span>);
+</span></span><span style="display:flex;"><span>                res
+</span></span><span style="display:flex;"><span>            },
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">async</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#8be9fd;font-style:italic">let</span> res <span style="color:#ff79c6">=</span> io::copy(reader, <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">mut</span> stdout).<span style="color:#ff79c6">await</span>;
+</span></span><span style="display:flex;"><span>                println!(<span style="color:#f1fa8c">&#34;Server disconnected!&#34;</span>);
+</span></span><span style="display:flex;"><span>                res
+</span></span><span style="display:flex;"><span>            },
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>        .<span style="color:#ff79c6">await</span><span style="color:#ff79c6">?</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">Ok</span>(())
+</span></span><span style="display:flex;"><span>    })
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="futures_lite">futures_lite</h3>
+<p>文档：<a href="https://docs.rs/futures-lite/latest/futures_lite/">futures_lite</a>，futures库的轻量版。</p>
+<p><a href="https://docs.rs/futures-lite/latest/futures_lite/#modules">Modules</a></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://docs.rs/futures-lite/latest/futures_lite/future/index.html">future</a></td>
+<td>Combinators for the <a href="https://doc.rust-lang.org/nightly/core/future/future/trait.Future.html"><code>Future</code></a> trait.</td>
+</tr>
+<tr>
+<td><a href="https://docs.rs/futures-lite/latest/futures_lite/io/index.html">io</a></td>
+<td>Tools and combinators for I/O.</td>
+</tr>
+<tr>
+<td><a href="https://docs.rs/futures-lite/latest/futures_lite/prelude/index.html">prelude</a></td>
+<td>Traits <a href="https://doc.rust-lang.org/nightly/core/future/future/trait.Future.html"><code>Future</code></a>, <a href="https://docs.rs/futures-core/0.3.15/futures_core/stream/trait.Stream.html"><code>Stream</code></a>, <a href="https://docs.rs/futures-io/0.3.15/futures_io/if_std/trait.AsyncRead.html"><code>AsyncRead</code></a>, <a href="https://docs.rs/futures-io/0.3.15/futures_io/if_std/trait.AsyncWrite.html"><code>AsyncWrite</code></a>, <a href="https://docs.rs/futures-io/0.3.15/futures_io/if_std/trait.AsyncBufRead.html"><code>AsyncBufRead</code></a>, <a href="https://docs.rs/futures-io/0.3.15/futures_io/if_std/trait.AsyncSeek.html"><code>AsyncSeek</code></a>, and their extensions.</td>
+</tr>
+<tr>
+<td><a href="https://docs.rs/futures-lite/latest/futures_lite/stream/index.html">stream</a></td>
+<td>Combinators for the <a href="https://docs.rs/futures-core/0.3.15/futures_core/stream/trait.Stream.html"><code>Stream</code></a> trait.</td>
+</tr>
+</tbody>
+</table>
+<p>主要就是上述四个模块。</p>
+<h3 id="async_io">async_io</h3>
+<p>文档：<a href="https://docs.rs/async-io/latest/async_io/">async_io</a></p>
+<p>在async_io/lib.rs中定义了两个结构体，一个是Timer，另一个是Async。</p>
+<ul>
+<li>Timer: 在某个时间点到期的 Future。</li>
+<li>Async: 在异步编程中在标准网络类型（还有许多其他类型的）中使用的一个适配器。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">#[derive(Debug)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">Timer</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// This timer&#39;s ID and last waker that polled it.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// When this field is set to `None`, this timer is not registered in the reactor.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    id_and_waker: <span style="color:#8be9fd;font-style:italic">Option</span><span style="color:#ff79c6">&lt;</span>(<span style="color:#8be9fd">usize</span>, Waker)<span style="color:#ff79c6">&gt;</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// The next instant at which this timer fires.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    when: <span style="color:#50fa7b">Instant</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// The period.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    period: <span style="color:#50fa7b">Duration</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[derive(Debug)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">Async</span><span style="color:#ff79c6">&lt;</span>T<span style="color:#ff79c6">&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// A source registered in the reactor.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    source: <span style="color:#50fa7b">Arc</span><span style="color:#ff79c6">&lt;</span>Source<span style="color:#ff79c6">&gt;</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// The inner I/O handle.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    io: <span style="color:#8be9fd;font-style:italic">Option</span><span style="color:#ff79c6">&lt;</span>T<span style="color:#ff79c6">&gt;</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>这里用到了<a href="https://docs.rs/polling/latest/polling/">polling</a> crate。这个库实现了跨平台的poll，提供了很多接口。</p>
+<blockquote>
+<p>Portable interface to epoll, kqueue, event ports, and wepoll.
+Supported platforms:</p>
+<ul>
+<li>epoll : Linux, Android</li>
+<li>kqueue : macOS, iOS, FreeBSD, NetBSD, OpenBSD, DragonFly BSD</li>
+<li>event ports : illumos, Solaris</li>
+<li>poll : VxWorks, Fuchsia, other Unix systems</li>
+<li>wepoll : Windows</li>
+</ul>
+</blockquote>
+<p>下面看看 async_io/reactor.rs</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">crate</span>) <span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">Reactor</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// Portable bindings to epoll/kqueue/event ports/wepoll.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// This is where I/O is polled, producing I/O events.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    poller: <span style="color:#50fa7b">Poller</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// Ticker bumped before polling.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// This is useful for checking what is the current &#34;round&#34; of `ReactorLock::react()` when
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// synchronizing things in `Source::readable()` and `Source::writable()`. Both of those
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// methods must make sure they don&#39;t receive stale I/O events - they only accept events from a
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// fresh &#34;round&#34; of `ReactorLock::react()`.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    ticker: <span style="color:#50fa7b">AtomicUsize</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// Registered sources.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    sources: <span style="color:#50fa7b">Mutex</span><span style="color:#ff79c6">&lt;</span>Slab<span style="color:#ff79c6">&lt;</span>Arc<span style="color:#ff79c6">&lt;</span>Source<span style="color:#ff79c6">&gt;&gt;&gt;</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// Temporary storage for I/O events when polling the reactor.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// Holding a lock on this event list implies the exclusive right to poll I/O.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    events: <span style="color:#50fa7b">Mutex</span><span style="color:#ff79c6">&lt;</span><span style="color:#8be9fd;font-style:italic">Vec</span><span style="color:#ff79c6">&lt;</span>Event<span style="color:#ff79c6">&gt;&gt;</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// An ordered map of registered timers.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// Timers are in the order in which they fire. The `usize` in this type is a timer ID used to
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// distinguish timers that fire at the same time. The `Waker` represents the task awaiting the
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// timer.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    timers: <span style="color:#50fa7b">Mutex</span><span style="color:#ff79c6">&lt;</span>BTreeMap<span style="color:#ff79c6">&lt;</span>(Instant, <span style="color:#8be9fd">usize</span>), Waker<span style="color:#ff79c6">&gt;&gt;</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// A queue of timer operations (insert and remove).
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// When inserting or removing a timer, we don&#39;t process it immediately - we just push it into
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// this queue. Timers actually get processed when the queue fills up or the reactor is polled.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    timer_ops: <span style="color:#50fa7b">ConcurrentQueue</span><span style="color:#ff79c6">&lt;</span>TimerOp<span style="color:#ff79c6">&gt;</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>还有 async_io/driver.rs，其中有main_loop函数，对async_io线程进行主要的循环，另外还有block_on函数，在有异步任务时阻塞当前的线程，在空闲的时候处理IO事件。</p>
+<h3 id="async_task">async_task</h3>
+<p>文档： <a href="https://docs.rs/async-task/latest/async_task/">async_task</a></p>
+<p>Task abstraction for building executors.</p>
+<p>To spawn a future onto an executor, we first need to allocate it on the heap and keep some state attached to it. The state indicates whether the future is ready for polling, waiting to be woken up, or completed. Such a stateful future is called a task.</p>
+<p>All executors have a queue that holds scheduled tasks:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> (sender, receiver) <span style="color:#ff79c6">=</span> flume::unbounded();
+</span></span></code></pre></div><p>这里用到了第三方库<a href="https://docs.rs/flume/0.10.14/flume/">flume</a>。它比 crossbeam-channel 更加轻量，实现了mpmc。</p>
+<p>接着来看 async_task 的函数：</p>
+<ul>
+<li>spawn	创建一个新任务。</li>
+<li>spawn_local 创建一个新的本地任务。</li>
+<li>spawn_unchecked⚠	Creates a new task without Send, Sync, and &lsquo;static bounds.</li>
+</ul>
+<p>async_task 的结构：</p>
+<ul>
+<li>FallibleTask:	A spawned task with a fallible response.</li>
+<li>Runnable:	A handle to a runnable task.</li>
+<li>Task:	A spawned task.</li>
+</ul>
+<p>在 async_task/raw.rs 中定义了底层的TaskVTable、TaskLayout、RawTask。</p>
+<p>在 async_task/header.rs 中定义了结构体Header。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">crate</span>) <span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">Header</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// Current state of the task.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// Contains flags representing the current state and the reference count.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">crate</span>) state: <span style="color:#50fa7b">AtomicUsize</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// The task that is blocked on the `Task` handle.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// This waker needs to be woken up once the task completes or is closed.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">crate</span>) awaiter: <span style="color:#50fa7b">UnsafeCell</span><span style="color:#ff79c6">&lt;</span><span style="color:#8be9fd;font-style:italic">Option</span><span style="color:#ff79c6">&lt;</span>Waker<span style="color:#ff79c6">&gt;&gt;</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// The virtual table.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// In addition to the actual waker virtual table, it also contains pointers to several other
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// methods necessary for bookkeeping the heap-allocated task.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">crate</span>) vtable: <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&#39;</span><span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#50fa7b">TaskVTable</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>相当于做一些任务的处理，提供了notify、take、register三个函数。</p>
+<p>这里面任务的状态state是在state.rs中定义的。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#f1fa8c">/// Set if the task is scheduled for running.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span><span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">crate</span>) <span style="color:#ff79c6">const</span> SCHEDULED: <span style="color:#8be9fd">usize</span> <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">1</span> <span style="color:#ff79c6">&lt;&lt;</span> <span style="color:#bd93f9">0</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f1fa8c">/// Set if the task is running.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span><span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">crate</span>) <span style="color:#ff79c6">const</span> RUNNING: <span style="color:#8be9fd">usize</span> <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">1</span> <span style="color:#ff79c6">&lt;&lt;</span> <span style="color:#bd93f9">1</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f1fa8c">/// Set if the task has been completed.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span><span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">crate</span>) <span style="color:#ff79c6">const</span> COMPLETED: <span style="color:#8be9fd">usize</span> <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">1</span> <span style="color:#ff79c6">&lt;&lt;</span> <span style="color:#bd93f9">2</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f1fa8c">/// Set if the task is closed.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span><span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">crate</span>) <span style="color:#ff79c6">const</span> CLOSED: <span style="color:#8be9fd">usize</span> <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">1</span> <span style="color:#ff79c6">&lt;&lt;</span> <span style="color:#bd93f9">3</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f1fa8c">/// Set if the `Task` still exists.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span><span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">crate</span>) <span style="color:#ff79c6">const</span> TASK: <span style="color:#8be9fd">usize</span> <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">1</span> <span style="color:#ff79c6">&lt;&lt;</span> <span style="color:#bd93f9">4</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f1fa8c">/// Set if the `Task` is awaiting the output.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span><span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">crate</span>) <span style="color:#ff79c6">const</span> AWAITER: <span style="color:#8be9fd">usize</span> <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">1</span> <span style="color:#ff79c6">&lt;&lt;</span> <span style="color:#bd93f9">5</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f1fa8c">/// Set if an awaiter is being registered.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span><span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">crate</span>) <span style="color:#ff79c6">const</span> REGISTERING: <span style="color:#8be9fd">usize</span> <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">1</span> <span style="color:#ff79c6">&lt;&lt;</span> <span style="color:#bd93f9">6</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f1fa8c">/// Set if the awaiter is being notified.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span><span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">crate</span>) <span style="color:#ff79c6">const</span> NOTIFYING: <span style="color:#8be9fd">usize</span> <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">1</span> <span style="color:#ff79c6">&lt;&lt;</span> <span style="color:#bd93f9">7</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f1fa8c">/// A single reference.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span><span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">crate</span>) <span style="color:#ff79c6">const</span> REFERENCE: <span style="color:#8be9fd">usize</span> <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">1</span> <span style="color:#ff79c6">&lt;&lt;</span> <span style="color:#bd93f9">8</span>;
+</span></span></code></pre></div><h3 id="async_executor">async_executor</h3>
+<p>异步执行器。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">use</span> async_executor::Executor;
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">use</span> futures_lite::future;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">// Create a new executor.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span><span style="color:#8be9fd;font-style:italic">let</span> ex <span style="color:#ff79c6">=</span> Executor::new();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">// Spawn a task.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span><span style="color:#8be9fd;font-style:italic">let</span> task <span style="color:#ff79c6">=</span> ex.spawn(<span style="color:#ff79c6">async</span> {
+</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;Hello world&#34;</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">// Run the executor until the task completes.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>future::block_on(ex.run(task));
+</span></span></code></pre></div><h3 id="blocking">blocking</h3>
+<p>文档：<a href="https://docs.rs/blocking/latest/blocking/">blocking</a></p>
+<p>在异步程序里提供了一个线程池用于隔离阻塞的IO。</p>
+<p>unblock 函数：对阻塞的代码进行异步化。</p>
+<p>Unblock 类型：对阻塞的IO进行异步化。通过维护一个环形队列来进行处理。</p>
+<p><a href="https://docs.rs/async-fs/latest/async_fs/">async-fs</a> 其中用到了 blocking 这个库。</p>
+<h2 id="async-std">async-std</h2>
+<p>文档：<a href="https://docs.rs/async-std/1.12.0/async_std/">async_std</a>，rust标准库的异步版本。</p>
+<p>task的使用以及抽象出来的API接口类似线程，易于上手。</p>
+<p>async_std 和 smol 运行时一些架构以及组件都是公用的，并且它提供了一个类似于线程的一个异步 task 的抽象，并且它还兼容 tokio。</p>
+<h2 id="tokio">tokio</h2>
+<p>github仓库地址：<a href="https://github.com/tokio-rs/tokio">tokio</a></p>
+<p>官方网站：<a href="https://tokio.rs/">tokio.rs</a></p>
+<p>文档：<a href="https://docs.rs/tokio/latest/tokio/">tokio</a></p>
+<p>官方文档介绍：</p>
+<p>A runtime for writing reliable network applications without compromising speed.</p>
+<p>Tokio is an event-driven, non-blocking I/O platform for writing asynchronous applications with the Rust programming language. At a high level, it provides a few major components:</p>
+<ul>
+<li>Tools for working with asynchronous tasks, including synchronization primitives and channels and timeouts, sleeps, and intervals.</li>
+<li>APIs for performing asynchronous I/O, including TCP and UDP sockets, filesystem operations, and process and signal management.</li>
+<li>A runtime for executing asynchronous code, including a task scheduler, an I/O driver backed by the operating system’s event queue (epoll, kqueue, IOCP, etc…), and a high performance timer.</li>
+</ul>
+<p>Remark: loom 模块用来检测异步并发，也可以检测同步并发。</p>
+<h3 id="mini-redis">mini-redis</h3>
+<ul>
+<li>github仓库地址：<a href="https://github.com/tokio-rs/mini-redis">mini-redis</a></li>
+</ul>
+<p><a href="https://www.runoob.com/redis/redis-tutorial.html">Redis教程</a></p>
+<p><code>#[tokio::main]</code>宏，定义在tokio-macros/lib.rs中。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">#[tokio::main]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">async</span> <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">main</span>() {
+</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;Hello world&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>宏展开之后为：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">main</span>() {
+</span></span><span style="display:flex;"><span>    tokio::runtime::Builder::new_multi_thread()
+</span></span><span style="display:flex;"><span>        .enable_all()
+</span></span><span style="display:flex;"><span>        .build()
+</span></span><span style="display:flex;"><span>        .unwrap()
+</span></span><span style="display:flex;"><span>        .block_on(<span style="color:#ff79c6">async</span> {
+</span></span><span style="display:flex;"><span>            println!(<span style="color:#f1fa8c">&#34;Hello world&#34;</span>);
+</span></span><span style="display:flex;"><span>        })
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">#[proc_macro_attribute]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[cfg(not(test))]</span> <span style="color:#6272a4">// Work around for rust-lang/rust#62127
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">main</span>(args: <span style="color:#50fa7b">TokenStream</span>, item: <span style="color:#50fa7b">TokenStream</span>) -&gt; <span style="color:#50fa7b">TokenStream</span> {
+</span></span><span style="display:flex;"><span>    entry::main(args, item, <span style="color:#ff79c6">true</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>在entry.rs中：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">#[cfg(not(test))]</span> <span style="color:#6272a4">// Work around for rust-lang/rust#62127
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span><span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">crate</span>) <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">main</span>(args: <span style="color:#50fa7b">TokenStream</span>, item: <span style="color:#50fa7b">TokenStream</span>, rt_multi_thread: <span style="color:#8be9fd">bool</span>) -&gt; <span style="color:#50fa7b">TokenStream</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// If any of the steps for this macro fail, we still want to expand to an item that is as close
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    <span style="color:#6272a4">// to the expected output as possible. This helps out IDEs such that completions and other
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    <span style="color:#6272a4">// related features keep working.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    <span style="color:#8be9fd;font-style:italic">let</span> input: <span style="color:#50fa7b">syn</span>::ItemFn <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">match</span> syn::parse(item.clone()) {
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">Ok</span>(it) <span style="color:#ff79c6">=&gt;</span> it,
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">Err</span>(e) <span style="color:#ff79c6">=&gt;</span> <span style="color:#ff79c6">return</span> token_stream_with_error(item, e),
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> config <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">if</span> input.sig.ident <span style="color:#ff79c6">==</span> <span style="color:#f1fa8c">&#34;main&#34;</span> <span style="color:#ff79c6">&amp;&amp;</span> <span style="color:#ff79c6">!</span>input.sig.inputs.is_empty() {
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">let</span> msg <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34;the main function cannot accept arguments&#34;</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">Err</span>(syn::Error::new_spanned(<span style="color:#ff79c6">&amp;</span>input.sig.ident, msg))
+</span></span><span style="display:flex;"><span>    } <span style="color:#ff79c6">else</span> {
+</span></span><span style="display:flex;"><span>        AttributeArgs::parse_terminated
+</span></span><span style="display:flex;"><span>            .parse(args)
+</span></span><span style="display:flex;"><span>            .and_then(<span style="color:#ff79c6">|</span>args<span style="color:#ff79c6">|</span> build_config(input.clone(), args, <span style="color:#ff79c6">false</span>, rt_multi_thread))
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">match</span> config {
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">Ok</span>(config) <span style="color:#ff79c6">=&gt;</span> parse_knobs(input, <span style="color:#ff79c6">false</span>, config),
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">Err</span>(e) <span style="color:#ff79c6">=&gt;</span> token_stream_with_error(parse_knobs(input, <span style="color:#ff79c6">false</span>, DEFAULT_ERROR_CONFIG), e),
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>还有一个select宏，官方教程参见<a href="https://tokio.rs/tokio/tutorial/select">Select</a>。例如：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">use</span> tokio::sync::oneshot;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[tokio::main]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">async</span> <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> (tx1, rx1) <span style="color:#ff79c6">=</span> oneshot::channel();
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> (tx2, rx2) <span style="color:#ff79c6">=</span> oneshot::channel();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    tokio::spawn(<span style="color:#ff79c6">async</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">let</span> _ <span style="color:#ff79c6">=</span> tx1.send(<span style="color:#f1fa8c">&#34;one&#34;</span>);
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    tokio::spawn(<span style="color:#ff79c6">async</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">let</span> _ <span style="color:#ff79c6">=</span> tx2.send(<span style="color:#f1fa8c">&#34;two&#34;</span>);
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    tokio::select<span style="color:#ff79c6">!</span> {
+</span></span><span style="display:flex;"><span>        val <span style="color:#ff79c6">=</span> rx1 <span style="color:#ff79c6">=&gt;</span> {
+</span></span><span style="display:flex;"><span>            println!(<span style="color:#f1fa8c">&#34;rx1 completed first with {:?}&#34;</span>, val);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        val <span style="color:#ff79c6">=</span> rx2 <span style="color:#ff79c6">=&gt;</span> {
+</span></span><span style="display:flex;"><span>            println!(<span style="color:#f1fa8c">&#34;rx2 completed first with {:?}&#34;</span>, val);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>tokio的运行时是通过Builder来创建的。tokio中分两种线程，core线程专门处理异步，blocking线程处理同步。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">Builder</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// Runtime type
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    kind: <span style="color:#50fa7b">Kind</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// Whether or not to enable the I/O driver
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    enable_io: <span style="color:#8be9fd">bool</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// Whether or not to enable the time driver
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    enable_time: <span style="color:#8be9fd">bool</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// Whether or not the clock should start paused.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    start_paused: <span style="color:#8be9fd">bool</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// The number of worker threads, used by Runtime.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// Only used when not using the current-thread executor.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    worker_threads: <span style="color:#8be9fd;font-style:italic">Option</span><span style="color:#ff79c6">&lt;</span><span style="color:#8be9fd">usize</span><span style="color:#ff79c6">&gt;</span>, <span style="color:#6272a4">// core 线程
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// Cap on thread usage.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    max_blocking_threads: <span style="color:#8be9fd">usize</span>, <span style="color:#6272a4">// blocking线程最大数量
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// Name fn used for threads spawned by the runtime.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">super</span>) thread_name: <span style="color:#50fa7b">ThreadNameFn</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// Stack size used for threads spawned by the runtime.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">super</span>) thread_stack_size: <span style="color:#8be9fd;font-style:italic">Option</span><span style="color:#ff79c6">&lt;</span><span style="color:#8be9fd">usize</span><span style="color:#ff79c6">&gt;</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// Callback to run after each thread starts.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">super</span>) after_start: <span style="color:#8be9fd;font-style:italic">Option</span><span style="color:#ff79c6">&lt;</span>Callback<span style="color:#ff79c6">&gt;</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// To run before each worker thread stops
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">super</span>) before_stop: <span style="color:#8be9fd;font-style:italic">Option</span><span style="color:#ff79c6">&lt;</span>Callback<span style="color:#ff79c6">&gt;</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// To run before each worker thread is parked.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">super</span>) before_park: <span style="color:#8be9fd;font-style:italic">Option</span><span style="color:#ff79c6">&lt;</span>Callback<span style="color:#ff79c6">&gt;</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// To run after each thread is unparked.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">super</span>) after_unpark: <span style="color:#8be9fd;font-style:italic">Option</span><span style="color:#ff79c6">&lt;</span>Callback<span style="color:#ff79c6">&gt;</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// Customizable keep alive timeout for BlockingPool
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">super</span>) keep_alive: <span style="color:#8be9fd;font-style:italic">Option</span><span style="color:#ff79c6">&lt;</span>Duration<span style="color:#ff79c6">&gt;</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// How many ticks before pulling a task from the global/remote queue?
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">super</span>) global_queue_interval: <span style="color:#8be9fd">u32</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// How many ticks before yielding to the driver for timer and I/O events?
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">super</span>) event_interval: <span style="color:#8be9fd">u32</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">#[cfg(tokio_unstable)]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">super</span>) unhandled_panic: <span style="color:#50fa7b">UnhandledPanic</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>tokio/park：</p>
+<p>有事件唤醒线程让它去spawn task，如果没有的话就等待 park。</p>
+<p>tokio中的任务队列tokio/src/runtime/thread_pool/worker.rs。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#f1fa8c">/// A scheduler worker
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span><span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">super</span>) <span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">Worker</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// Reference to shared state
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    shared: <span style="color:#50fa7b">Arc</span><span style="color:#ff79c6">&lt;</span>Shared<span style="color:#ff79c6">&gt;</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// Index holding this worker&#39;s remote state
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    index: <span style="color:#8be9fd">usize</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// Used to hand-off a worker&#39;s core to another thread.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    core: <span style="color:#50fa7b">AtomicCell</span><span style="color:#ff79c6">&lt;</span>Core<span style="color:#ff79c6">&gt;</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f1fa8c">/// Core data
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span><span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">Core</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// Used to schedule bookkeeping tasks every so often.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    tick: <span style="color:#8be9fd">u32</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// When a task is scheduled from a worker, it is stored in this slot. The
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// worker will check this slot for a task **before** checking the run
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// queue. This effectively results in the **last** scheduled task to be run
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// next (LIFO). This is an optimization for message passing patterns and
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// helps to reduce latency.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    lifo_slot: <span style="color:#8be9fd;font-style:italic">Option</span><span style="color:#ff79c6">&lt;</span>Notified<span style="color:#ff79c6">&gt;</span>, <span style="color:#6272a4">// 后进先出队列，做了优化
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// The worker-local run queue.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    run_queue: <span style="color:#50fa7b">queue</span>::Local<span style="color:#ff79c6">&lt;</span>Arc<span style="color:#ff79c6">&lt;</span>Shared<span style="color:#ff79c6">&gt;&gt;</span>, <span style="color:#6272a4">// 本地队列
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// True if the worker is currently searching for more work. Searching
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// involves attempting to steal from other workers.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    is_searching: <span style="color:#8be9fd">bool</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// True if the scheduler is being shutdown
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    is_shutdown: <span style="color:#8be9fd">bool</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// Parker
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// Stored in an `Option` as the parker is added / removed to make the
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// borrow checker happy.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    park: <span style="color:#8be9fd;font-style:italic">Option</span><span style="color:#ff79c6">&lt;</span>Parker<span style="color:#ff79c6">&gt;</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// Batching metrics so they can be submitted to RuntimeMetrics.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    metrics: <span style="color:#50fa7b">MetricsBatch</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// Fast random number generator.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    rand: <span style="color:#50fa7b">FastRand</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// How many ticks before pulling a task from the global/remote queue?
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    global_queue_interval: <span style="color:#8be9fd">u32</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// How many ticks before yielding to the driver for timer and I/O events?
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    event_interval: <span style="color:#8be9fd">u32</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>提供了一个方法block_in_place，可以将当前线程变为阻塞线程。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">crate</span>) <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">block_in_place</span><span style="color:#ff79c6">&lt;</span>F, R<span style="color:#ff79c6">&gt;</span>(f: <span style="color:#50fa7b">F</span>) -&gt; <span style="color:#50fa7b">R</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">where</span>
+</span></span><span style="display:flex;"><span>    F: <span style="color:#8be9fd;font-style:italic">FnOnce</span>() -&gt; <span style="color:#50fa7b">R</span>,
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">..</span>.
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="流处理">流处理</h3>
+<p>文档参考：<a href="https://docs.rs/tokio-util/0.7.3/tokio_util/codec/index.html">tokio_util::codec</a>。</p>
+<p>Adaptors from AsyncRead/AsyncWrite to Stream/Sink</p>
+<p>Raw I/O objects work with byte sequences, but higher-level code usually wants to batch these into meaningful chunks, called “frames”.</p>
+<p>This module contains adapters to go from streams of bytes, AsyncRead and AsyncWrite, to framed streams implementing Sink and Stream. Framed streams are also known as transports.</p>
+<p>tokio-stream抽象了一种帧结果，也提供相应的适配器进行异步读写。如果想更好的进行异步读写，可以使用抽象的codec，也可以使用更底层的Sink/Stream进行处理。</p>
+<p><a href="https://github.com/hyperium/tonic">tonic</a>：实现gRPC客户端和服务端，自己实现Stream，从而来进行异步读写。</p>
+<p><a href="https://github.com/seanmonstar/warp">wrap</a>：实现文件上传，也是通过自己实现Stream。</p>
+<p><a href="https://github.com/redis-rs/redis-rs">redis-rs</a>：redis library。这里用到了解析器组合子<a href="https://github.com/Marwes/combine">combine</a>。</p>
+<h3 id="扩展资料">扩展资料</h3>
+<ul>
+<li><a href="https://tony612.github.io/tokio-internals/">Tokio Internals - 源码解析和设计分析</a></li>
+</ul>
+<h2 id="参考资料">参考资料</h2>
+<p><a href="https://time.geekbang.org/course/intro/348">张汉东的Rust实战课</a></p>
+<p><a href="https://github.com/ZhangHanDong/inviting-rust">张汉东的Rust实战课视频课程代码示例</a></p>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2022/07/05/Programming-Rust/" data-toggle="tooltip" data-placement="top" title="Programming Rust">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2022/07/31/RustChinaConf/" data-toggle="tooltip" data-placement="top" title="Rust开发者大会">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/linux" title="linux">
+                            linux
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/rust" title="rust">
+                            rust
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E5%8D%9A%E5%AE%A2" title="博客">
+                            博客
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E5%BC%82%E6%AD%A5" title="异步">
+                            异步
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%BE%AE%E5%88%86%E6%96%B9%E7%A8%8B%E6%95%B0%E5%80%BC%E8%A7%A3" title="微分方程数值解">
+                            微分方程数值解
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E5%80%BC%E5%88%86%E6%9E%90" title="数值分析">
+                            数值分析
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8" title="服务器">
+                            服务器
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%AC%94%E8%AE%B0" title="笔记">
+                            笔记
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E7%AE%97%E6%B3%95" title="算法">
+                            算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E9%9D%A2%E8%AF%95" title="面试">
+                            面试
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://magiconch.github.io/">小旱獭的QQ空间</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:wenjinsmail@163.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/wenjin1997">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="Wenjin Blog" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; Wenjin Blog 2022
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

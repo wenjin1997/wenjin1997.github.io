@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>mac on Wenjin Blog</title>
+    <link>https://wenjin1997.github.io/tags/mac/</link>
+    <description>Recent content in mac on Wenjin Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 01 Aug 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://wenjin1997.github.io/tags/mac/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Mac用ssh远程连接服务器</title>
+      <link>https://wenjin1997.github.io/2022/08/01/Linux-ssh/</link>
+      <pubDate>Mon, 01 Aug 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2022/08/01/Linux-ssh/</guid>
+      <description>在mac本地打开终端，创建密钥对。 ssh-keygen -t rsa -C &amp;#39;your email@domain.com&amp;#39; -t 指定密钥类型，默认即 rsa ，可以省略 -C 设置注释文字，比如你的邮箱，可以省略 接着就按回车，如果发现</description>
+    </item>
+    
+  </channel>
+</rss>

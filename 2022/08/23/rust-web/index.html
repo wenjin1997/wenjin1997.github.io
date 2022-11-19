@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="Wenjin Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://wenjin1997.github.io/img/home-bg-stars.jpg">
+    <meta property="twitter:image" content="https://wenjin1997.github.io/img/home-bg-stars.jpg" />
+    
+
+    
+    <meta name="title" content="Rust异步Web框架" />
+    <meta property="og:title" content="Rust异步Web框架" />
+    <meta property="twitter:title" content="Rust异步Web框架" />
+    
+
+    
+    <meta name="description" content="介绍Rust异步Web框架生态">
+    <meta property="og:description" content="介绍Rust异步Web框架生态" />
+    <meta property="twitter:description" content="介绍Rust异步Web框架生态" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Rust异步Web框架 | 文进的博客</title>
+
+    <link rel="canonical" href="/2022/08/23/rust-web/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    <script src="/js/lazysizes.min.js"></script>
+
+    
+    
+
+</head>
+
+
+<script type="text/javascript"
+        async
+        src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Wenjin Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/math">math</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/reading">reading</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/about/">ABOUT</a></li>
+                    
+		            <li>
+                        <a href="/search"><i class="fa fa-search"></i></a>
+		           </li>
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/home-bg-stars.jpg')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/rust" title="Rust">
+                            Rust
+                        </a>
+                        
+                        <a class="tag" href="/tags/%E5%BC%82%E6%AD%A5" title="异步">
+                            异步
+                        </a>
+                        
+                        <a class="tag" href="/tags/web%E6%A1%86%E6%9E%B6" title="Web框架">
+                            Web框架
+                        </a>
+                        
+                        <a class="tag" href="/tags/%E7%AC%94%E8%AE%B0" title="笔记">
+                            笔记
+                        </a>
+                        
+                    </div>
+                    <h1>Rust异步Web框架</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                    &#34;谢文进&#34;
+                             
+                            on 
+                            Tuesday, August 23, 2022
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <h2 id="异步web框架生态">异步Web框架生态</h2>
+<ul>
+<li><a href="https://github.com/SergioBenitez/Rocket">Rocket</a></li>
+<li><a href="https://github.com/http-rs/tide">tide</a></li>
+<li><a href="https://github.com/seanmonstar/warp">warp</a></li>
+<li><a href="https://github.com/carllerche/tower-web">tower-web</a></li>
+<li><a href="https://github.com/thruster-rs/Thruster">Thruster</a></li>
+<li><a href="https://github.com/gotham-rs/gotham">gotham</a></li>
+<li><a href="https://github.com/actix/actix-web">actix-web</a></li>
+<li><a href="https://github.com/ntex-rs/ntex">ntex</a></li>
+<li><a href="https://github.com/tokio-rs/axum">axum</a></li>
+</ul>
+<h2 id="rocket框架">Rocket框架</h2>
+<p>官方教程：<a href="https://rocket.rs/v0.5-rc/guide/">The Rocket Programming Guide</a></p>
+<p>Rocket设计核心哲学：</p>
+<ul>
+<li>Security, correctness, and developer experience are paramount.</li>
+<li>All request handling information should be typed and self-contained.</li>
+<li>Decisions should not be forced.</li>
+</ul>
+<p><strong>Lifecycle</strong></p>
+<p>Rocket&rsquo;s main task is to listen for incoming web requests, dispatch the request to the application code, and return a response to the client. We call the process that goes from request to response the &ldquo;lifecycle&rdquo;. We summarize the lifecycle as the following sequence of steps:</p>
+<ol>
+<li>Routing 路由</li>
+<li>Validation 验证</li>
+<li>Processing 处理</li>
+<li>Response 回复</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">#[get(</span><span style="color:#f1fa8c">&#34;/world&#34;</span><span style="color:#ff79c6">)]</span>              <span style="color:#6272a4">// &lt;- route attribute
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">world</span>() -&gt; <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&#39;</span><span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd">str</span> {  <span style="color:#6272a4">// &lt;- request handler
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    <span style="color:#f1fa8c">&#34;hello, world!&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><strong>Lanuching</strong></p>
+<p>Rocket begins serving requests after being launched, which starts a multi-threaded asynchronous server and dispatches requests to matching routes as they arrive.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">#[macro_use]</span> <span style="color:#ff79c6">extern</span> <span style="color:#ff79c6">crate</span> rocket;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[get(</span><span style="color:#f1fa8c">&#34;/world&#34;</span><span style="color:#ff79c6">)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">world</span>() -&gt; <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&#39;</span><span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd">str</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">&#34;Hello, world!&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[launch]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">rocket</span>() -&gt; <span style="color:#50fa7b">_</span> {
+</span></span><span style="display:flex;"><span>    rocket::build().mount(<span style="color:#f1fa8c">&#34;/hello&#34;</span>, routes<span style="color:#ff79c6">!</span>[world])
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><strong>Dynamic Paths</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">#[get(</span><span style="color:#f1fa8c">&#34;/hello/&lt;name&gt;&#34;</span><span style="color:#ff79c6">)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">hello</span>(name: <span style="color:#ff79c6">&amp;</span><span style="color:#8be9fd">str</span>) -&gt; <span style="color:#8be9fd;font-style:italic">String</span> {
+</span></span><span style="display:flex;"><span>    format!(<span style="color:#f1fa8c">&#34;Hello, {}!&#34;</span>, name)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><strong>Forwarding</strong></p>
+<p>Routes are attempted in increasing rank order. Rocket chooses a default ranking from -12 to -1, detailed in the next section, but a route&rsquo;s rank can also be manually set with the rank attribute. To illustrate, consider the following routes:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">#[get(</span><span style="color:#f1fa8c">&#34;/user/&lt;id&gt;&#34;</span><span style="color:#ff79c6">)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">user</span>(id: <span style="color:#8be9fd">usize</span>) { <span style="color:#6272a4">/* ... */</span> }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[get(</span><span style="color:#f1fa8c">&#34;/user/&lt;id&gt;&#34;</span><span style="color:#ff79c6">, rank = 2)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">user_int</span>(id: <span style="color:#8be9fd">isize</span>) { <span style="color:#6272a4">/* ... */</span> }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[get(</span><span style="color:#f1fa8c">&#34;/user/&lt;id&gt;&#34;</span><span style="color:#ff79c6">, rank = 3)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">user_str</span>(id: <span style="color:#ff79c6">&amp;</span><span style="color:#8be9fd">str</span>) { <span style="color:#6272a4">/* ... */</span> }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[launch]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">rocket</span>() -&gt; <span style="color:#50fa7b">_</span> {
+</span></span><span style="display:flex;"><span>    rocket::build().mount(<span style="color:#f1fa8c">&#34;/&#34;</span>, routes<span style="color:#ff79c6">!</span>[user, user_int, user_str])
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="actix-web">actix-web</h2>
+<p>官方文档：<a href="https://docs.rs/actix-web/4.1.0/actix_web/">actix_web</a></p>
+<p>可以通过宏来创建提取器。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">use</span> actix_web::{get, web, App, HttpServer, Responder};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[get(</span><span style="color:#f1fa8c">&#34;/hello/{name}&#34;</span><span style="color:#ff79c6">)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">async</span> <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">greet</span>(name: <span style="color:#50fa7b">web</span>::Path<span style="color:#ff79c6">&lt;</span><span style="color:#8be9fd;font-style:italic">String</span><span style="color:#ff79c6">&gt;</span>) -&gt; <span style="color:#50fa7b">impl</span> Responder {
+</span></span><span style="display:flex;"><span>    format!(<span style="color:#f1fa8c">&#34;Hello {}!&#34;</span>, name)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[actix_web::main]</span> <span style="color:#6272a4">// or #[tokio::main]
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span><span style="color:#ff79c6">async</span> <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">main</span>() -&gt; <span style="color:#50fa7b">std</span>::io::<span style="color:#8be9fd;font-style:italic">Result</span><span style="color:#ff79c6">&lt;</span>()<span style="color:#ff79c6">&gt;</span> {
+</span></span><span style="display:flex;"><span>    HttpServer::new(<span style="color:#ff79c6">||</span> {
+</span></span><span style="display:flex;"><span>        App::new().service(greet)
+</span></span><span style="display:flex;"><span>    })
+</span></span><span style="display:flex;"><span>    .bind((<span style="color:#f1fa8c">&#34;127.0.0.1&#34;</span>, <span style="color:#bd93f9">8080</span>))<span style="color:#ff79c6">?</span>
+</span></span><span style="display:flex;"><span>    .run()
+</span></span><span style="display:flex;"><span>    .<span style="color:#ff79c6">await</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>其他</p>
+<ul>
+<li><a href="https://github.com/LemmyNet/lemmy">Lemmy论坛</a></li>
+<li><a href="https://github.com/actix/actix-extras">actix-extras</a>：actix中间件</li>
+</ul>
+<p>actix-web底层基于<a href="https://github.com/actix/actix-net">actix-net</a>中间库，封装了和网络相关的东西。</p>
+<p>在actix-net/actix-rt/src/arbiter.rs下每个arbiter对应一个线程。</p>
+<h2 id="gotham">gotham</h2>
+<p>比较早的框架，基于tokio实现。</p>
+<h2 id="thruster">Thruster</h2>
+<p>构建于hyper之上，这个中间件在请求过程中设置上下文。</p>
+<h2 id="tower">tower</h2>
+<p>文档： <a href="https://docs.rs/tower/0.4.13/tower/">tower</a></p>
+<p>Tower is a library of modular and reusable components for building robust networking clients and servers.</p>
+<h2 id="hyper">hyper</h2>
+<p>官方文档：<a href="https://docs.rs/hyper/0.14.20/hyper/">hyper</a></p>
+<p>关于路由用到<a href="https://github.com/http-rs/route-recognizer">route-recognizer</a>，它的底层是<a href="https://zh.m.wikipedia.org/zh-hans/%E9%9D%9E%E7%A1%AE%E5%AE%9A%E6%9C%89%E9%99%90%E7%8A%B6%E6%80%81%E8%87%AA%E5%8A%A8%E6%9C%BA">非确定有限状态自动机</a>。</p>
+<h2 id="warp">warp</h2>
+<p>github仓库地址：<a href="https://github.com/seanmonstar/warp">warp</a>。</p>
+<p>filter的工作机制，基于hyper。<a href="https://github.com/steadylearner/Rust-Warp-Example">Rust-Warp-Example</a>是一个应用实例。</p>
+<h2 id="一些底层的库">一些底层的库</h2>
+<ul>
+<li><a href="https://docs.rs/http/0.2.8/http/">http</a>：解析处理HTTP协议，对http请求和响应做了一个类型抽象。</li>
+<li><a href="https://docs.rs/http-body/0.4.5/http_body/">http-body</a>：做异步http请求和响应。</li>
+<li><a href="https://github.com/http-rs/http-types">http-types</a>：基于async-std。</li>
+<li><a href="https://github.com/tower-rs/tower-http">tower-http</a>：基于tower、http、http-body、的中间件。</li>
+<li><a href="https://github.com/hyperium/hyper">hyper</a>：HTTP的实现，没有整合tower-http。</li>
+</ul>
+<h2 id="rust异步web框架">Rust异步Web框架</h2>
+<p>结构：</p>
+<ul>
+<li>框架接口设计</li>
+<li>路由结构实现</li>
+<li>实现Handler</li>
+<li>添加tracing打印日志</li>
+<li>实现提取器</li>
+<li>实现中间件</li>
+<li>错误处理</li>
+</ul>
+<h2 id="补充学习">补充学习</h2>
+<ul>
+<li><a href="https://www.runoob.com/regexp/regexp-tutorial.html">正则表达式</a></li>
+<li>Cow</li>
+<li>and_then、and</li>
+<li>dyn</li>
+<li>pin、unpin</li>
+<li>Oneshot</li>
+<li>pin_project!</li>
+<li>网络中的请求方法有哪些？区别是什么？</li>
+<li><a href="https://doc.rust-lang.org/core/any/index.html">Any</a></li>
+<li>终端命令 curl，参考<a href="https://www.cnblogs.com/duhuo/p/5695256.html">Linux curl命令详解</a></li>
+<li>DSL是什么？参考<a href="https://draveness.me/dsl/">谈谈 DSL 以及 DSL 的应用（以 CocoaPods 为例）</a></li>
+<li>uri</li>
+<li>async_trait</li>
+<li>map、map_err</li>
+<li><code>curl http://... -I -HEAD</code></li>
+<li>tower</li>
+<li>阅读axum源码</li>
+<li>kv-serve 和 web 如何连接在一起？</li>
+</ul>
+<p>
+  <img src="/img/2022-08-23-rust-web/rust-web-%e8%af%be%e7%a8%8b%e5%9b%9e%e9%a1%be.png" alt="课程回顾">
+
+</p>
+<h2 id="参考资料">参考资料</h2>
+<p><a href="https://time.geekbang.org/course/intro/348">张汉东的Rust实战课</a></p>
+<p><a href="https://github.com/ZhangHanDong/inviting-rust">张汉东的Rust实战课视频课程代码示例</a></p>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2022/08/01/Linux-ssh/" data-toggle="tooltip" data-placement="top" title="Mac用ssh远程连接服务器">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2022/11/19/hugo-post/" data-toggle="tooltip" data-placement="top" title="如何用Hugo &#43; Github Action部署个人博客">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/linux" title="linux">
+                            linux
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/rust" title="rust">
+                            rust
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E5%8D%9A%E5%AE%A2" title="博客">
+                            博客
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E5%BC%82%E6%AD%A5" title="异步">
+                            异步
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%BE%AE%E5%88%86%E6%96%B9%E7%A8%8B%E6%95%B0%E5%80%BC%E8%A7%A3" title="微分方程数值解">
+                            微分方程数值解
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E5%80%BC%E5%88%86%E6%9E%90" title="数值分析">
+                            数值分析
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8" title="服务器">
+                            服务器
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%AC%94%E8%AE%B0" title="笔记">
+                            笔记
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E7%AE%97%E6%B3%95" title="算法">
+                            算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E9%9D%A2%E8%AF%95" title="面试">
+                            面试
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://magiconch.github.io/">小旱獭的QQ空间</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:wenjinsmail@163.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/wenjin1997">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="Wenjin Blog" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; Wenjin Blog 2022
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

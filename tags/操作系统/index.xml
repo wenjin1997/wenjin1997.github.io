@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>操作系统 on Wenjin Blog</title>
+    <link>https://wenjin1997.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</link>
+    <description>Recent content in 操作系统 on Wenjin Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 01 Jul 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://wenjin1997.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>现代操作系统笔记</title>
+      <link>https://wenjin1997.github.io/2022/07/01/Operating-System/</link>
+      <pubDate>Fri, 01 Jul 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2022/07/01/Operating-System/</guid>
+      <description>第1章 引论 1.1 什么是操作系统 操作系统（Operating System，简称 OS）是管理计算机硬件与软件资源的程序，是计算机的基石。 操作系统本质</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -16,5 +16,14 @@
       <description>最近又把自己的博客折腾了一遍，之前用的是vuepress搭建的，奈何实在看不惯字体太小，配置字体大小半天不成功，索性想着重新搭建一下。网上搜</description>
     </item>
     
+    <item>
+      <title>vuepress配置博客支持数学公式</title>
+      <link>https://wenjin1997.github.io/2022/03/09/mathEquationBlog/</link>
+      <pubDate>Wed, 09 Mar 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2022/03/09/mathEquationBlog/</guid>
+      <description>主要参考vuepress-theme-reco设置math公式。 步骤 定位到博客的根目录下，安装库 npm i markdown-it-texmath 安装markdown-it npm install markdown-it --save 安装</description>
+    </item>
+    
   </channel>
 </rss>

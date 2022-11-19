@@ -1,0 +1,1979 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="Wenjin Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://wenjin1997.github.io/img/home-bg-stars.jpg">
+    <meta property="twitter:image" content="https://wenjin1997.github.io/img/home-bg-stars.jpg" />
+    
+
+    
+    <meta name="title" content="计算机网络知识总结" />
+    <meta property="og:title" content="计算机网络知识总结" />
+    <meta property="twitter:title" content="计算机网络知识总结" />
+    
+
+    
+    <meta name="description" content="总结中国大学MOOC计算机网络课程相关知识。">
+    <meta property="og:description" content="总结中国大学MOOC计算机网络课程相关知识。" />
+    <meta property="twitter:description" content="总结中国大学MOOC计算机网络课程相关知识。" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>计算机网络知识总结 | 文进的博客</title>
+
+    <link rel="canonical" href="/2022/03/23/internet/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    <script src="/js/lazysizes.min.js"></script>
+
+    
+    
+
+</head>
+
+
+<script type="text/javascript"
+        async
+        src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Wenjin Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/math">math</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/reading">reading</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/about/">ABOUT</a></li>
+                    
+		            <li>
+                        <a href="/search"><i class="fa fa-search"></i></a>
+		           </li>
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/home-bg-stars.jpg')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C" title="计算机网络">
+                            计算机网络
+                        </a>
+                        
+                        <a class="tag" href="/tags/%E7%AC%94%E8%AE%B0" title="笔记">
+                            笔记
+                        </a>
+                        
+                    </div>
+                    <h1>计算机网络知识总结</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                    &#34;谢文进&#34;
+                             
+                            on 
+                            Wednesday, March 23, 2022
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <h1 id="课程介绍">课程介绍</h1>
+<p>学习计算机网络时找到了这套课程，作为入门还是不错的，老师的PPT都很通俗易懂。可以在MOOC<a href="https://www.icourse163.org/course/HNKJ-1461816178?tid=1465255482">计算机网络</a>上下载课程PPT，B站上<a href="https://www.bilibili.com/video/BV1c4411d7jb/?spm_id_from=333.999.0.0&amp;vd_source=d6d5daa7e5c1f2e2ffc186195640b61d">计算机网络微课堂（有字幕无背景音乐版）</a>也有课程视频。</p>
+<h1 id="第1章-概述">第1章 概述</h1>
+<h2 id="11-计算机网络在信息时代的作用">1.1 计算机网络在信息时代的作用</h2>
+<p>略。</p>
+<h2 id="12-因特网概述">1.2 因特网概述</h2>
+<ol>
+<li>
+<p>网络是由若干结点和连接这些结点的链路组成。</p>
+</li>
+<li>
+<p>多个网络可以通过路由器互连起来，这样就构成了一个覆盖范围更大的网络，即互联网。因此，互联网就是“网络的网络”。</p>
+</li>
+<li>
+<p>因特网是世界上最大的互连网络。它是一个专用名词，采用TCP/IP协议族作为通信的规则，其前身是美国的ARPANET。</p>
+</li>
+</ol>
+<p>ISP(Internet Service Provider)：因特网服务提供者。例如国内的中国电信、中国联通和中国移动。</p>
+<p>因特网的组成：边缘部分+核心部分</p>
+<h2 id="13-电路交换分组交换报文交换">1.3 电路交换、分组交换、报文交换</h2>
+<p>分组交换：</p>
+<ul>
+<li>发送方：构造分组、发送分组</li>
+<li>路由器：存储转发分组</li>
+<li>接收方：接收分组、还原报文</li>
+</ul>
+<p>分组交换的优缺点：</p>
+<ul>
+<li>优点
+<ul>
+<li>无需建立连接</li>
+<li>线路利用率高</li>
+<li>简化了存储管理</li>
+<li>加速传输</li>
+<li>减少出错概率和重发数据量</li>
+</ul>
+</li>
+<li>缺点
+<ul>
+<li>引发了转发时延</li>
+<li>需要额外的信息量</li>
+<li>对于数据报服务，存在失序、丢失和重复分组的问题；对于虚电路服务，存在呼叫建立、数据传输和虚电路释放三个过程</li>
+</ul>
+</li>
+</ul>
+<h2 id="14-计算机网络的定义与分类">1.4 计算机网络的定义与分类</h2>
+<p>计算机网络：一些互相连接的、自治的计算机的集合。</p>
+<h2 id="15-计算机网络的性能指标">1.5 计算机网络的性能指标</h2>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220306165419446.png" alt="image1">
+
+
+
+  <img src="/img/2022-03-23-internet/image-20220306165610117.png" alt="image2">
+
+</p>
+<h2 id="16-计算机网络体系结构">🚩1.6 计算机网络体系结构</h2>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220306165831945.png" alt="image-20220306165831945">
+
+</p>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220306165900996.png" alt="image-20220306165900996">
+
+</p>
+<p><strong>应用层</strong> :解决通过应用进程的交互来实现特定网络应用的问题。为特定应用程序提供数据传输服务，例如 HTTP、DNS 等协议。数据单位为报文。</p>
+<p><strong>表示层</strong> :数据处理（编解码、加密解密、压缩解压缩）。</p>
+<p><strong>会话层</strong> :管理（建立、维护、重连）应用程序之间的对话。</p>
+<p><strong>传输层</strong> :解决进程之间基于网络的通信问题。为进程提供通用数据传输服务。由于应用层协议很多，定义通用的传输层协议就可以支持不断增多的应用层协议。运输层包括两种协议:传输控制协议 TCP，提供面向连接、可靠的数据传输服务，数据单位为报文段;用户数据报协议 UDP，提供 无连接、尽最大努力的数据传输服务，数据单位为用户数据报。TCP 主要提供完整性服务，UDP 主要提供及时性服务。</p>
+<p><strong>网络层</strong> :解决分组在多个网络上传输（路由）的问题。为主机提供数据传输服务。而传输层协议是为主机中的进程提供数据传输服务。网络层把传输层传递下来的报文段或者用户数据报封装成分组。</p>
+<p><strong>数据链路层</strong> :解决分组在一个网络（或一段链路）上传输的问题。网络层针对的还是主机之间的数据传输服务，而主机之间可以有很多链路，链路层协议就是为同一链路的主机提供数据传输服务。数据链路层把网络层传下来的分组封装成帧。</p>
+<p><strong>物理层</strong> :解决使用何种信号来传输比特的问题。考虑的是怎样在传输媒体上传输数据比特流，而不是指具体的传输媒体。物理层的作用是尽可能屏蔽传输媒体和通信手段的差异，使数据链路层感觉不到这些差异。</p>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220306171201560.png" alt="image-20220306171201560">
+
+</p>
+<h1 id="第2章-物理层">第2章 物理层</h1>
+<h2 id="21-物理层的基本概念">2.1 物理层的基本概念</h2>
+<p>
+  <img src="/img/2022-03-23-internet/%e5%9b%be%e7%89%87%201.png" alt="image-1">
+
+</p>
+<h2 id="22-物理层下面的传输媒体">2.2 物理层下面的传输媒体</h2>
+<p>
+  <img src="/img/2022-03-23-internet/%e5%9b%be%e7%89%87%202.png" alt="image-2">
+
+</p>
+<h2 id="23-传输方式">2.3 传输方式</h2>
+<p>
+  <img src="/img/2022-03-23-internet/%e4%bc%a0%e8%be%93%e6%96%b9%e5%bc%8f.png" alt="传输方式">
+
+</p>
+<h2 id="24-编码与调制">2.4 编码与调制</h2>
+<p>
+  <img src="/img/2022-03-23-internet/2.4-1.png" alt="2.4-1">
+
+
+
+  <img src="/img/2022-03-23-internet/2.4-2.png" alt="2.4-2">
+
+
+
+  <img src="/img/2022-03-23-internet/2.4-3.png" alt="2.4-3">
+
+
+
+  <img src="/img/2022-03-23-internet/2.4-4.png" alt="2.4-4">
+
+
+
+  <img src="/img/2022-03-23-internet/2.4-5.png" alt="2.4-5">
+
+
+
+  <img src="/img/2022-03-23-internet/2.4-6.png" alt="2.4-6">
+
+
+
+  <img src="/img/2022-03-23-internet/2.4-7.png" alt="2.4-7">
+
+
+
+  <img src="/img/2022-03-23-internet/2.4-8.png" alt="2.4-8">
+
+</p>
+<h2 id="25-信道的极限容量">2.5 信道的极限容量</h2>
+<p>
+  <img src="/img/2022-03-23-internet/2.5-1.png" alt="2.5-1">
+
+
+
+  <img src="/img/2022-03-23-internet/2.5-2.png" alt="2.5-2">
+
+
+
+  <img src="/img/2022-03-23-internet/2.5-3.png" alt="2.5-3">
+
+
+
+  <img src="/img/2022-03-23-internet/2.5-4.png" alt="2.5-4">
+
+</p>
+<h1 id="第3章-数据链路层">第3章 数据链路层</h1>
+<h2 id="31-数据链路层概述">3.1 数据链路层概述</h2>
+<p>
+  <img src="/img/2022-03-23-internet/3.1-1.png" alt="2.4-1">
+
+
+
+  <img src="/img/2022-03-23-internet/3.1-2.png" alt="2.4-2">
+
+
+
+  <img src="/img/2022-03-23-internet/3.1-3.png" alt="2.4-3">
+
+
+
+  <img src="/img/2022-03-23-internet/3.1-4.png" alt="2.4-4">
+
+
+
+  <img src="/img/2022-03-23-internet/3.1-5.png" alt="2.4-5">
+
+
+
+  <img src="/img/2022-03-23-internet/3.1-6.png" alt="2.4-6">
+
+</p>
+<h2 id="32-封装成帧">3.2 封装成帧</h2>
+<p>
+  <img src="/img/2022-03-23-internet/3.2-1.png" alt="1">
+
+
+
+  <img src="/img/2022-03-23-internet/3.2-2.png" alt="2">
+
+
+
+  <img src="/img/2022-03-23-internet/3.2-3.png" alt="3">
+
+</p>
+<h2 id="33-差错检测">3.3 差错检测</h2>
+<p>
+  <img src="/img/2022-03-23-internet/3.3-1.png" alt="1">
+
+
+
+  <img src="/img/2022-03-23-internet/3.3-2.png" alt="2">
+
+
+
+  <img src="/img/2022-03-23-internet/3.3-3.png" alt="3">
+
+
+
+  <img src="/img/2022-03-23-internet/3.3-4.png" alt="4">
+
+
+
+  <img src="/img/2022-03-23-internet/3.3-5.png" alt="5">
+
+
+
+  <img src="/img/2022-03-23-internet/3.3-6.png" alt="6">
+
+</p>
+<h2 id="34-可靠传输">3.4 可靠传输</h2>
+<h3 id="341-可靠传输的基本概念">3.4.1 可靠传输的基本概念</h3>
+<p>
+  <img src="/img/2022-03-23-internet/3.4.1-1.png" alt="1">
+
+
+
+  <img src="/img/2022-03-23-internet/3.4.1-2.png" alt="2">
+
+
+
+  <img src="/img/2022-03-23-internet/3.4.1-3.png" alt="3">
+
+</p>
+<h3 id="342-停止-等待协议sw">3.4.2 停止-等待协议SW</h3>
+<p>
+  <img src="/img/2022-03-23-internet/3.4.2-1.png" alt="1">
+
+
+
+  <img src="/img/2022-03-23-internet/3.4.2-2.png" alt="2">
+
+
+
+  <img src="/img/2022-03-23-internet/3.4.2-3.png" alt="3">
+
+</p>
+<h3 id="343-回退n帧协议gbn">3.4.3 回退N帧协议GBN</h3>
+<p>
+  <img src="/img/2022-03-23-internet/3.4.3-1.png" alt="1">
+
+
+
+  <img src="/img/2022-03-23-internet/3.4.3-2.png" alt="2">
+
+
+
+  <img src="/img/2022-03-23-internet/3.4.3-3.png" alt="3">
+
+
+
+  <img src="/img/2022-03-23-internet/3.4.3-4.png" alt="4">
+
+
+
+  <img src="/img/2022-03-23-internet/3.4.3-5.png" alt="5">
+
+
+
+  <img src="/img/2022-03-23-internet/3.4.3-6.png" alt="6">
+
+
+
+  <img src="/img/2022-03-23-internet/3.4.3-7.png" alt="7">
+
+
+
+  <img src="/img/2022-03-23-internet/3.4.3-8.png" alt="8">
+
+</p>
+<h3 id="344-选择重传协议sr">3.4.4 选择重传协议SR</h3>
+<p>
+  <img src="/img/2022-03-23-internet/3.4.4-1.png" alt="1">
+
+
+
+  <img src="/img/2022-03-23-internet/3.4.4-2.png" alt="2">
+
+
+
+  <img src="/img/2022-03-23-internet/3.4.4-3.png" alt="3">
+
+
+
+  <img src="/img/2022-03-23-internet/3.4.4-4.png" alt="4">
+
+
+
+  <img src="/img/2022-03-23-internet/3.4.4-5.png" alt="5">
+
+</p>
+<h2 id="35-点对点协议ppp">3.5 点对点协议PPP</h2>
+<p>
+  <img src="/img/2022-03-23-internet/3.5-1.png" alt="1">
+
+
+
+  <img src="/img/2022-03-23-internet/3.5-2.png" alt="2">
+
+
+
+  <img src="/img/2022-03-23-internet/3.5-3.png" alt="3">
+
+
+
+  <img src="/img/2022-03-23-internet/3.5-4.png" alt="4">
+
+
+
+  <img src="/img/2022-03-23-internet/3.5-5.png" alt="5">
+
+
+
+  <img src="/img/2022-03-23-internet/3.5-6.png" alt="6">
+
+
+
+  <img src="/img/2022-03-23-internet/3.5-7.png" alt="7">
+
+
+
+  <img src="/img/2022-03-23-internet/3.5-8.png" alt="8">
+
+</p>
+<h2 id="36-媒体接入控制mac">3.6 媒体接入控制MAC</h2>
+<h3 id="361基本概念">3.6.1基本概念</h3>
+<p>
+  <img src="/img/2022-03-23-internet/3.6.1-1.png" alt="1">
+
+</p>
+<h3 id="362静态划分信道">3.6.2静态划分信道</h3>
+<p>
+  <img src="/img/2022-03-23-internet/3.6.2-1.png" alt="1">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.2-2.png" alt="2">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.2-3.png" alt="3">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.2-4.png" alt="4">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.2-5.png" alt="5">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.2-6.png" alt="6">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.2-7.png" alt="7">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.2-8.png" alt="8">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.2-9.png" alt="9">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.2-10.png" alt="10">
+
+</p>
+<h3 id="363-csmacd">3.6.3 CSMA/CD</h3>
+<p>
+  <img src="/img/2022-03-23-internet/3.6.3-1.png" alt="1">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.3-2.png" alt="2">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.3-3.png" alt="3">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.3-4.png" alt="4">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.3-5.png" alt="5">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.3-6.png" alt="6">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.3-7.png" alt="7">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.3-8.png" alt="8">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.3-9.png" alt="9">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.3-10.png" alt="10">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.3-11.png" alt="11">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.3-12.png" alt="12">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.3-13.png" alt="13">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.3-14.png" alt="14">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.3-15.png" alt="15">
+
+</p>
+<h3 id="364-csmaca">3.6.4 CSMA/CA</h3>
+<p>
+  <img src="/img/2022-03-23-internet/3.6.4-1.png" alt="1">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.4-2.png" alt="2">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.4-3.png" alt="3">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.4-4.png" alt="4">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.4-5.png" alt="5">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.4-6.png" alt="6">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.4-7.png" alt="7">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.4-8.png" alt="8">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.4-9.png" alt="9">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.4-10.png" alt="10">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.4-11.png" alt="11">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.4-12.png" alt="12">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.4-13.png" alt="13">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.4-14.png" alt="14">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.4-15.png" alt="15">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.4-16.png" alt="16">
+
+
+
+  <img src="/img/2022-03-23-internet/3.6.4-17.png" alt="17">
+
+</p>
+<h2 id="37-mac地址ip地址以及arp协议">3.7 MAC地址、IP地址以及ARP协议</h2>
+<h3 id="371-mac地址">3.7.1 MAC地址</h3>
+<p>
+  <img src="/img/2022-03-23-internet/3.7.1-1.png" alt="1">
+
+
+
+  <img src="/img/2022-03-23-internet/3.7.1-2.png" alt="2">
+
+
+
+  <img src="/img/2022-03-23-internet/3.7.1-3.png" alt="3">
+
+
+
+  <img src="/img/2022-03-23-internet/3.7.1-4.png" alt="4">
+
+
+
+  <img src="/img/2022-03-23-internet/3.7.1-5.png" alt="5">
+
+
+
+  <img src="/img/2022-03-23-internet/3.7.1-6.png" alt="6">
+
+
+
+  <img src="/img/2022-03-23-internet/3.7.1-7.png" alt="7">
+
+
+
+  <img src="/img/2022-03-23-internet/3.7.1-8.png" alt="8">
+
+
+
+  <img src="/img/2022-03-23-internet/3.7.1-9.png" alt="9">
+
+
+
+  <img src="/img/2022-03-23-internet/3.7.1-10.png" alt="10">
+
+
+
+  <img src="/img/2022-03-23-internet/3.7.1-11.png" alt="11">
+
+
+
+  <img src="/img/2022-03-23-internet/3.7.1-12.png" alt="12">
+
+
+
+  <img src="/img/2022-03-23-internet/3.7.1-13.png" alt="13">
+
+
+
+  <img src="/img/2022-03-23-internet/3.7.1-14.png" alt="14">
+
+</p>
+<h3 id="372-ip地址">3.7.2 IP地址</h3>
+<p>
+  <img src="/img/2022-03-23-internet/3.7.2-1.png" alt="1">
+
+
+
+  <img src="/img/2022-03-23-internet/3.7.2-2.png" alt="2">
+
+
+
+  <img src="/img/2022-03-23-internet/3.7.2-3.png" alt="3">
+
+
+
+  <img src="/img/2022-03-23-internet/3.7.2-4.png" alt="4">
+
+
+
+  <img src="/img/2022-03-23-internet/3.7.2-5.png" alt="5">
+
+</p>
+<h3 id="373-arp协议">3.7.3 ARP协议</h3>
+<p>
+  <img src="/img/2022-03-23-internet/3.7.3-1.png" alt="1">
+
+
+
+  <img src="/img/2022-03-23-internet/3.7.3-2.png" alt="2">
+
+
+
+  <img src="/img/2022-03-23-internet/3.7.3-3.png" alt="3">
+
+
+
+  <img src="/img/2022-03-23-internet/3.7.3-4.png" alt="4">
+
+
+
+  <img src="/img/2022-03-23-internet/3.7.3-5.png" alt="5">
+
+
+
+  <img src="/img/2022-03-23-internet/3.7.3-6.png" alt="6">
+
+
+
+  <img src="/img/2022-03-23-internet/3.7.3-7.png" alt="7">
+
+</p>
+<h2 id="38-集线器与交换机的区别">3.8 集线器与交换机的区别</h2>
+<p>
+  <img src="/img/2022-03-23-internet/3.8-1.png" alt="1">
+
+
+
+  <img src="/img/2022-03-23-internet/3.8-2.png" alt="2">
+
+
+
+  <img src="/img/2022-03-23-internet/3.8-3.png" alt="3">
+
+
+
+  <img src="/img/2022-03-23-internet/3.8-4.png" alt="4">
+
+
+
+  <img src="/img/2022-03-23-internet/3.8-5.png" alt="5">
+
+
+
+  <img src="/img/2022-03-23-internet/3.8-6.png" alt="6">
+
+
+
+  <img src="/img/2022-03-23-internet/3.8-7.png" alt="7">
+
+
+
+  <img src="/img/2022-03-23-internet/3.8-8.png" alt="8">
+
+</p>
+<h2 id="39-以太网交换机自学习和转发帧的流程">3.9 以太网交换机自学习和转发帧的流程</h2>
+<p>
+  <img src="/img/2022-03-23-internet/3.9-1.png" alt="1">
+
+
+
+  <img src="/img/2022-03-23-internet/3.9-2.png" alt="2">
+
+
+
+  <img src="/img/2022-03-23-internet/3.9-3.png" alt="3">
+
+
+
+  <img src="/img/2022-03-23-internet/3.9-4.png" alt="4">
+
+
+
+  <img src="/img/2022-03-23-internet/3.9-5.png" alt="5">
+
+
+
+  <img src="/img/2022-03-23-internet/3.9-6.png" alt="6">
+
+</p>
+<h2 id="310-以太网交换机的生成树协议stp">3.10 以太网交换机的生成树协议STP</h2>
+<p>
+  <img src="/img/2022-03-23-internet/3.10-1.png" alt="1">
+
+</p>
+<h2 id="311-虚拟局域网vlan">3.11 虚拟局域网VLAN</h2>
+<h3 id="3111概述">3.11.1概述</h3>
+<p>
+  <img src="/img/2022-03-23-internet/3.11.1-1.png" alt="1">
+
+
+
+  <img src="/img/2022-03-23-internet/3.11.1-2.png" alt="2">
+
+</p>
+<h3 id="3112-实现机制">3.11.2 实现机制</h3>
+<p>
+  <img src="/img/2022-03-23-internet/3.11.2-1.png" alt="1">
+
+
+
+  <img src="/img/2022-03-23-internet/3.11.2-2.png" alt="2">
+
+
+
+  <img src="/img/2022-03-23-internet/3.11.2-3.png" alt="3">
+
+
+
+  <img src="/img/2022-03-23-internet/3.11.2-4.png" alt="4">
+
+
+
+  <img src="/img/2022-03-23-internet/3.11.2-5.png" alt="5">
+
+
+
+  <img src="/img/2022-03-23-internet/3.11.2-6.png" alt="6">
+
+
+
+  <img src="/img/2022-03-23-internet/3.11.2-7.png" alt="7">
+
+
+
+  <img src="/img/2022-03-23-internet/3.11.2-8.png" alt="8">
+
+</p>
+<h1 id="第4章-网络层">第4章 网络层</h1>
+<h2 id="41-网络层概述">4.1 网络层概述</h2>
+<p>
+  <img src="/img/2022-03-23-internet/4.1-1.png" alt="1">
+
+
+
+  <img src="/img/2022-03-23-internet/4.1-2.png" alt="2">
+
+</p>
+<h2 id="42-网络层提供的两种服务">4.2 网络层提供的两种服务</h2>
+<p>
+  <img src="/img/2022-03-23-internet/4.2-1.png" alt="1">
+
+
+
+  <img src="/img/2022-03-23-internet/4.2-2.png" alt="2">
+
+
+
+  <img src="/img/2022-03-23-internet/4.2-3.png" alt="3">
+
+</p>
+<h2 id="43-ipv4地址">4.3 IPv4地址</h2>
+<h3 id="431-ipv4地址概述">4.3.1 IPv4地址概述</h3>
+<p>
+  <img src="/img/2022-03-23-internet/4.3.1-1.png" alt="1">
+
+
+
+  <img src="/img/2022-03-23-internet/4.3.1-2.png" alt="2">
+
+</p>
+<h3 id="432-分类编址的ipv4地址">4.3.2 分类编址的IPv4地址</h3>
+<p>
+  <img src="/img/2022-03-23-internet/4.3.2-1.png" alt="1">
+
+
+
+  <img src="/img/2022-03-23-internet/4.3.2-2.png" alt="2">
+
+
+
+  <img src="/img/2022-03-23-internet/4.3.2-3.png" alt="3">
+
+
+
+  <img src="/img/2022-03-23-internet/4.3.2-4.png" alt="4">
+
+
+
+  <img src="/img/2022-03-23-internet/4.3.2-5.png" alt="5">
+
+
+
+  <img src="/img/2022-03-23-internet/4.3.2-6.png" alt="6">
+
+
+
+  <img src="/img/2022-03-23-internet/4.3.2-7.png" alt="7">
+
+</p>
+<h3 id="433-划分子网的ipv4地址">4.3.3 划分子网的IPv4地址</h3>
+<p>
+  <img src="/img/2022-03-23-internet/4.3.3-1.png" alt="1">
+
+
+
+  <img src="/img/2022-03-23-internet/4.3.3-2.png" alt="2">
+
+
+
+  <img src="/img/2022-03-23-internet/4.3.3-3.png" alt="3">
+
+
+
+  <img src="/img/2022-03-23-internet/4.3.3-4.png" alt="4">
+
+
+
+  <img src="/img/2022-03-23-internet/4.3.3-5.png" alt="5">
+
+
+
+  <img src="/img/2022-03-23-internet/4.3.3-6.png" alt="6">
+
+
+
+  <img src="/img/2022-03-23-internet/4.3.3-7.png" alt="7">
+
+
+
+  <img src="/img/2022-03-23-internet/4.3.3-8.png" alt="8">
+
+</p>
+<h3 id="434-无分类编址的ipv4地址">4.3.4 无分类编址的IPv4地址</h3>
+<p>
+  <img src="/img/2022-03-23-internet/4.3.4-1.png" alt="1">
+
+
+
+  <img src="/img/2022-03-23-internet/4.3.4-2.png" alt="2">
+
+
+
+  <img src="/img/2022-03-23-internet/4.3.4-3.png" alt="3">
+
+
+
+  <img src="/img/2022-03-23-internet/4.3.4-4.png" alt="4">
+
+
+
+  <img src="/img/2022-03-23-internet/4.3.4-5.png" alt="5">
+
+
+
+  <img src="/img/2022-03-23-internet/4.3.4-6.png" alt="6">
+
+
+
+  <img src="/img/2022-03-23-internet/4.3.4-7.png" alt="7">
+
+</p>
+<h3 id="435-ipv4地址的应用规划">4.3.5 IPv4地址的应用规划</h3>
+<p>
+  <img src="/img/2022-03-23-internet/4.3.5-1.png" alt="1">
+
+
+
+  <img src="/img/2022-03-23-internet/4.3.5-2.png" alt="2">
+
+
+
+  <img src="/img/2022-03-23-internet/4.3.5-3.png" alt="3">
+
+
+
+  <img src="/img/2022-03-23-internet/4.3.5-4.png" alt="4">
+
+
+
+  <img src="/img/2022-03-23-internet/4.3.5-5.png" alt="5">
+
+
+
+  <img src="/img/2022-03-23-internet/4.3.5-6.png" alt="6">
+
+
+
+  <img src="/img/2022-03-23-internet/4.3.5-7.png" alt="7">
+
+
+
+  <img src="/img/2022-03-23-internet/4.3.5-8.png" alt="8">
+
+</p>
+<h2 id="44-ip数据包的发送和转发过程">4.4 IP数据包的发送和转发过程</h2>
+<p>
+  <img src="/img/2022-03-23-internet/4.4-1.png" alt="1">
+
+
+
+  <img src="/img/2022-03-23-internet/4.4-2.png" alt="2">
+
+
+
+  <img src="/img/2022-03-23-internet/4.4-3.png" alt="3">
+
+
+
+  <img src="/img/2022-03-23-internet/4.4-4.png" alt="4">
+
+
+
+  <img src="/img/2022-03-23-internet/4.4-5.png" alt="5">
+
+
+
+  <img src="/img/2022-03-23-internet/4.4-6.png" alt="6">
+
+
+
+  <img src="/img/2022-03-23-internet/4.4-7.png" alt="7">
+
+
+
+  <img src="/img/2022-03-23-internet/4.4-8.png" alt="8">
+
+
+
+  <img src="/img/2022-03-23-internet/4.4-9.png" alt="9">
+
+
+
+  <img src="/img/2022-03-23-internet/4.4-10.png" alt="10">
+
+
+
+  <img src="/img/2022-03-23-internet/4.4-11.png" alt="11">
+
+</p>
+<h2 id="45-静态路由配置及其可能产生的路由环路问题">4.5 静态路由配置及其可能产生的路由环路问题</h2>
+<p>
+  <img src="/img/2022-03-23-internet/4.5-1.png" alt="1">
+
+
+
+  <img src="/img/2022-03-23-internet/4.5-2.png" alt="2">
+
+
+
+  <img src="/img/2022-03-23-internet/4.5-3.png" alt="3">
+
+
+
+  <img src="/img/2022-03-23-internet/4.5-4.png" alt="4">
+
+
+
+  <img src="/img/2022-03-23-internet/4.5-5.png" alt="5">
+
+
+
+  <img src="/img/2022-03-23-internet/4.5-6.png" alt="6">
+
+
+
+  <img src="/img/2022-03-23-internet/4.5-7.png" alt="7">
+
+</p>
+<h2 id="46-路由选择协议">4.6 路由选择协议</h2>
+<h3 id="461-路由选择协议概述">4.6.1 路由选择协议概述</h3>
+<p>
+  <img src="/img/2022-03-23-internet/4.6.1-1.png" alt="1">
+
+
+
+  <img src="/img/2022-03-23-internet/4.6.1-2.png" alt="2">
+
+
+
+  <img src="/img/2022-03-23-internet/4.6.1-3.png" alt="3">
+
+
+
+  <img src="/img/2022-03-23-internet/4.6.1-4.png" alt="4">
+
+
+
+  <img src="/img/2022-03-23-internet/4.6.1-5.png" alt="5">
+
+
+
+  <img src="/img/2022-03-23-internet/4.6.1-6.png" alt="6">
+
+
+
+  <img src="/img/2022-03-23-internet/4.6.1-7.png" alt="7">
+
+</p>
+<h3 id="462-路由信息协议rip的基本工作原理">4.6.2 路由信息协议RIP的基本工作原理</h3>
+<p>
+  <img src="/img/2022-03-23-internet/4.6.2-1.png" alt="1">
+
+
+
+  <img src="/img/2022-03-23-internet/4.6.2-2.png" alt="2">
+
+
+
+  <img src="/img/2022-03-23-internet/4.6.2-3.png" alt="3">
+
+
+
+  <img src="/img/2022-03-23-internet/4.6.2-4.png" alt="4">
+
+
+
+  <img src="/img/2022-03-23-internet/4.6.2-5.png" alt="5">
+
+
+
+  <img src="/img/2022-03-23-internet/4.6.2-6.png" alt="6">
+
+
+
+  <img src="/img/2022-03-23-internet/4.6.2-7.png" alt="7">
+
+</p>
+<h3 id="463-开放最短路径优先ospf的基本工作原理">4.6.3 开放最短路径优先OSPF的基本工作原理</h3>
+<p>
+  <img src="/img/2022-03-23-internet/4.6.3-1.png" alt="1">
+
+
+
+  <img src="/img/2022-03-23-internet/4.6.3-2.png" alt="2">
+
+
+
+  <img src="/img/2022-03-23-internet/4.6.3-3.png" alt="3">
+
+
+
+  <img src="/img/2022-03-23-internet/4.6.3-4.png" alt="4">
+
+
+
+  <img src="/img/2022-03-23-internet/4.6.3-5.png" alt="5">
+
+
+
+  <img src="/img/2022-03-23-internet/4.6.3-6.png" alt="6">
+
+
+
+  <img src="/img/2022-03-23-internet/4.6.3-7.png" alt="7">
+
+
+
+  <img src="/img/2022-03-23-internet/4.6.3-8.png" alt="8">
+
+
+
+  <img src="/img/2022-03-23-internet/4.6.3-9.png" alt="9">
+
+
+
+  <img src="/img/2022-03-23-internet/4.6.3-10.png" alt="10">
+
+</p>
+<h3 id="464-边界网关协议bgp的基本工作原理">4.6.4 边界网关协议BGP的基本工作原理</h3>
+<p>
+  <img src="/img/2022-03-23-internet/4.6.4-1.png" alt="1">
+
+
+
+  <img src="/img/2022-03-23-internet/4.6.4-2.png" alt="2">
+
+
+
+  <img src="/img/2022-03-23-internet/4.6.4-3.png" alt="3">
+
+
+
+  <img src="/img/2022-03-23-internet/4.6.4-4.png" alt="4">
+
+
+
+  <img src="/img/2022-03-23-internet/4.6.4-5.png" alt="5">
+
+
+
+  <img src="/img/2022-03-23-internet/4.6.4-6.png" alt="6">
+
+
+
+  <img src="/img/2022-03-23-internet/4.6.4-7.png" alt="7">
+
+
+
+  <img src="/img/2022-03-23-internet/4.6.4-8.png" alt="8">
+
+
+
+  <img src="/img/2022-03-23-internet/4.6.4-9.png" alt="9">
+
+
+
+  <img src="/img/2022-03-23-internet/4.6.4-10.png" alt="10">
+
+</p>
+<h2 id="47-ipv4数据报的首部格式">4.7 IPv4数据报的首部格式</h2>
+<p>重要的是能画出IPv4数据报的首部格式</p>
+<p>
+  <img src="/img/2022-03-23-internet/IPv4%e6%95%b0%e6%8d%ae%e6%8a%a5%e9%a6%96%e9%83%a8%e6%a0%bc%e5%bc%8f.png" alt="image-20220220131707502">
+
+</p>
+<h2 id="48-网际控制协议icmp">4.8 网际控制协议ICMP</h2>
+<ul>
+<li>目的：为了更有效地转发IP数据报和提高交付成功的机会</li>
+<li>封装在IP数据报中</li>
+<li>ICMP差错报告报文分为5种：终点不可达、源点抑制、时间超过、参数问题、改变路由（重定向）</li>
+<li>不应发送ICMP差错报告报文 有4种情况</li>
+<li>ICMP询问报文
+<ul>
+<li>回送请求和回答：测试目的站是否可达</li>
+<li>时间戳请求和回答：进行时钟同步和测量时间</li>
+</ul>
+</li>
+<li>ICMP应用
+<ul>
+<li>分组网间探测PING</li>
+<li>跟踪路由</li>
+</ul>
+</li>
+</ul>
+<h2 id="49-虚拟专用网vpn和网络地址转换nat">4.9 虚拟专用网VPN和网络地址转换NAT</h2>
+<ul>
+<li>VPN：利用公用的因特网作为本机构各专用网络之间的通信载体</li>
+<li>虚拟专用网中的各主机所分配的地址应该是本机构可自由分配的专用地址。有专用地址。</li>
+<li>NAT：可使大量使用内部专用地址的网络用户共享少量外部全球地址</li>
+<li>网络地址与端口号转换：NAPT，用一个全球IP地址就可以使本地地址的主机同时和因特网上的主机进行通信。</li>
+<li>NAT对外网屏蔽了内网主机的网络地址，能为内网的主机提供一定的安全保护。</li>
+</ul>
+<h1 id="第5章-运输层">第5章 运输层</h1>
+<h2 id="51-运输层概述">5.1 运输层概述</h2>
+<ul>
+<li>计算机网络体系结构中的物理层、数据链路层和网络层共同解决了将主机通过异构网络互联起来说面临的问题，<strong>实现了主机到主机的通信</strong>。</li>
+<li>运输层任务：为运行在不同主机上的应用进程提供直接的通信服务</li>
+<li>运输协议：面向连接的TCP和无连接的UDP</li>
+</ul>
+<h2 id="52-运输层端口号复用和分用的概念">5.2 运输层端口号、复用和分用的概念</h2>
+<ul>
+<li>TCP/IP体系的运输层使用<strong>端口号</strong>来区分应用层的不同进程
+<ul>
+<li>熟知端口号</li>
+<li>登记端口号</li>
+<li>短暂端口号</li>
+</ul>
+</li>
+<li>端口号只具有本地意义</li>
+<li>发送方的复用和接收方的分用</li>
+</ul>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220220135230146.png" alt="image-20220220135230146">
+
+</p>
+<ul>
+<li>熟知端口号</li>
+</ul>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220220135502221.png" alt="image-20220220135502221">
+
+</p>
+<h2 id="53-udp和tcp的对比">5.3 UDP和TCP的对比</h2>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220220142051219.png" alt="image-20220220142051219">
+
+</p>
+<p>UDP的首部格式</p>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220224191840954.png" alt="image-20220224191840954">
+
+</p>
+<h2 id="54-tcp的流量控制">5.4 TCP的流量控制</h2>
+<ul>
+<li>
+<p>所谓流量控制就是<strong>让发送方的发送速率不要太快，要让接收方来得及接收</strong>。</p>
+</li>
+<li>
+<p>利用<strong>滑动窗口</strong>机制可以很方便地在TCP连接上实现对发送方的流量控制。</p>
+<ul>
+<li>TCP接收方利用自己的<strong>接收窗口</strong>的大小来限制发送方<strong>发送窗口</strong>的大小。</li>
+<li>TCP发送方收到接收方的<strong>零窗口通知</strong>后，应启动<strong>持续计时器</strong>。持续计时器超时后，向接收方发送<strong>零窗口探测报文</strong>。</li>
+</ul>
+</li>
+</ul>
+<h2 id="55-tcp的拥塞控制">5.5 TCP的拥塞控制</h2>
+<p>在某段时间内，若对网络中某一资源的需求超过了该资源所能提供的部分，网络性能就要变坏。这种情况就叫做拥塞。</p>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220221191213823.png" alt="image-20220221191213823">
+
+</p>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220221191002197.png" alt="image-20220221191002197">
+
+</p>
+<h2 id="56-tcp超时重传时间的选择">5.6 TCP超时重传时间的选择</h2>
+<p>超时重传时间RTO应略大于加权平均往返时间RTTs（又称为平滑的往返时间）。</p>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220221192951884.png" alt="image-20220221192951884">
+
+</p>
+<h2 id="57-tcp可靠传输的实现">5.7 TCP可靠传输的实现</h2>
+<p>
+  <img src="/img/2022-03-23-internet/TCP%e5%8f%af%e9%9d%a0%e4%bc%a0%e8%be%93%e7%9a%84%e5%ae%9e%e7%8e%b0.png" alt="image-20220221194903190">
+
+</p>
+<h2 id="58-tcp的运输连接管理">5.8 TCP的运输连接管理</h2>
+<h3 id="581-tcp的连接建立">5.8.1 TCP的连接建立</h3>
+<p>
+  <img src="/img/2022-03-23-internet/TCP%e7%9a%84%e8%bf%9e%e6%8e%a5%e5%bb%ba%e7%ab%8b.png" alt="image-20220221200835993">
+
+</p>
+<p>发送针对TCP连接请求的确认的确认不多余，这是为了防止失效的连接请求报文段突然又重传到了TCP服务器，因而导致错误。</p>
+<p><a href="https://www.zhihu.com/question/24853633">TCP 为什么是三次握手，而不是两次或四次？</a></p>
+<h3 id="582-tcp的连接释放">5.8.2 TCP的连接释放</h3>
+<p>
+  <img src="/img/2022-03-23-internet/TCP%e9%87%8a%e6%94%be%e8%bf%9e%e6%8e%a5.png" alt="image-20220221202241831">
+
+</p>
+<p>
+  <img src="/img/2022-03-23-internet/%e4%bf%9d%e6%b4%bb%e8%ae%a1%e6%97%b6%e5%99%a8.png" alt="image-20220221202420969">
+
+</p>
+<p>参考<a href="https://blog.csdn.net/qzcsu/article/details/72861891">两张动图-彻底明白TCP的三次握手与四次挥手</a>:</p>
+<p>为什么建立连接是三次握手，关闭连接确是四次挥手呢？</p>
+<p>建立连接的时候， 服务器在LISTEN状态下，收到建立连接请求的SYN报文后，把ACK和SYN放在一个报文里发送给客户端。而关闭连接时，服务器收到对方的FIN报文时，仅仅表示对方不再发送数据了但是还能接收数据，而自己也未必全部数据都发送给对方了，所以己方可以立即关闭，也可以发送一些数据给对方后，再发送FIN报文给对方来表示同意现在关闭连接，因此，己方ACK和FIN一般都会分开发送，从而导致多了一次。</p>
+<h2 id="59-tcp报文段的首部格式">5.9 TCP报文段的首部格式</h2>
+<p>
+  <img src="/img/2022-03-23-internet/TCP%e6%8a%a5%e6%96%87%e6%ae%b5%e7%9a%84%e9%a6%96%e9%83%a8%e6%a0%bc%e5%bc%8f.png" alt="image-20220222143614760">
+
+</p>
+<p>序号：指出本TCP报文段数据载荷的第一个字节的序号</p>
+<p>确认号：指出期望收到对方下一个TCP报文段的数据载荷的第一个字节的序号，同时也是对之前收到的所有数据的确认。</p>
+<p>TCP规定，在连接建立后所有传送的TCP报文段都必须把ACK置1。</p>
+<p>保留：占6比特</p>
+<p>校验和：在计算校验和时，要在TCP报文段的前面加上12字节的伪首部。</p>
+<p>复位标识位RST：用来复位TCP连接。为1表明TCP连接出现了异常。RST置1还用来拒绝一个非法的报文段或拒绝打开一个TCP连接。</p>
+<p>PSH：推送标志位</p>
+<p>紧急标记位URG</p>
+<p>紧急指针：占16比特，以字节为单位，用来指明紧急数据的长度。</p>
+<p>选项：最大报文段长度MSS选项、窗口扩大选项、时间戳选项（计算往返时间RTT，处理序号超范围的情况）、选择确认选项</p>
+<h1 id="第6章-应用层">第6章 应用层</h1>
+<h2 id="61-应用层概述">6.1 应用层概述</h2>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220222150200269.png" alt="image-20220222150200269">
+
+</p>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220222150247501.png" alt="image-20220222150247501">
+
+</p>
+<h2 id="62-客户服务器方式和对等方式">6.2 客户/服务器方式和对等方式</h2>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220222150411463.png" alt="image-20220222150411463">
+
+</p>
+<h2 id="63-动态主机配置协议dhcp">6.3 动态主机配置协议DHCP</h2>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220222151827754.png" alt="image-20220222151827754">
+
+</p>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220222151905764.png" alt="image-20220222151905764">
+
+</p>
+<h2 id="64-域名系统dnsdomain-name-system">6.4 域名系统DNS(Domain Name System)</h2>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220222153928601.png" alt="image-20220222153928601">
+
+</p>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220222154000857.png" alt="image-20220222154000857">
+
+</p>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220222154058684.png" alt="image-20220222154058684">
+
+</p>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220222154122175.png" alt="image-20220222154122175">
+
+</p>
+<p>为了提高DNS的查询效率，并减轻根域名服务器的负荷和减少因特网上DNS查询报文的数量，在域名服务器和主机中广泛使用了<strong>高速缓存</strong>。</p>
+<p>DNS报文使用运输层的UDP协议封装，运输层<strong>端口号为53</strong>。</p>
+<h2 id="65-文件传送协议ftp">6.5 文件传送协议FTP</h2>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220222161515570.png" alt="image-20220222161515570">
+
+</p>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220222161543913.png" alt="image-20220222161543913">
+
+</p>
+<h2 id="66-电子邮件">6.6 电子邮件</h2>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220222173318475.png" alt="image-20220222173318475">
+
+</p>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220222173351178.png" alt="image-20220222173351178">
+
+</p>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220222173528597.png" alt="image-20220222173528597">
+
+</p>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220222173558645.png" alt="image-20220222173558645">
+
+</p>
+<h2 id="67-万维网www">6.7 万维网WWW</h2>
+<p>万维网是运行在因特网上的一个<strong>分布式应用</strong>。</p>
+<p>万维网利用网页之间的<strong>超链接</strong>将不同网站的网页链接成一张逻辑上的信息网。</p>
+<p>万维网使用<strong>统一资源定位符URL</strong>来指明因特网上任何种类“资源”的位置。URL一般形式：<strong>&lt;协议&gt;://&lt;主机&gt;:&lt;端口&gt;/&lt;路径&gt;</strong></p>
+<p>万维网文档</p>
+<ul>
+<li>超文本标记语言HTML，使用多种标签来描述网页的结构和内容</li>
+<li>层叠样式表CSS，从审美的角度来描述网页的样式</li>
+<li>JavaScript，一种脚本语言，控制网页行为</li>
+</ul>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220223135217357.png" alt="image-20220223135217357">
+
+</p>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220223135245364.png" alt="image-20220223135245364">
+
+</p>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220223135322233.png" alt="image-20220223135322233">
+
+</p>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220223135804011.png" alt="image-20220223135804011">
+
+</p>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220223135834276.png" alt="image-20220223135834276">
+
+</p>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220223135913212.png" alt="image-20220223135913212">
+
+</p>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220223140106001.png" alt="image-20220223140106001">
+
+</p>
+<p>Cookie是一种<strong>对无状态的HTTP进行状态化</strong>的技术。</p>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220223140250457.png" alt="image-20220223140250457">
+
+</p>
+<p>
+  <img src="/img/2022-03-23-internet/image-20220223140415470.png" alt="image-20220223140415470">
+
+</p>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2022/03/09/mathEquationBlog/" data-toggle="tooltip" data-placement="top" title="vuepress配置博客支持数学公式">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2022/03/23/Ubuntu/" data-toggle="tooltip" data-placement="top" title="Ubuntu下创建快捷方式">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/linux" title="linux">
+                            linux
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/rust" title="rust">
+                            rust
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E5%8D%9A%E5%AE%A2" title="博客">
+                            博客
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E5%BC%82%E6%AD%A5" title="异步">
+                            异步
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%BE%AE%E5%88%86%E6%96%B9%E7%A8%8B%E6%95%B0%E5%80%BC%E8%A7%A3" title="微分方程数值解">
+                            微分方程数值解
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E5%80%BC%E5%88%86%E6%9E%90" title="数值分析">
+                            数值分析
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8" title="服务器">
+                            服务器
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%AC%94%E8%AE%B0" title="笔记">
+                            笔记
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E7%AE%97%E6%B3%95" title="算法">
+                            算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E9%9D%A2%E8%AF%95" title="面试">
+                            面试
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://magiconch.github.io/">小旱獭的QQ空间</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:wenjinsmail@163.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/wenjin1997">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="Wenjin Blog" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; Wenjin Blog 2022
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="Wenjin Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://wenjin1997.github.io/img/home-bg-stars.jpg">
+    <meta property="twitter:image" content="https://wenjin1997.github.io/img/home-bg-stars.jpg" />
+    
+
+    
+    <meta name="title" content="Rust元编程" />
+    <meta property="og:title" content="Rust元编程" />
+    <meta property="twitter:title" content="Rust元编程" />
+    
+
+    
+    <meta name="description" content="">
+    <meta property="og:description" content="" />
+    <meta property="twitter:description" content="" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Rust元编程 | 文进的博客</title>
+
+    <link rel="canonical" href="/2022/07/05/Rust-meta-programming/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    <script src="/js/lazysizes.min.js"></script>
+
+    
+    
+
+</head>
+
+
+<script type="text/javascript"
+        async
+        src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Wenjin Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/math">math</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/reading">reading</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/about/">ABOUT</a></li>
+                    
+		            <li>
+                        <a href="/search"><i class="fa fa-search"></i></a>
+		           </li>
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/home-bg-stars.jpg')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/rust" title="Rust">
+                            Rust
+                        </a>
+                        
+                        <a class="tag" href="/tags/%E5%85%83%E7%BC%96%E7%A8%8B" title="元编程">
+                            元编程
+                        </a>
+                        
+                    </div>
+                    <h1>Rust元编程</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                      &#34;谢文进&#34;
+                             
+                            on 
+                            Tuesday, July 5, 2022
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <p>元编程技术大概分为：</p>
+<ul>
+<li>简单文本替换</li>
+<li>类型模板</li>
+<li>反射</li>
+<li>语法扩展</li>
+<li>代码自动生成</li>
+</ul>
+<p>Rust语言通过反射和AST语法扩展两种手段来支持元编程。</p>
+<h2 id="反射">反射</h2>
+<p>反射机制一般是指程序自我访问、检测和修改其自身状态或行为的能力。Rust标准库提供了<a href="https://rustwiki.org/zh-CN/std/any/trait.Any.html">std::any::Any</a>来支持运行时反射。可以先看下代码结构：</p>
+<p>
+  <img src="/img/2022-07-05-Rust-meta-programming/any-struct.png" alt="any-struct">
+
+</p>
+<p><code>Any</code>定义：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">#[stable(feature = </span><span style="color:#f1fa8c">&#34;rust1&#34;</span><span style="color:#ff79c6">, since = </span><span style="color:#f1fa8c">&#34;1.0.0&#34;</span><span style="color:#ff79c6">)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[cfg_attr(not(test), rustc_diagnostic_item = </span><span style="color:#f1fa8c">&#34;Any&#34;</span><span style="color:#ff79c6">)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">trait</span> Any: <span style="color:#ff79c6">&#39;</span><span style="color:#8be9fd;font-style:italic">static</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// Gets the `TypeId` of `self`.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// # Examples
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// ```
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// use std::any::{Any, TypeId};
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// fn is_string(s: &amp;dyn Any) -&gt; bool {
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///     TypeId::of::&lt;String&gt;() == s.type_id()
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// }
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// assert_eq!(is_string(&amp;0), false);
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// assert_eq!(is_string(&amp;&#34;cookie monster&#34;.to_string()), true);
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// ```
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#ff79c6">#[stable(feature = </span><span style="color:#f1fa8c">&#34;get_type_id&#34;</span><span style="color:#ff79c6">, since = </span><span style="color:#f1fa8c">&#34;1.34.0&#34;</span><span style="color:#ff79c6">)]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">type_id</span>(<span style="color:#ff79c6">&amp;</span>self) -&gt; <span style="color:#50fa7b">TypeId</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[stable(feature = </span><span style="color:#f1fa8c">&#34;rust1&#34;</span><span style="color:#ff79c6">, since = </span><span style="color:#f1fa8c">&#34;1.0.0&#34;</span><span style="color:#ff79c6">)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">impl</span><span style="color:#ff79c6">&lt;</span>T: <span style="color:#ff79c6">&#39;</span><span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#ff79c6">+</span> <span style="color:#ff79c6">?</span><span style="color:#8be9fd;font-style:italic">Sized</span><span style="color:#ff79c6">&gt;</span> Any <span style="color:#ff79c6">for</span> T {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">type_id</span>(<span style="color:#ff79c6">&amp;</span>self) -&gt; <span style="color:#50fa7b">TypeId</span> {
+</span></span><span style="display:flex;"><span>        TypeId::of::<span style="color:#ff79c6">&lt;</span>T<span style="color:#ff79c6">&gt;</span>()
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li>该 trait 加上了<code>'static</code> 生命周期限定，意味着该 trait 不能被非静态生命周期的类型实现。 <code>impl&lt;T: 'static + ?Sized&gt; Any for T</code> 表示 Rust 中满足 <code>'static</code> 生命周期的类型均实现了它。</li>
+<li><code>type_id</code>方法返回 <code>TypeId</code> 类型，代表 Rust 中某个类型的全局唯一标识，它是在编译时生成的。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug, Hash)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[stable(feature = </span><span style="color:#f1fa8c">&#34;rust1&#34;</span><span style="color:#ff79c6">, since = </span><span style="color:#f1fa8c">&#34;1.0.0&#34;</span><span style="color:#ff79c6">)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">TypeId</span> {
+</span></span><span style="display:flex;"><span>    t: <span style="color:#8be9fd">u64</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">impl</span> TypeId {
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// Returns the `TypeId` of the type this generic function has been
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// instantiated with.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// # Examples
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// ```
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// use std::any::{Any, TypeId};
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// fn is_string&lt;T: ?Sized + Any&gt;(_s: &amp;T) -&gt; bool {
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///     TypeId::of::&lt;String&gt;() == TypeId::of::&lt;T&gt;()
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// }
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// assert_eq!(is_string(&amp;0), false);
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// assert_eq!(is_string(&amp;&#34;cookie monster&#34;.to_string()), true);
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// ```
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#ff79c6">#[must_use]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">#[stable(feature = </span><span style="color:#f1fa8c">&#34;rust1&#34;</span><span style="color:#ff79c6">, since = </span><span style="color:#f1fa8c">&#34;1.0.0&#34;</span><span style="color:#ff79c6">)]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">#[rustc_const_unstable(feature = </span><span style="color:#f1fa8c">&#34;const_type_id&#34;</span><span style="color:#ff79c6">, issue = </span><span style="color:#f1fa8c">&#34;77125&#34;</span><span style="color:#ff79c6">)]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">const</span> <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">of</span><span style="color:#ff79c6">&lt;</span>T: <span style="color:#ff79c6">?</span><span style="color:#8be9fd;font-style:italic">Sized</span> <span style="color:#ff79c6">+</span> <span style="color:#ff79c6">&#39;</span><span style="color:#8be9fd;font-style:italic">static</span><span style="color:#ff79c6">&gt;</span>() -&gt; <span style="color:#50fa7b">TypeId</span> {
+</span></span><span style="display:flex;"><span>        TypeId { t: <span style="color:#50fa7b">intrinsics</span>::type_id::<span style="color:#ff79c6">&lt;</span>T<span style="color:#ff79c6">&gt;</span>() }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li>每个 <code>TypeId</code> 都是一个“黑盒”，不能检查其内部内容，但是允许复制、比较、打印等操作。<code>TypeId</code> 当前仅适用于归因于 <code>'static</code> 的类型，但是可以在 future 中消除此限制。</li>
+</ul>
+<h3 id="通过-is-函数判断类型">通过 is 函数判断类型</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">impl</span> <span style="color:#ff79c6">dyn</span> Any {
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// Returns `true` if the inner type is the same as `T`.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// # Examples
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// ```
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// use std::any::Any;
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// fn is_string(s: &amp;dyn Any) {
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///     if s.is::&lt;String&gt;() {
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///         println!(&#34;It&#39;s a string!&#34;);
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///     } else {
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///         println!(&#34;Not a string...&#34;);
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///     }
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// }
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// is_string(&amp;0);
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// is_string(&amp;&#34;cookie monster&#34;.to_string());
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// ```
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#ff79c6">#[stable(feature = </span><span style="color:#f1fa8c">&#34;rust1&#34;</span><span style="color:#ff79c6">, since = </span><span style="color:#f1fa8c">&#34;1.0.0&#34;</span><span style="color:#ff79c6">)]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">#[inline]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">is</span><span style="color:#ff79c6">&lt;</span>T: <span style="color:#50fa7b">Any</span><span style="color:#ff79c6">&gt;</span>(<span style="color:#ff79c6">&amp;</span>self) -&gt; <span style="color:#8be9fd">bool</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">// Get `TypeId` of the type this function is instantiated with.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>        <span style="color:#8be9fd;font-style:italic">let</span> t <span style="color:#ff79c6">=</span> TypeId::of::<span style="color:#ff79c6">&lt;</span>T<span style="color:#ff79c6">&gt;</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">// Get `TypeId` of the type in the trait object (`self`).
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>        <span style="color:#8be9fd;font-style:italic">let</span> concrete <span style="color:#ff79c6">=</span> self.type_id();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">// Compare both `TypeId`s on equality.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>        t <span style="color:#ff79c6">==</span> concrete
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li>因为 <code>Any</code> 是一个 trait ，所以这里的 <code>is</code>方法的 <code>&amp;self</code> 必然是一个 trait 对象。</li>
+<li><code>TypeId::of</code> 函数用来获取类型 <code>T</code> 的全局唯一标识符 <code>t</code> 。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#f1fa8c">//! 代码清单 12-3: Any 中实现 is 方法源码示意
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">//! 《Rust编程之道》P436 
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">use</span> std::any::{Any, TypeId};
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">enum</span> <span style="color:#50fa7b">E</span> { H, He, Li }
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">S</span> { x: <span style="color:#8be9fd">u8</span>, y: <span style="color:#8be9fd">u8</span>, z: <span style="color:#8be9fd">u16</span> }
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[test]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> v1 <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0xc0ffee_</span><span style="color:#ff79c6">u32</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> v2 <span style="color:#ff79c6">=</span> E::He;
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> v3 <span style="color:#ff79c6">=</span> S { x: <span style="color:#bd93f9">0xde</span>, y: <span style="color:#bd93f9">0xad</span>, z: <span style="color:#bd93f9">0xbeef</span> };
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> v4 <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34;rust&#34;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> a: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">dyn</span> Any;
+</span></span><span style="display:flex;"><span>    a <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">&amp;</span>v1;
+</span></span><span style="display:flex;"><span>    assert!(a.is::<span style="color:#ff79c6">&lt;</span><span style="color:#8be9fd">u32</span><span style="color:#ff79c6">&gt;</span>());
+</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;{:?}&#34;</span>, TypeId::of::<span style="color:#ff79c6">&lt;</span><span style="color:#8be9fd">u32</span><span style="color:#ff79c6">&gt;</span>());
+</span></span><span style="display:flex;"><span>    a <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">&amp;</span>v2;
+</span></span><span style="display:flex;"><span>    assert!(a.is::<span style="color:#ff79c6">&lt;</span>E<span style="color:#ff79c6">&gt;</span>());
+</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;{:?}&#34;</span>, TypeId::of::<span style="color:#ff79c6">&lt;</span>E<span style="color:#ff79c6">&gt;</span>());
+</span></span><span style="display:flex;"><span>    a <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">&amp;</span>v3;
+</span></span><span style="display:flex;"><span>    assert!(a.is::<span style="color:#ff79c6">&lt;</span>S<span style="color:#ff79c6">&gt;</span>());
+</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;{:?}&#34;</span>, TypeId::of::<span style="color:#ff79c6">&lt;</span>S<span style="color:#ff79c6">&gt;</span>());
+</span></span><span style="display:flex;"><span>    a <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">&amp;</span>v4;
+</span></span><span style="display:flex;"><span>    assert!(a.is::<span style="color:#ff79c6">&lt;&amp;</span><span style="color:#8be9fd">str</span><span style="color:#ff79c6">&gt;</span>());
+</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;{:?}&#34;</span>, TypeId::of::<span style="color:#ff79c6">&lt;&amp;</span><span style="color:#8be9fd">str</span><span style="color:#ff79c6">&gt;</span>());
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>输出结果：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>TypeId <span style="color:#ff79c6">{</span> t: <span style="color:#bd93f9">18349839772473174998</span> <span style="color:#ff79c6">}</span>
+</span></span><span style="display:flex;"><span>TypeId <span style="color:#ff79c6">{</span> t: <span style="color:#bd93f9">5500635625788377815</span> <span style="color:#ff79c6">}</span>
+</span></span><span style="display:flex;"><span>TypeId <span style="color:#ff79c6">{</span> t: <span style="color:#bd93f9">4485408004367722735</span> <span style="color:#ff79c6">}</span>
+</span></span><span style="display:flex;"><span>TypeId <span style="color:#ff79c6">{</span> t: <span style="color:#bd93f9">13307641874416792075</span> <span style="color:#ff79c6">}</span>
+</span></span></code></pre></div><ul>
+<li><code>TypeId</code> 是一个结构体，其字段 <code>t</code> 存储了一串数字，这就是全局唯一类型标识符，实际上是 u64 类型。代表唯一标识符的这串数字，在不同的编译环境中，产生的结果是不同的。所以在实际开发中，最好不要将 <code>TypeId</code> 暴露到外部接口中被当作依赖。</li>
+</ul>
+<h3 id="转换到具体类型">转换到具体类型</h3>
+<p>Any 提供了 <code>downcast_ref</code> 和 <code>downcast_mut</code> 两个成对的泛型方法，用于将泛型T向下转换为具体的类型，返回值分别是 <code>Option&lt;&amp;T&gt;</code> 和 <code>Option&lt;&amp;mut T&gt;</code> 类型。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">impl</span> <span style="color:#ff79c6">dyn</span> Any {
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// Returns some reference to the inner value if it is of type `T`, or
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// `None` if it isn&#39;t.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// # Examples
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// ```
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// use std::any::Any;
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// fn print_if_string(s: &amp;dyn Any) {
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///     if let Some(string) = s.downcast_ref::&lt;String&gt;() {
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///         println!(&#34;It&#39;s a string({}): &#39;{}&#39;&#34;, string.len(), string);
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///     } else {
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///         println!(&#34;Not a string...&#34;);
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///     }
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// }
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// print_if_string(&amp;0);
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// print_if_string(&amp;&#34;cookie monster&#34;.to_string());
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// ```
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#ff79c6">#[stable(feature = </span><span style="color:#f1fa8c">&#34;rust1&#34;</span><span style="color:#ff79c6">, since = </span><span style="color:#f1fa8c">&#34;1.0.0&#34;</span><span style="color:#ff79c6">)]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">#[inline]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">downcast_ref</span><span style="color:#ff79c6">&lt;</span>T: <span style="color:#50fa7b">Any</span><span style="color:#ff79c6">&gt;</span>(<span style="color:#ff79c6">&amp;</span>self) -&gt; <span style="color:#8be9fd;font-style:italic">Option</span><span style="color:#ff79c6">&lt;&amp;</span>T<span style="color:#ff79c6">&gt;</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">if</span> self.is::<span style="color:#ff79c6">&lt;</span>T<span style="color:#ff79c6">&gt;</span>() {
+</span></span><span style="display:flex;"><span>            <span style="color:#6272a4">// SAFETY: just checked whether we are pointing to the correct type, and we can rely on
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>            <span style="color:#6272a4">// that check for memory safety because we have implemented Any for all types; no other
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>            <span style="color:#6272a4">// impls can exist as they would conflict with our impl.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>            <span style="color:#ff79c6">unsafe</span> { <span style="color:#8be9fd;font-style:italic">Some</span>(self.downcast_ref_unchecked()) }
+</span></span><span style="display:flex;"><span>        } <span style="color:#ff79c6">else</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">None</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// Returns some mutable reference to the inner value if it is of type `T`, or
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// `None` if it isn&#39;t.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// # Examples
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// ```
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// use std::any::Any;
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// fn modify_if_u32(s: &amp;mut dyn Any) {
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///     if let Some(num) = s.downcast_mut::&lt;u32&gt;() {
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///         *num = 42;
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///     }
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// }
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// let mut x = 10u32;
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// let mut s = &#34;starlord&#34;.to_string();
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// modify_if_u32(&amp;mut x);
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// modify_if_u32(&amp;mut s);
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// assert_eq!(x, 42);
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// assert_eq!(&amp;s, &#34;starlord&#34;);
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// ```
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#ff79c6">#[stable(feature = </span><span style="color:#f1fa8c">&#34;rust1&#34;</span><span style="color:#ff79c6">, since = </span><span style="color:#f1fa8c">&#34;1.0.0&#34;</span><span style="color:#ff79c6">)]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">#[inline]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">downcast_mut</span><span style="color:#ff79c6">&lt;</span>T: <span style="color:#50fa7b">Any</span><span style="color:#ff79c6">&gt;</span>(<span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">mut</span> self) -&gt; <span style="color:#8be9fd;font-style:italic">Option</span><span style="color:#ff79c6">&lt;&amp;</span><span style="color:#ff79c6">mut</span> T<span style="color:#ff79c6">&gt;</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">if</span> self.is::<span style="color:#ff79c6">&lt;</span>T<span style="color:#ff79c6">&gt;</span>() {
+</span></span><span style="display:flex;"><span>            <span style="color:#6272a4">// SAFETY: just checked whether we are pointing to the correct type, and we can rely on
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>            <span style="color:#6272a4">// that check for memory safety because we have implemented Any for all types; no other
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>            <span style="color:#6272a4">// impls can exist as they would conflict with our impl.
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>            <span style="color:#ff79c6">unsafe</span> { <span style="color:#8be9fd;font-style:italic">Some</span>(self.downcast_mut_unchecked()) }
+</span></span><span style="display:flex;"><span>        } <span style="color:#ff79c6">else</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">None</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="非静态生命周期类型">非静态生命周期类型</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#f1fa8c">//! 代码清单 12-9: 非静态生命周期类型没有实现 Any
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span><span style="color:#ff79c6">use</span> std::any::Any;
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">Unstatic</span><span style="color:#ff79c6">&lt;&#39;</span><span style="color:#50fa7b">a</span><span style="color:#ff79c6">&gt;</span> { x: <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&#39;</span><span style="color:#50fa7b">a</span> <span style="color:#8be9fd">i32</span> }
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[test]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> a <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">42</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> v <span style="color:#ff79c6">=</span> Unstatic { x: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">a</span> };
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> any: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">dyn</span> Any;
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// any = &amp;v; // 编译错误
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>}
+</span></span></code></pre></div><ul>
+<li>带引用字段的结构体 <code>Unstatic&lt;'a&gt;</code> ，其生命周期不是静态的，编译会报错。</li>
+</ul>
+<p>修改：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">#![allow(unused)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">use</span> std::any::Any;
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">UnStatic</span><span style="color:#ff79c6">&lt;&#39;</span><span style="color:#50fa7b">a</span><span style="color:#ff79c6">&gt;</span> { x: <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&#39;</span><span style="color:#50fa7b">a</span> <span style="color:#8be9fd">i32</span> }
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">static</span> ANSWER: <span style="color:#8be9fd">i32</span> <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">42</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> v <span style="color:#ff79c6">=</span> UnStatic { x: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">ANSWER</span> };
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> a: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">dyn</span> Any;
+</span></span><span style="display:flex;"><span>    a <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">&amp;</span>v;
+</span></span><span style="display:flex;"><span>    assert!(a.is::<span style="color:#ff79c6">&lt;</span>UnStatic<span style="color:#ff79c6">&gt;</span>());
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="any-的应用">Any 的应用</h3>
+<ul>
+<li><a href="https://github.com/osohq/oso/blob/main/languages/rust/oso/src/host/class.rs">oso库应用</a></li>
+<li><a href="https://github.com/bevyengine/bevy/blob/main/crates/bevy_reflect/src/lib.rs">bevy_reflect库应用</a></li>
+</ul>
+<h3 id="remark">Remark</h3>
+<p>在2018 Edition 中，以下语句不会报错：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> a: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">Any</span>;   			<span style="color:#6272a4">// 2018 Edition Ok
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> a: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">dyn</span> Any;   	<span style="color:#6272a4">// 2018 Edition Ok
+</span></span></span></code></pre></div><p>但是在2021 Edition中，必须加上 <code>dyn</code> 。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> a: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">Any</span>; 			<span style="color:#6272a4">// 2021 Edition Error: trait objects must include the `dyn` keyword
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> a: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">dyn</span> Any; 	<span style="color:#6272a4">// 2021 Edition Ok
+</span></span></span></code></pre></div><h2 id="宏系统">宏系统</h2>
+<p>Rust编译过程：</p>
+<p>
+  <img src="/img/2022-07-05-Rust-meta-programming/compile-process.png" alt="compile-process">
+
+</p>
+<h3 id="声明宏">声明宏</h3>
+<p>宏展开命令： cargo rustc – -Z unstable-options –pretty=expanded</p>
+<p>示例1:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">#![allow(unused)]</span>
+</span></span><span style="display:flex;"><span>macro_rules! unless {
+</span></span><span style="display:flex;"><span>      (<span style="color:#ff79c6">$arg</span>:<span style="color:#50fa7b">expr</span>, <span style="color:#ff79c6">$branch</span>:<span style="color:#50fa7b">expr</span>) <span style="color:#ff79c6">=&gt;</span> ( <span style="color:#ff79c6">if</span> <span style="color:#ff79c6">!</span><span style="color:#ff79c6">$arg</span> { <span style="color:#ff79c6">$branch</span> };);
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">cmp</span>(a: <span style="color:#8be9fd">i32</span>, b: <span style="color:#8be9fd">i32</span>) {
+</span></span><span style="display:flex;"><span>      unless<span style="color:#ff79c6">!</span>( a <span style="color:#ff79c6">&gt;</span> b, {
+</span></span><span style="display:flex;"><span>          println!(<span style="color:#f1fa8c">&#34;{} &lt; {}&#34;</span>, a, b);
+</span></span><span style="display:flex;"><span>      });
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">main</span>() {
+</span></span><span style="display:flex;"><span>      <span style="color:#8be9fd;font-style:italic">let</span> (a, b) <span style="color:#ff79c6">=</span> (<span style="color:#bd93f9">1</span>, <span style="color:#bd93f9">2</span>);
+</span></span><span style="display:flex;"><span>      cmp(a, b);
+</span></span><span style="display:flex;"><span>  }
+</span></span></code></pre></div><p>支持token类型：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>item — an item, like a <span style="color:#ff79c6">function</span>, struct, module, etc.
+</span></span><span style="display:flex;"><span>block — a block <span style="color:#ff79c6">(</span>i.e. a block of statements and/or an expression, surrounded by braces<span style="color:#ff79c6">)</span>
+</span></span><span style="display:flex;"><span>stmt — a statement
+</span></span><span style="display:flex;"><span>pat — a pattern
+</span></span><span style="display:flex;"><span>expr — an expression
+</span></span><span style="display:flex;"><span>ty — a <span style="color:#8be9fd;font-style:italic">type</span>
+</span></span><span style="display:flex;"><span>ident — an identifier 标识符
+</span></span><span style="display:flex;"><span>path — a path <span style="color:#ff79c6">(</span>e.g., foo, ::std::mem::replace, transmute::&lt;_, int&gt;, …<span style="color:#ff79c6">)</span>
+</span></span><span style="display:flex;"><span>meta — a meta item; the things that go inside <span style="color:#6272a4">#[...] and #![...] attributes</span>
+</span></span><span style="display:flex;"><span>tt — a single token tree
+</span></span><span style="display:flex;"><span>vis — a possibly empty Visibility qualifier
+</span></span><span style="display:flex;"><span>lifetime — 指代声明周期参数
+</span></span></code></pre></div><p>hashmap 1.0</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span>macro_rules! hashmap {
+</span></span><span style="display:flex;"><span>    (<span style="color:#ff79c6">$($key</span>:<span style="color:#50fa7b">expr</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#ff79c6">$value</span>:<span style="color:#50fa7b">expr</span>), <span style="color:#ff79c6">*</span>) <span style="color:#ff79c6">=&gt;</span> {
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> _map <span style="color:#ff79c6">=</span> ::std::collections::HashMap::new();
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">$(</span>
+</span></span><span style="display:flex;"><span>                _map.insert(<span style="color:#ff79c6">$key</span>, <span style="color:#ff79c6">$value</span>);
+</span></span><span style="display:flex;"><span>            )<span style="color:#ff79c6">*</span>
+</span></span><span style="display:flex;"><span>            _map
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[test]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> map <span style="color:#ff79c6">=</span> hashmap<span style="color:#ff79c6">!</span>{
+</span></span><span style="display:flex;"><span>        <span style="color:#f1fa8c">&#34;a&#34;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">1</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f1fa8c">&#34;b&#34;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">2</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">// &#34;c&#34; =&gt; 3, // 会报错，不支持结尾有逗号
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    };
+</span></span><span style="display:flex;"><span>    assert_eq!(map[<span style="color:#f1fa8c">&#34;a&#34;</span>], <span style="color:#bd93f9">1</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>hashmap 2.0：可以匹配结尾有逗号</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span>macro_rules! hashmap {
+</span></span><span style="display:flex;"><span>    (<span style="color:#ff79c6">$($key</span>:<span style="color:#50fa7b">expr</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#ff79c6">$value</span>:<span style="color:#50fa7b">expr</span>,)<span style="color:#ff79c6">*</span>) <span style="color:#ff79c6">=&gt;</span> 
+</span></span><span style="display:flex;"><span>        { hashmap<span style="color:#ff79c6">!</span>(<span style="color:#ff79c6">$($key</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#ff79c6">$value</span>),<span style="color:#ff79c6">*</span>) };
+</span></span><span style="display:flex;"><span>    (<span style="color:#ff79c6">$($key</span>:<span style="color:#50fa7b">expr</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#ff79c6">$value</span>:<span style="color:#50fa7b">expr</span>),<span style="color:#ff79c6">*</span>) <span style="color:#ff79c6">=&gt;</span> {
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> _map <span style="color:#ff79c6">=</span> ::std::collections::HashMap::new();
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">$(</span>
+</span></span><span style="display:flex;"><span>                _map.insert(<span style="color:#ff79c6">$key</span>, <span style="color:#ff79c6">$value</span>);
+</span></span><span style="display:flex;"><span>            )<span style="color:#ff79c6">*</span>
+</span></span><span style="display:flex;"><span>            _map
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[test]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> map <span style="color:#ff79c6">=</span> hashmap<span style="color:#ff79c6">!</span>{
+</span></span><span style="display:flex;"><span>        <span style="color:#f1fa8c">&#34;a&#34;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">1</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f1fa8c">&#34;b&#34;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">2</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f1fa8c">&#34;c&#34;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">3</span>,
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>    assert_eq!(map[<span style="color:#f1fa8c">&#34;a&#34;</span>], <span style="color:#bd93f9">1</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>hashmap 3.0</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span>macro_rules! hashmap {
+</span></span><span style="display:flex;"><span>    (<span style="color:#ff79c6">$($key</span>:<span style="color:#50fa7b">expr</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#ff79c6">$value</span>:<span style="color:#50fa7b">expr</span>),<span style="color:#ff79c6">*</span> <span style="color:#ff79c6">$(,</span>)<span style="color:#ff79c6">*</span>) <span style="color:#ff79c6">=&gt;</span> {
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> _map <span style="color:#ff79c6">=</span> ::std::collections::HashMap::new();
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">$(</span>
+</span></span><span style="display:flex;"><span>                _map.insert(<span style="color:#ff79c6">$key</span>, <span style="color:#ff79c6">$value</span>);
+</span></span><span style="display:flex;"><span>            )<span style="color:#ff79c6">*</span>
+</span></span><span style="display:flex;"><span>            _map
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[test]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> map <span style="color:#ff79c6">=</span> hashmap<span style="color:#ff79c6">!</span>{
+</span></span><span style="display:flex;"><span>        <span style="color:#f1fa8c">&#34;a&#34;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">1</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f1fa8c">&#34;b&#34;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">2</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f1fa8c">&#34;c&#34;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">3</span>,
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>    assert_eq!(map[<span style="color:#f1fa8c">&#34;a&#34;</span>], <span style="color:#bd93f9">1</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>hashmap 4.0 ： 节省存储空间</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span>macro_rules! unit {
+</span></span><span style="display:flex;"><span>    (<span style="color:#ff79c6">$($x</span>:<span style="color:#50fa7b">tt</span>)<span style="color:#ff79c6">*</span>) <span style="color:#ff79c6">=&gt;</span> (());
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>macro_rules! count {
+</span></span><span style="display:flex;"><span>    (<span style="color:#ff79c6">$($key</span>:<span style="color:#50fa7b">expr</span>),<span style="color:#ff79c6">*</span>) <span style="color:#ff79c6">=&gt;</span> (<span style="color:#ff79c6">&lt;</span>[()]<span style="color:#ff79c6">&gt;</span>::len(<span style="color:#ff79c6">&amp;</span>[<span style="color:#ff79c6">$(</span>unit<span style="color:#ff79c6">!</span>(<span style="color:#ff79c6">$key</span>)),<span style="color:#ff79c6">*</span>]));
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>macro_rules! hashmap {
+</span></span><span style="display:flex;"><span>    (<span style="color:#ff79c6">$($key</span>:<span style="color:#50fa7b">expr</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#ff79c6">$value</span>:<span style="color:#50fa7b">expr</span>),<span style="color:#ff79c6">*</span> <span style="color:#ff79c6">$(,</span>)<span style="color:#ff79c6">*</span>) <span style="color:#ff79c6">=&gt;</span> {
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> _cap <span style="color:#ff79c6">=</span> count<span style="color:#ff79c6">!</span>(<span style="color:#ff79c6">$($key</span>),<span style="color:#ff79c6">*</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> _map 
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">=</span> ::std::collections::HashMap::with_capacity(_cap);
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">$(</span>
+</span></span><span style="display:flex;"><span>                _map.insert(<span style="color:#ff79c6">$key</span>, <span style="color:#ff79c6">$value</span>);
+</span></span><span style="display:flex;"><span>            )<span style="color:#ff79c6">*</span>
+</span></span><span style="display:flex;"><span>            _map
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[test]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> map <span style="color:#ff79c6">=</span> hashmap<span style="color:#ff79c6">!</span>{
+</span></span><span style="display:flex;"><span>        <span style="color:#f1fa8c">&#34;a&#34;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">1</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f1fa8c">&#34;b&#34;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">2</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f1fa8c">&#34;c&#34;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">3</span>,
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>    assert_eq!(map[<span style="color:#f1fa8c">&#34;a&#34;</span>], <span style="color:#bd93f9">1</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>hashmap 5.0：将声明宏放在一起</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span>macro_rules! hashmap {
+</span></span><span style="display:flex;"><span>    (<span style="color:#ff79c6">@</span>unit <span style="color:#ff79c6">$($x</span>:<span style="color:#50fa7b">tt</span>)<span style="color:#ff79c6">*</span>) <span style="color:#ff79c6">=&gt;</span> (());
+</span></span><span style="display:flex;"><span>    (<span style="color:#ff79c6">@</span>count <span style="color:#ff79c6">$($rest</span>:<span style="color:#50fa7b">expr</span>),<span style="color:#ff79c6">*</span>) <span style="color:#ff79c6">=&gt;</span> (<span style="color:#ff79c6">&lt;</span>[()]<span style="color:#ff79c6">&gt;</span>::len(<span style="color:#ff79c6">&amp;</span>[<span style="color:#ff79c6">$(</span>hashmap<span style="color:#ff79c6">!</span>(<span style="color:#ff79c6">@</span>unit <span style="color:#ff79c6">$rest</span>)),<span style="color:#ff79c6">*</span>]));
+</span></span><span style="display:flex;"><span>    (<span style="color:#ff79c6">$($key</span>:<span style="color:#50fa7b">expr</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#ff79c6">$value</span>:<span style="color:#50fa7b">expr</span>),<span style="color:#ff79c6">*</span> <span style="color:#ff79c6">$(,</span>)<span style="color:#ff79c6">*</span>) <span style="color:#ff79c6">=&gt;</span> {
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> _cap <span style="color:#ff79c6">=</span> hashmap<span style="color:#ff79c6">!</span>(<span style="color:#ff79c6">@</span>count <span style="color:#ff79c6">$($key</span>),<span style="color:#ff79c6">*</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> _map 
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">=</span> ::std::collections::HashMap::with_capacity(_cap);
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">$(</span>
+</span></span><span style="display:flex;"><span>                _map.insert(<span style="color:#ff79c6">$key</span>, <span style="color:#ff79c6">$value</span>);
+</span></span><span style="display:flex;"><span>            )<span style="color:#ff79c6">*</span>
+</span></span><span style="display:flex;"><span>            _map
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[test]</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> map <span style="color:#ff79c6">=</span> hashmap<span style="color:#ff79c6">!</span>{
+</span></span><span style="display:flex;"><span>        <span style="color:#f1fa8c">&#34;a&#34;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">1</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f1fa8c">&#34;b&#34;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">2</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f1fa8c">&#34;c&#34;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">3</span>,
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>    assert_eq!(map[<span style="color:#f1fa8c">&#34;a&#34;</span>], <span style="color:#bd93f9">1</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>示例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span>  macro_rules! sum {
+</span></span><span style="display:flex;"><span>      (<span style="color:#ff79c6">$e</span>:<span style="color:#50fa7b">expr</span>) <span style="color:#ff79c6">=&gt;</span> ({
+</span></span><span style="display:flex;"><span>          <span style="color:#8be9fd;font-style:italic">let</span> a <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">2</span>;
+</span></span><span style="display:flex;"><span>          <span style="color:#ff79c6">$e</span> <span style="color:#ff79c6">+</span> a
+</span></span><span style="display:flex;"><span>      })
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">main</span>(){
+</span></span><span style="display:flex;"><span>      <span style="color:#6272a4">// error[E0425]: cannot find value `a` in this scope
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>      <span style="color:#8be9fd;font-style:italic">let</span> four <span style="color:#ff79c6">=</span> sum<span style="color:#ff79c6">!</span>(a);
+</span></span><span style="display:flex;"><span>  }
+</span></span></code></pre></div><ul>
+<li>注意这里会报错，宏里面的 <code>a</code> 变量是局部的。</li>
+</ul>
+<h3 id="过程宏">过程宏</h3>
+<p>过程宏三件套：</p>
+<ul>
+<li><a href="https://github.com/dtolnay/syn">syn</a></li>
+<li><a href="https://github.com/dtolnay/quote">quote</a></li>
+<li><a href="https://github.com/alexcrichton/proc-macro2">proc-macro2</a></li>
+</ul>
+<p>介绍：</p>
+<ul>
+<li>Syn is a parsing library for parsing a stream of Rust tokens into a syntax tree of Rust source code. 将 token 流转换成语法树。</li>
+<li>quote: This crate provides the <a href="https://docs.rs/quote/1.0/quote/macro.quote.html"><code>quote!</code></a> macro for turning Rust syntax tree data structures into tokens of source code. 将语法树转换成 token 源码。</li>
+<li>proc-macro2 比 proc-macro 更加的灵活。TokenStream API接口。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span> <span style="color:#6272a4">// find_by_or!{ Person -&gt; people::[name:String || company_name:String]   }
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">use</span> <span style="color:#ff79c6">super</span>::<span style="color:#ff79c6">*</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">DbOpByOrBy</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">pub</span> model: <span style="color:#50fa7b">Type</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">pub</span> table: <span style="color:#50fa7b">Ident</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">pub</span> bracket_token: <span style="color:#50fa7b">token</span>::Bracket,
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">pub</span> content: <span style="color:#50fa7b">FieldContentOr</span>,
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">FieldContentOr</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">pub</span> name1: <span style="color:#50fa7b">Ident</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">pub</span> ty1: <span style="color:#50fa7b">Type</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">pub</span> name2: <span style="color:#50fa7b">Ident</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">pub</span> ty2: <span style="color:#50fa7b">Type</span>,
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">impl</span> Parse <span style="color:#ff79c6">for</span> DbOpByOrBy {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">parse</span>(input: <span style="color:#50fa7b">ParseStream</span>) -&gt; <span style="color:#8be9fd;font-style:italic">Result</span><span style="color:#ff79c6">&lt;</span>Self<span style="color:#ff79c6">&gt;</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> content;
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> model: <span style="color:#50fa7b">Type</span> <span style="color:#ff79c6">=</span> input.parse()<span style="color:#ff79c6">?</span>;
+</span></span><span style="display:flex;"><span>            input.parse::<span style="color:#ff79c6">&lt;</span>Token<span style="color:#ff79c6">!</span>[-&gt;]<span style="color:#ff79c6">&gt;</span>()<span style="color:#ff79c6">?</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> table: <span style="color:#50fa7b">Ident</span> <span style="color:#ff79c6">=</span> input.parse()<span style="color:#ff79c6">?</span>;
+</span></span><span style="display:flex;"><span>            input.parse::<span style="color:#ff79c6">&lt;</span>Token<span style="color:#ff79c6">!</span>[::]<span style="color:#ff79c6">&gt;</span>()<span style="color:#ff79c6">?</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> bracket_token <span style="color:#ff79c6">=</span> bracketed<span style="color:#ff79c6">!</span>(content <span style="color:#ff79c6">in</span> input);
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> content <span style="color:#ff79c6">=</span> content.parse()<span style="color:#ff79c6">?</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">Ok</span>(DbOpByOrBy {
+</span></span><span style="display:flex;"><span>                model,
+</span></span><span style="display:flex;"><span>                table,
+</span></span><span style="display:flex;"><span>                bracket_token,
+</span></span><span style="display:flex;"><span>                content,
+</span></span><span style="display:flex;"><span>            })
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">impl</span> Parse <span style="color:#ff79c6">for</span> FieldContentOr {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">parse</span>(input: <span style="color:#50fa7b">ParseStream</span>) -&gt; <span style="color:#8be9fd;font-style:italic">Result</span><span style="color:#ff79c6">&lt;</span>Self<span style="color:#ff79c6">&gt;</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> name1: <span style="color:#50fa7b">Ident</span> <span style="color:#ff79c6">=</span> input.parse()<span style="color:#ff79c6">?</span>;
+</span></span><span style="display:flex;"><span>            input.parse::<span style="color:#ff79c6">&lt;</span>Token<span style="color:#ff79c6">!</span>[:]<span style="color:#ff79c6">&gt;</span>()<span style="color:#ff79c6">?</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> ty1: <span style="color:#50fa7b">Type</span> <span style="color:#ff79c6">=</span> input.parse()<span style="color:#ff79c6">?</span>;
+</span></span><span style="display:flex;"><span>            input.parse::<span style="color:#ff79c6">&lt;</span>Token<span style="color:#ff79c6">!</span>[<span style="color:#ff79c6">||</span>]<span style="color:#ff79c6">&gt;</span>()<span style="color:#ff79c6">?</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> name2: <span style="color:#50fa7b">Ident</span> <span style="color:#ff79c6">=</span> input.parse()<span style="color:#ff79c6">?</span>;
+</span></span><span style="display:flex;"><span>            input.parse::<span style="color:#ff79c6">&lt;</span>Token<span style="color:#ff79c6">!</span>[:]<span style="color:#ff79c6">&gt;</span>()<span style="color:#ff79c6">?</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> ty2: <span style="color:#50fa7b">Type</span> <span style="color:#ff79c6">=</span> input.parse()<span style="color:#ff79c6">?</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">Ok</span>(FieldContentOr {
+</span></span><span style="display:flex;"><span>                name1,
+</span></span><span style="display:flex;"><span>                ty1,
+</span></span><span style="display:flex;"><span>                name2,
+</span></span><span style="display:flex;"><span>                ty2,
+</span></span><span style="display:flex;"><span>            })
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// in lib.rs
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// find_by_or!{ Person -&gt; people::[name:String || company_name:String]   }
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">#[proc_macro]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">find_by_or</span>(input: <span style="color:#50fa7b">TokenStream</span>) -&gt; <span style="color:#50fa7b">TokenStream</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">let</span> DbOpByOrBy {
+</span></span><span style="display:flex;"><span>            model,
+</span></span><span style="display:flex;"><span>            table,
+</span></span><span style="display:flex;"><span>            bracket_token,
+</span></span><span style="display:flex;"><span>            content,
+</span></span><span style="display:flex;"><span>        } <span style="color:#ff79c6">=</span> parse_macro_input<span style="color:#ff79c6">!</span>(input <span style="color:#ff79c6">as</span> DbOpByOrBy);
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">let</span> (name1, name2) <span style="color:#ff79c6">=</span> (content.name1, content.name2);
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">let</span> (ty1, ty2) <span style="color:#ff79c6">=</span> (content.ty1, content.ty2);
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">let</span> fn_name <span style="color:#ff79c6">=</span> format!(<span style="color:#f1fa8c">&#34;find_by_{}_or_{}&#34;</span>, name1, name2);
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">let</span> fn_name <span style="color:#ff79c6">=</span> Ident::new(<span style="color:#ff79c6">&amp;</span>fn_name, proc_macro2::Span::call_site());
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">let</span> expanded <span style="color:#ff79c6">=</span> quote<span style="color:#ff79c6">!</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">impl</span> #model {
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">fn</span> #fn_name(conn: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">PgConnection</span>, #name1: #ty1, #name2: #ty2) -&gt; <span style="color:#50fa7b">QueryResult</span><span style="color:#ff79c6">&lt;</span>#model<span style="color:#ff79c6">&gt;</span> {
+</span></span><span style="display:flex;"><span>                    #table::table
+</span></span><span style="display:flex;"><span>                    .filter(#table::dsl::#name1.eq(#name1))
+</span></span><span style="display:flex;"><span>                    .or_filter(#table::dsl::#name2.eq(#name2))
+</span></span><span style="display:flex;"><span>                    .get_result(conn)
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        };
+</span></span><span style="display:flex;"><span>        TokenStream::from(expanded)
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div><h2 id="参考资料">参考资料</h2>
+<ul>
+<li>《Rust编程之道》</li>
+</ul>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2022/07/01/Operating-System/" data-toggle="tooltip" data-placement="top" title="现代操作系统笔记">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2022/07/05/Programming-Rust/" data-toggle="tooltip" data-placement="top" title="Programming Rust">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/linux" title="linux">
+                            linux
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/rust" title="rust">
+                            rust
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E5%8D%9A%E5%AE%A2" title="博客">
+                            博客
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E5%BC%82%E6%AD%A5" title="异步">
+                            异步
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%BE%AE%E5%88%86%E6%96%B9%E7%A8%8B%E6%95%B0%E5%80%BC%E8%A7%A3" title="微分方程数值解">
+                            微分方程数值解
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E5%80%BC%E5%88%86%E6%9E%90" title="数值分析">
+                            数值分析
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8" title="服务器">
+                            服务器
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%AC%94%E8%AE%B0" title="笔记">
+                            笔记
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E7%AE%97%E6%B3%95" title="算法">
+                            算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E9%9D%A2%E8%AF%95" title="面试">
+                            面试
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://magiconch.github.io/">小旱獭的QQ空间</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:wenjinsmail@163.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/wenjin1997">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="Wenjin Blog" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; Wenjin Blog 2022
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

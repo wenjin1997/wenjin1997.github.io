@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="Wenjin Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://wenjin1997.github.io/img/home-bg-stars.jpg">
+    <meta property="twitter:image" content="https://wenjin1997.github.io/img/home-bg-stars.jpg" />
+    
+
+    
+    <meta name="title" content="滑动窗口相关算法" />
+    <meta property="og:title" content="滑动窗口相关算法" />
+    <meta property="twitter:title" content="滑动窗口相关算法" />
+    
+
+    
+    <meta name="description" content="总结滑动窗口相关LeetCode题目。">
+    <meta property="og:description" content="总结滑动窗口相关LeetCode题目。" />
+    <meta property="twitter:description" content="总结滑动窗口相关LeetCode题目。" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>滑动窗口相关算法 | 文进的博客</title>
+
+    <link rel="canonical" href="/2022/05/07/Algorithms-sliding-window/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    <script src="/js/lazysizes.min.js"></script>
+
+    
+    
+
+</head>
+
+
+<script type="text/javascript"
+        async
+        src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Wenjin Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/math">math</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/reading">reading</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/about/">ABOUT</a></li>
+                    
+		            <li>
+                        <a href="/search"><i class="fa fa-search"></i></a>
+		           </li>
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/home-bg-stars.jpg')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/java" title="Java">
+                            Java
+                        </a>
+                        
+                        <a class="tag" href="/tags/%E7%AE%97%E6%B3%95" title="算法">
+                            算法
+                        </a>
+                        
+                        <a class="tag" href="/tags/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3" title="滑动窗口">
+                            滑动窗口
+                        </a>
+                        
+                    </div>
+                    <h1>滑动窗口相关算法</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                    &#34;谢文进&#34;
+                             
+                            on 
+                            Saturday, May 7, 2022
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <h2 id="滑动窗口">滑动窗口</h2>
+<p>滑动窗口模板：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#8be9fd">int</span> left <span style="color:#ff79c6">=</span> 0<span style="color:#ff79c6">,</span> right <span style="color:#ff79c6">=</span> 0<span style="color:#ff79c6">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">while</span> <span style="color:#ff79c6">(</span>right <span style="color:#ff79c6">&lt;</span> s<span style="color:#ff79c6">.</span><span style="color:#50fa7b">size</span><span style="color:#ff79c6">())</span> <span style="color:#ff79c6">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// 增大窗口
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    window<span style="color:#ff79c6">.</span><span style="color:#50fa7b">add</span><span style="color:#ff79c6">(</span>s<span style="color:#ff79c6">[</span>right<span style="color:#ff79c6">]);</span>
+</span></span><span style="display:flex;"><span>    right<span style="color:#ff79c6">++;</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">while</span> <span style="color:#ff79c6">(</span>window needs shrink<span style="color:#ff79c6">)</span> <span style="color:#ff79c6">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#6272a4">// 缩小窗口
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>        window<span style="color:#ff79c6">.</span><span style="color:#50fa7b">remove</span><span style="color:#ff79c6">(</span>s<span style="color:#ff79c6">[</span>left<span style="color:#ff79c6">]);</span>
+</span></span><span style="display:flex;"><span>        left<span style="color:#ff79c6">++;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">}</span>
+</span></span></code></pre></div><h2 id="209长度最小的子数组httpsleetcode-cncomproblemsminimum-size-subarray-sum"><a href="https://leetcode-cn.com/problems/minimum-size-subarray-sum/">209.长度最小的子数组</a></h2>
+<p>这道题HotStar一面考到了，用滑动窗口解决。这里写的是前缀和数组和滑动窗口来解决，
+其实也可以降低空间复杂度，直接用滑动窗口解决，一个变量来记子数组的和。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">Solution</span> <span style="color:#ff79c6">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// 前缀和数组 + 滑动窗口
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd">int</span> <span style="color:#50fa7b">minSubArrayLen</span><span style="color:#ff79c6">(</span><span style="color:#8be9fd">int</span> target<span style="color:#ff79c6">,</span> <span style="color:#8be9fd">int</span><span style="color:#ff79c6">[]</span> nums<span style="color:#ff79c6">)</span> <span style="color:#ff79c6">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd">int</span><span style="color:#ff79c6">[]</span> preSum <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">new</span> <span style="color:#8be9fd">int</span><span style="color:#ff79c6">[</span>nums<span style="color:#ff79c6">.</span><span style="color:#50fa7b">length</span><span style="color:#ff79c6">];</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd">int</span> sum <span style="color:#ff79c6">=</span> 0<span style="color:#ff79c6">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">for</span> <span style="color:#ff79c6">(</span><span style="color:#8be9fd">int</span> i <span style="color:#ff79c6">=</span> 0<span style="color:#ff79c6">;</span> i <span style="color:#ff79c6">&lt;</span> nums<span style="color:#ff79c6">.</span><span style="color:#50fa7b">length</span><span style="color:#ff79c6">;</span> i<span style="color:#ff79c6">++)</span> <span style="color:#ff79c6">{</span>
+</span></span><span style="display:flex;"><span>            sum <span style="color:#ff79c6">+=</span> nums<span style="color:#ff79c6">[</span>i<span style="color:#ff79c6">];</span>
+</span></span><span style="display:flex;"><span>            preSum<span style="color:#ff79c6">[</span>i<span style="color:#ff79c6">]</span> <span style="color:#ff79c6">=</span> sum<span style="color:#ff79c6">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd">int</span> left <span style="color:#ff79c6">=</span> 0<span style="color:#ff79c6">,</span> right <span style="color:#ff79c6">=</span> 0<span style="color:#ff79c6">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd">int</span> length <span style="color:#ff79c6">=</span> Integer<span style="color:#ff79c6">.</span><span style="color:#50fa7b">MAX_VALUE</span><span style="color:#ff79c6">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">while</span> <span style="color:#ff79c6">(</span>left <span style="color:#ff79c6">&lt;=</span> right <span style="color:#ff79c6">&amp;&amp;</span> right <span style="color:#ff79c6">&lt;</span> nums<span style="color:#ff79c6">.</span><span style="color:#50fa7b">length</span><span style="color:#ff79c6">)</span> <span style="color:#ff79c6">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">while</span> <span style="color:#ff79c6">(</span>right <span style="color:#ff79c6">&lt;</span> nums<span style="color:#ff79c6">.</span><span style="color:#50fa7b">length</span> <span style="color:#ff79c6">&amp;&amp;</span> preSum<span style="color:#ff79c6">[</span>right<span style="color:#ff79c6">]</span> <span style="color:#ff79c6">-</span> preSum<span style="color:#ff79c6">[</span>left<span style="color:#ff79c6">]</span> <span style="color:#ff79c6">+</span> nums<span style="color:#ff79c6">[</span>left<span style="color:#ff79c6">]</span> <span style="color:#ff79c6">&lt;</span> target<span style="color:#ff79c6">)</span> <span style="color:#ff79c6">{</span>
+</span></span><span style="display:flex;"><span>                right<span style="color:#ff79c6">++;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">}</span>
+</span></span><span style="display:flex;"><span>            System<span style="color:#ff79c6">.</span><span style="color:#50fa7b">out</span><span style="color:#ff79c6">.</span><span style="color:#50fa7b">println</span><span style="color:#ff79c6">(</span>right<span style="color:#ff79c6">);</span>
+</span></span><span style="display:flex;"><span>            length <span style="color:#ff79c6">=</span> Math<span style="color:#ff79c6">.</span><span style="color:#50fa7b">min</span><span style="color:#ff79c6">(</span>length<span style="color:#ff79c6">,</span> right <span style="color:#ff79c6">-</span> left <span style="color:#ff79c6">+</span> 1<span style="color:#ff79c6">);</span>
+</span></span><span style="display:flex;"><span>            System<span style="color:#ff79c6">.</span><span style="color:#50fa7b">out</span><span style="color:#ff79c6">.</span><span style="color:#50fa7b">println</span><span style="color:#ff79c6">(</span>length<span style="color:#ff79c6">);</span>
+</span></span><span style="display:flex;"><span>            left<span style="color:#ff79c6">++;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">return</span> preSum<span style="color:#ff79c6">[</span>nums<span style="color:#ff79c6">.</span><span style="color:#50fa7b">length</span> <span style="color:#ff79c6">-</span> 1<span style="color:#ff79c6">]</span> <span style="color:#ff79c6">&lt;</span> target <span style="color:#ff79c6">?</span> 0 <span style="color:#ff79c6">:</span> length<span style="color:#ff79c6">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">}</span>
+</span></span></code></pre></div><h2 id="3无重复字符的最长子串httpsleetcode-cncomproblemslongest-substring-without-repeating-charactersdescription"><a href="https://leetcode-cn.com/problems/longest-substring-without-repeating-characters/description/">3.无重复字符的最长子串</a></h2>
+<p>直接上代码：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">Solution</span> <span style="color:#ff79c6">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// 滑动窗口
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd">int</span> <span style="color:#50fa7b">lengthOfLongestSubstring</span><span style="color:#ff79c6">(</span>String s<span style="color:#ff79c6">)</span> <span style="color:#ff79c6">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">if</span> <span style="color:#ff79c6">(</span>s<span style="color:#ff79c6">.</span><span style="color:#50fa7b">length</span><span style="color:#ff79c6">()</span> <span style="color:#ff79c6">==</span> 0<span style="color:#ff79c6">)</span> <span style="color:#ff79c6">return</span> 0<span style="color:#ff79c6">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd">int</span> left <span style="color:#ff79c6">=</span> 0<span style="color:#ff79c6">,</span> right <span style="color:#ff79c6">=</span> 0<span style="color:#ff79c6">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd">int</span> length <span style="color:#ff79c6">=</span> 1<span style="color:#ff79c6">;</span>
+</span></span><span style="display:flex;"><span>        Set<span style="color:#ff79c6">&lt;</span>Character<span style="color:#ff79c6">&gt;</span> set <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">new</span> HashSet<span style="color:#ff79c6">&lt;&gt;();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">while</span> <span style="color:#ff79c6">(</span>left <span style="color:#ff79c6">&lt;=</span> right <span style="color:#ff79c6">&amp;&amp;</span> right <span style="color:#ff79c6">&lt;</span> s<span style="color:#ff79c6">.</span><span style="color:#50fa7b">length</span><span style="color:#ff79c6">())</span> <span style="color:#ff79c6">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">while</span> <span style="color:#ff79c6">(</span>right <span style="color:#ff79c6">&lt;</span> s<span style="color:#ff79c6">.</span><span style="color:#50fa7b">length</span><span style="color:#ff79c6">()</span> <span style="color:#ff79c6">&amp;&amp;</span> <span style="color:#ff79c6">!</span>set<span style="color:#ff79c6">.</span><span style="color:#50fa7b">contains</span><span style="color:#ff79c6">(</span>s<span style="color:#ff79c6">.</span><span style="color:#50fa7b">charAt</span><span style="color:#ff79c6">(</span>right<span style="color:#ff79c6">)))</span> <span style="color:#ff79c6">{</span>
+</span></span><span style="display:flex;"><span>                set<span style="color:#ff79c6">.</span><span style="color:#50fa7b">add</span><span style="color:#ff79c6">(</span>s<span style="color:#ff79c6">.</span><span style="color:#50fa7b">charAt</span><span style="color:#ff79c6">(</span>right<span style="color:#ff79c6">));</span>
+</span></span><span style="display:flex;"><span>                right<span style="color:#ff79c6">++;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">}</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#6272a4">// System.out.println(&#34;left &#34; + left + &#34; right &#34; + right);
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>            length <span style="color:#ff79c6">=</span> Math<span style="color:#ff79c6">.</span><span style="color:#50fa7b">max</span><span style="color:#ff79c6">(</span>length<span style="color:#ff79c6">,</span> right <span style="color:#ff79c6">-</span> left<span style="color:#ff79c6">);</span>
+</span></span><span style="display:flex;"><span>            set<span style="color:#ff79c6">.</span><span style="color:#50fa7b">remove</span><span style="color:#ff79c6">(</span>s<span style="color:#ff79c6">.</span><span style="color:#50fa7b">charAt</span><span style="color:#ff79c6">(</span>left<span style="color:#ff79c6">));</span>
+</span></span><span style="display:flex;"><span>            left<span style="color:#ff79c6">++;</span>  
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">return</span> length<span style="color:#ff79c6">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">}</span>
+</span></span></code></pre></div><p>这里和模板有所区别，不过思路都是一样的。这里是不停的在移动右指针，一旦不满足条件，就调节左指针。</p>
+<h2 id="76最小覆盖子串httpsleetcode-cncomproblemsminimum-window-substring"><a href="https://leetcode-cn.com/problems/minimum-window-substring/">76.最小覆盖子串</a></h2>
+<p>这道题需要好好想一下，什么时候收缩窗口，我们知道肯定是窗口中已经包含了整个字符串<code>t</code>中的所有字符，但是这个逻辑如何去实现呢？下面假设<code>String s = &quot;ADOBECODEBANC&quot;</code>，<code>String t = &quot;ABC&quot;</code>。</p>
+<ul>
+<li>首先根据字符串<code>t</code>构造一个哈希表<code>subStringMap</code>。</li>
+<li>滑动窗口内的哈希表记为<code>curMap</code>，但是这个哈希表不存储滑动窗口内所有的字符和相应出现的次数，我们只关心那些在<code>subStringMap</code>中包含的字符。</li>
+<li>设置一个变量<code>valid</code>，记录窗口内的有效字符的个数。如果当前窗口中<code>A</code>出现的次数达到了<code>subStringMap</code>中<code>A</code>出现的次数，<code>valid++</code>，也就是滑动窗口内覆盖了字符<code>A</code>，这也是为了后面好判断窗口收缩条件，也就是<code>valid == subStringMap.size()</code>，满足这个条件说明滑动窗口内刚好覆盖了子串。这一步思路最为关键。</li>
+<li>窗口收缩后，更新相应变量的值，<code>curMap</code>要变，<code>valid</code>也需要更新。</li>
+<li>最后为了返回最小的覆盖子串，用<code>len</code>和<code>start</code>两个变量来记录结果。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">Solution</span> <span style="color:#ff79c6">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// 滑动窗口
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    <span style="color:#8be9fd;font-style:italic">public</span> String <span style="color:#50fa7b">minWindow</span><span style="color:#ff79c6">(</span>String s<span style="color:#ff79c6">,</span> String t<span style="color:#ff79c6">)</span> <span style="color:#ff79c6">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">if</span> <span style="color:#ff79c6">(</span>t<span style="color:#ff79c6">.</span><span style="color:#50fa7b">length</span><span style="color:#ff79c6">()</span> <span style="color:#ff79c6">&gt;</span> s<span style="color:#ff79c6">.</span><span style="color:#50fa7b">length</span><span style="color:#ff79c6">())</span> <span style="color:#ff79c6">return</span> <span style="color:#f1fa8c">&#34;&#34;</span><span style="color:#ff79c6">;</span>
+</span></span><span style="display:flex;"><span>        HashMap<span style="color:#ff79c6">&lt;</span>Character<span style="color:#ff79c6">,</span> Integer<span style="color:#ff79c6">&gt;</span> subStringMap <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">new</span> HashMap<span style="color:#ff79c6">&lt;&gt;();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">for</span> <span style="color:#ff79c6">(</span><span style="color:#8be9fd">int</span> i <span style="color:#ff79c6">=</span> 0<span style="color:#ff79c6">;</span> i <span style="color:#ff79c6">&lt;</span> t<span style="color:#ff79c6">.</span><span style="color:#50fa7b">length</span><span style="color:#ff79c6">();</span> i<span style="color:#ff79c6">++)</span> <span style="color:#ff79c6">{</span>
+</span></span><span style="display:flex;"><span>            subStringMap<span style="color:#ff79c6">.</span><span style="color:#50fa7b">put</span><span style="color:#ff79c6">(</span>t<span style="color:#ff79c6">.</span><span style="color:#50fa7b">charAt</span><span style="color:#ff79c6">(</span>i<span style="color:#ff79c6">),</span> subStringMap<span style="color:#ff79c6">.</span><span style="color:#50fa7b">getOrDefault</span><span style="color:#ff79c6">(</span>t<span style="color:#ff79c6">.</span><span style="color:#50fa7b">charAt</span><span style="color:#ff79c6">(</span>i<span style="color:#ff79c6">),</span> 0<span style="color:#ff79c6">)</span> <span style="color:#ff79c6">+</span> 1<span style="color:#ff79c6">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">}</span>
+</span></span><span style="display:flex;"><span>        HashMap<span style="color:#ff79c6">&lt;</span>Character<span style="color:#ff79c6">,</span> Integer<span style="color:#ff79c6">&gt;</span> curMap <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">new</span> HashMap<span style="color:#ff79c6">&lt;&gt;();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd">int</span> left <span style="color:#ff79c6">=</span> 0<span style="color:#ff79c6">,</span> right <span style="color:#ff79c6">=</span> 0<span style="color:#ff79c6">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd">int</span> valid <span style="color:#ff79c6">=</span> 0<span style="color:#ff79c6">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd">int</span> start <span style="color:#ff79c6">=</span> 0<span style="color:#ff79c6">,</span> len <span style="color:#ff79c6">=</span> Integer<span style="color:#ff79c6">.</span><span style="color:#50fa7b">MAX_VALUE</span><span style="color:#ff79c6">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">while</span> <span style="color:#ff79c6">(</span>right <span style="color:#ff79c6">&lt;</span> s<span style="color:#ff79c6">.</span><span style="color:#50fa7b">length</span><span style="color:#ff79c6">())</span> <span style="color:#ff79c6">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd">char</span> c <span style="color:#ff79c6">=</span> s<span style="color:#ff79c6">.</span><span style="color:#50fa7b">charAt</span><span style="color:#ff79c6">(</span>right<span style="color:#ff79c6">);</span>
+</span></span><span style="display:flex;"><span>            right<span style="color:#ff79c6">++;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">if</span> <span style="color:#ff79c6">(</span>subStringMap<span style="color:#ff79c6">.</span><span style="color:#50fa7b">containsKey</span><span style="color:#ff79c6">(</span>c<span style="color:#ff79c6">))</span> <span style="color:#ff79c6">{</span>
+</span></span><span style="display:flex;"><span>                curMap<span style="color:#ff79c6">.</span><span style="color:#50fa7b">put</span><span style="color:#ff79c6">(</span>c<span style="color:#ff79c6">,</span> curMap<span style="color:#ff79c6">.</span><span style="color:#50fa7b">getOrDefault</span><span style="color:#ff79c6">(</span>c<span style="color:#ff79c6">,</span> 0<span style="color:#ff79c6">)</span> <span style="color:#ff79c6">+</span> 1<span style="color:#ff79c6">);</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">if</span> <span style="color:#ff79c6">(</span>curMap<span style="color:#ff79c6">.</span><span style="color:#50fa7b">get</span><span style="color:#ff79c6">(</span>c<span style="color:#ff79c6">).</span><span style="color:#50fa7b">equals</span><span style="color:#ff79c6">(</span>subStringMap<span style="color:#ff79c6">.</span><span style="color:#50fa7b">get</span><span style="color:#ff79c6">(</span>c<span style="color:#ff79c6">)))</span> <span style="color:#ff79c6">{</span>
+</span></span><span style="display:flex;"><span>                    valid<span style="color:#ff79c6">++;</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">}</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">while</span> <span style="color:#ff79c6">(</span>valid <span style="color:#ff79c6">==</span> subStringMap<span style="color:#ff79c6">.</span><span style="color:#50fa7b">size</span><span style="color:#ff79c6">())</span> <span style="color:#ff79c6">{</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#6272a4">// 更新最小字符串
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>                <span style="color:#ff79c6">if</span> <span style="color:#ff79c6">(</span>right <span style="color:#ff79c6">-</span> left <span style="color:#ff79c6">&lt;</span> len<span style="color:#ff79c6">)</span> <span style="color:#ff79c6">{</span>
+</span></span><span style="display:flex;"><span>                    start <span style="color:#ff79c6">=</span> left<span style="color:#ff79c6">;</span>
+</span></span><span style="display:flex;"><span>                    len <span style="color:#ff79c6">=</span> right <span style="color:#ff79c6">-</span> left<span style="color:#ff79c6">;</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">}</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#8be9fd">char</span> d <span style="color:#ff79c6">=</span> s<span style="color:#ff79c6">.</span><span style="color:#50fa7b">charAt</span><span style="color:#ff79c6">(</span>left<span style="color:#ff79c6">);</span>
+</span></span><span style="display:flex;"><span>                left<span style="color:#ff79c6">++;</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">if</span> <span style="color:#ff79c6">(</span>subStringMap<span style="color:#ff79c6">.</span><span style="color:#50fa7b">containsKey</span><span style="color:#ff79c6">(</span>d<span style="color:#ff79c6">))</span> <span style="color:#ff79c6">{</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#ff79c6">if</span> <span style="color:#ff79c6">(</span>subStringMap<span style="color:#ff79c6">.</span><span style="color:#50fa7b">get</span><span style="color:#ff79c6">(</span>d<span style="color:#ff79c6">).</span><span style="color:#50fa7b">equals</span><span style="color:#ff79c6">(</span>curMap<span style="color:#ff79c6">.</span><span style="color:#50fa7b">get</span><span style="color:#ff79c6">(</span>d<span style="color:#ff79c6">)))</span> <span style="color:#ff79c6">{</span>
+</span></span><span style="display:flex;"><span>                        valid<span style="color:#ff79c6">--;</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#ff79c6">}</span>
+</span></span><span style="display:flex;"><span>                    curMap<span style="color:#ff79c6">.</span><span style="color:#50fa7b">put</span><span style="color:#ff79c6">(</span>d<span style="color:#ff79c6">,</span> curMap<span style="color:#ff79c6">.</span><span style="color:#50fa7b">getOrDefault</span><span style="color:#ff79c6">(</span>d<span style="color:#ff79c6">,</span> 0<span style="color:#ff79c6">)</span> <span style="color:#ff79c6">-</span> 1<span style="color:#ff79c6">);</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">}</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">return</span> len <span style="color:#ff79c6">==</span> Integer<span style="color:#ff79c6">.</span><span style="color:#50fa7b">MAX_VALUE</span> <span style="color:#ff79c6">?</span> <span style="color:#f1fa8c">&#34;&#34;</span> <span style="color:#ff79c6">:</span> s<span style="color:#ff79c6">.</span><span style="color:#50fa7b">substring</span><span style="color:#ff79c6">(</span>start<span style="color:#ff79c6">,</span> start <span style="color:#ff79c6">+</span> len<span style="color:#ff79c6">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">}</span>
+</span></span></code></pre></div><h2 id="参考资料">参考资料</h2>
+<ul>
+<li><a href="https://labuladong.github.io/algo/2/18/25/">我写了首诗，把滑动窗口算法算法变成了默写题</a></li>
+</ul>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2022/05/06/ConcurrentHashMap/" data-toggle="tooltip" data-placement="top" title="ConcurrentHashMap源码分析">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2022/05/08/liangbo-negative-news/" data-toggle="tooltip" data-placement="top" title="发现负面新闻">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/linux" title="linux">
+                            linux
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/rust" title="rust">
+                            rust
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E5%8D%9A%E5%AE%A2" title="博客">
+                            博客
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E5%BC%82%E6%AD%A5" title="异步">
+                            异步
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%BE%AE%E5%88%86%E6%96%B9%E7%A8%8B%E6%95%B0%E5%80%BC%E8%A7%A3" title="微分方程数值解">
+                            微分方程数值解
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E5%80%BC%E5%88%86%E6%9E%90" title="数值分析">
+                            数值分析
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8" title="服务器">
+                            服务器
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%AC%94%E8%AE%B0" title="笔记">
+                            笔记
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E7%AE%97%E6%B3%95" title="算法">
+                            算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E9%9D%A2%E8%AF%95" title="面试">
+                            面试
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://magiconch.github.io/">小旱獭的QQ空间</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:wenjinsmail@163.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/wenjin1997">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="Wenjin Blog" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; Wenjin Blog 2022
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

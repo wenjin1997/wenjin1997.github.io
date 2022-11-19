@@ -17,12 +17,138 @@
     </item>
     
     <item>
-      <title>Zero Knowledge Proofs:An illustrated primer</title>
-      <link>https://wenjin1997.github.io/2022/11/16/Zero-Knowledge-Proofs-An-illustrated-primer/</link>
-      <pubDate>Wed, 16 Nov 2022 00:00:00 +0000</pubDate>
+      <title>Rust异步Web框架</title>
+      <link>https://wenjin1997.github.io/2022/08/23/rust-web/</link>
+      <pubDate>Tue, 23 Aug 2022 00:00:00 +0000</pubDate>
       
-      <guid>https://wenjin1997.github.io/2022/11/16/Zero-Knowledge-Proofs-An-illustrated-primer/</guid>
-      <description>原文链接：Zero Knowledge Proofs: An illustrated primer One of the best things about modern cryptography （密码学） is the beautiful terminology （术语）. You could start any number of punk bands (or Tumblrs) named after cryptography terms like ‘hard-core predicate</description>
+      <guid>https://wenjin1997.github.io/2022/08/23/rust-web/</guid>
+      <description>异步Web框架生态 Rocket tide warp tower-web Thruster gotham actix-web ntex axum Rocket框架 官方教程：The Rocket Programming Guide Rocket设计核心哲学： Security, correctness, and developer experience are paramount. All request handling information should be typed and self-contained. Decisions should not be</description>
+    </item>
+    
+    <item>
+      <title>Mac用ssh远程连接服务器</title>
+      <link>https://wenjin1997.github.io/2022/08/01/Linux-ssh/</link>
+      <pubDate>Mon, 01 Aug 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2022/08/01/Linux-ssh/</guid>
+      <description>在mac本地打开终端，创建密钥对。 ssh-keygen -t rsa -C &amp;#39;your email@domain.com&amp;#39; -t 指定密钥类型，默认即 rsa ，可以省略 -C 设置注释文字，比如你的邮箱，可以省略 接着就按回车，如果发现</description>
+    </item>
+    
+    <item>
+      <title>Rust开发者大会</title>
+      <link>https://wenjin1997.github.io/2022/07/31/RustChinaConf/</link>
+      <pubDate>Thu, 07 Jul 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2022/07/31/RustChinaConf/</guid>
+      <description>Rustdoc：你可以用它做什么，以及它的未来 Rust 计算加速技术解读及高性能代码重构实践 从零开始实现Rust Fuzzer从零开始实现Rust Fuzzer 复</description>
+    </item>
+    
+    <item>
+      <title>Rust异步编程</title>
+      <link>https://wenjin1997.github.io/2022/07/07/Rust-async/</link>
+      <pubDate>Thu, 07 Jul 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2022/07/07/Rust-async/</guid>
+      <description>本章至下而上的方式来带领大家理解异步编程: 异步 I/O 模型 异步编程模型： 事件驱动模型 Futures 生成器 与 Pin async/await 异步运行时介绍：async-std、tokio、</description>
+    </item>
+    
+    <item>
+      <title>Programming Rust</title>
+      <link>https://wenjin1997.github.io/2022/07/05/Programming-Rust/</link>
+      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2022/07/05/Programming-Rust/</guid>
+      <description>记录了学习《Programming Rust》笔记。 Chapter 3. Fundamental Types Rust有类型推断 函数可以是泛型的 Rust的类型 Type Description i8,i16,i32,i64,i128,u8,u16,u32,u64,u128 isize,usize f32,f64 bool char (char, u8, i32) 元组 () struct S { x:</description>
+    </item>
+    
+    <item>
+      <title>Rust元编程</title>
+      <link>https://wenjin1997.github.io/2022/07/05/Rust-meta-programming/</link>
+      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2022/07/05/Rust-meta-programming/</guid>
+      <description>元编程技术大概分为： 简单文本替换 类型模板 反射 语法扩展 代码自动生成 Rust语言通过反射和AST语法扩展两种手段来支持元编程。 反射 反射机制一般是</description>
+    </item>
+    
+    <item>
+      <title>现代操作系统笔记</title>
+      <link>https://wenjin1997.github.io/2022/07/01/Operating-System/</link>
+      <pubDate>Fri, 01 Jul 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2022/07/01/Operating-System/</guid>
+      <description>第1章 引论 1.1 什么是操作系统 操作系统（Operating System，简称 OS）是管理计算机硬件与软件资源的程序，是计算机的基石。 操作系统本质</description>
+    </item>
+    
+    <item>
+      <title>发现负面新闻</title>
+      <link>https://wenjin1997.github.io/2022/05/08/liangbo-negative-news/</link>
+      <pubDate>Sun, 08 May 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2022/05/08/liangbo-negative-news/</guid>
+      <description>任务 这是梁博云实习的第一个项目，发现负面新闻。 实习目标 学习和掌握json代码的解析和生成 学习一种http服务的方式 学习如何使用开放API 第一</description>
+    </item>
+    
+    <item>
+      <title>滑动窗口相关算法</title>
+      <link>https://wenjin1997.github.io/2022/05/07/Algorithms-sliding-window/</link>
+      <pubDate>Sat, 07 May 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2022/05/07/Algorithms-sliding-window/</guid>
+      <description>滑动窗口 滑动窗口模板： int left = 0, right = 0; while (right &amp;lt; s.size()) { // 增大窗口 window.add(s[right]); right++; while (window needs shrink) { // 缩小窗口 window.remove(s[left]); left++; } } 209.长度最小的子数组 这道题HotStar一面考到</description>
+    </item>
+    
+    <item>
+      <title>ConcurrentHashMap源码分析</title>
+      <link>https://wenjin1997.github.io/2022/05/06/ConcurrentHashMap/</link>
+      <pubDate>Fri, 06 May 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2022/05/06/ConcurrentHashMap/</guid>
+      <description>JDK 1.7 构造方法 public ConcurrentHashMap(int initialCapacity, float loadFactor, int concurrencyLevel) { // 检查输入参数的合法性 if (!(loadFactor &amp;gt; 0) || initialCapacity &amp;lt; 0 || concurrencyLevel &amp;lt;= 0) throw new IllegalArgumentException(); if (concurrencyLevel &amp;gt; MAX_SEGMENTS) concurrencyLevel = MAX_SEGMENTS; // MAX_SEGMENTS = 1 &amp;lt;&amp;lt; 16, 即 2 ^ 16 // Find power-of-two sizes best matching arguments // sshift 是 ssize 从 1</description>
+    </item>
+    
+    <item>
+      <title>Hotstar一面</title>
+      <link>https://wenjin1997.github.io/2022/05/06/interview-hotstar1/</link>
+      <pubDate>Fri, 06 May 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2022/05/06/interview-hotstar1/</guid>
+      <description>面试问题： 自我介绍 数学专业为什么转计算机？ 本科专业是应用数学，为什么有计算机相关课程。 用过MySQL吗？熟悉事务吗？ 这个我没答上来，不太会。</description>
+    </item>
+    
+    <item>
+      <title>图相关算法</title>
+      <link>https://wenjin1997.github.io/2022/05/06/Algorithms-graph/</link>
+      <pubDate>Fri, 06 May 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2022/05/06/Algorithms-graph/</guid>
+      <description>图的遍历 // 记录被遍历过的节点 boolean[] visited; // 记录从起点到当前节点的路径 boolean[] onPath; /* 图遍历框架 */ void traverse(Graph graph, int s) { if (visited[s]) return; // 经过节点 s，标记为已遍历 visited[s] = true; // 做选择：标</description>
+    </item>
+    
+    <item>
+      <title>单调栈相关题目</title>
+      <link>https://wenjin1997.github.io/2022/05/01/monotonic-stack/</link>
+      <pubDate>Sun, 01 May 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2022/05/01/monotonic-stack/</guid>
+      <description>下一个更大元素 单调栈的一个应用是求下一个更大的元素。其中用到的较多的是接口Deque，类图结构如下： 496.下一个更大元素I class Solution { // 单调栈 +</description>
+    </item>
+    
+    <item>
+      <title>排序算法</title>
+      <link>https://wenjin1997.github.io/2022/04/30/sortAlgorithms/</link>
+      <pubDate>Sat, 30 Apr 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2022/04/30/sortAlgorithms/</guid>
+      <description>参考十大经典排序算法。 冒泡排序 public class BubbleSort { public int[] sort(int[] sourceArray) { // 对 arr 进行拷贝，不改变参数内容 int[] arr = Arrays.copyOf(sourceArray, sourceArray.length); for (int i = 1; i &amp;lt; arr.length; i++) { // 设定一个标记，若为 true，则</description>
+    </item>
+    
+    <item>
+      <title>网易实习笔试题</title>
+      <link>https://wenjin1997.github.io/2022/04/19/intern-wangyi/</link>
+      <pubDate>Tue, 19 Apr 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2022/04/19/intern-wangyi/</guid>
+      <description>打印字母“O” 给一个数n，打印4n行字符串，是一个大“O”的形状。 例1: n = 1 .**. *..* *..* .**. 例2: n = 2 ..****.. .******. **....** **....** **....** **....** .******. ..****.. 例3: n = 3 ...******... ..********.. .**********. ***......*** ***......*** ***......*** ***......***</description>
     </item>
     
     <item>
@@ -32,6 +158,33 @@
       
       <guid>https://wenjin1997.github.io/2022/03/28/The-Art-of-Java-Concurrency-Programming/</guid>
       <description>第2章 Java并发机制的底层实现原理 2.1 volatile的应用 volatile的两条实现原则： Lock前缀指令会引起处理器缓存回写到内存。 一个</description>
+    </item>
+    
+    <item>
+      <title>Ubuntu下创建快捷方式</title>
+      <link>https://wenjin1997.github.io/2022/03/23/Ubuntu/</link>
+      <pubDate>Wed, 23 Mar 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2022/03/23/Ubuntu/</guid>
+      <description>创建Matlab快捷方式 在命令窗口执行如下命令，参考Linux下安装matlab及创建快捷方式 sudo gedit /usr/share/applications/matlab.desktop 在文件中输入如下命令： [Desktop Entry] Encoding=UTF-8 Name=matlab Comment=MATLAB R2014b Exec=/usr/local/MATLAB/R2014b/bin/matlab -desktop Icon=/usr/local/MATLAB/R2014b/bin/matlab_logo.png</description>
+    </item>
+    
+    <item>
+      <title>计算机网络知识总结</title>
+      <link>https://wenjin1997.github.io/2022/03/23/internet/</link>
+      <pubDate>Wed, 23 Mar 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2022/03/23/internet/</guid>
+      <description>课程介绍 学习计算机网络时找到了这套课程，作为入门还是不错的，老师的PPT都很通俗易懂。可以在MOOC计算机网络上下载课程PPT，B站上计算机</description>
+    </item>
+    
+    <item>
+      <title>vuepress配置博客支持数学公式</title>
+      <link>https://wenjin1997.github.io/2022/03/09/mathEquationBlog/</link>
+      <pubDate>Wed, 09 Mar 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2022/03/09/mathEquationBlog/</guid>
+      <description>主要参考vuepress-theme-reco设置math公式。 步骤 定位到博客的根目录下，安装库 npm i markdown-it-texmath 安装markdown-it npm install markdown-it --save 安装</description>
     </item>
     
     <item>
@@ -49,7 +202,14 @@ u(x,0)=\sin(4\pi x) \quad 0 \le x \le 1 \\
 u(0,t)  = 0 \quad  0 \le t \le 0.03 \\
 u(1,t)  = 0 \quad 0 \le t \le 0.03
 \end{cases}
-$$&lt;/p&gt;</description>
+$$&lt;/p&gt;
+&lt;p&gt;该方程的精确解为$u(t,x)=e^{-(4\pi)^2t}\sin (4 \pi x),0\le t \le 0.03, 0 \le x \le 1.$&lt;/p&gt;
+&lt;p&gt;首先对时间及空间进行划分，将时间划分为$m-1$份，将空间划分为$n-1$份，则$\tau=\frac{0.03}{m-1},h=\frac{1}{n-1}$。
+根据最简显格式可以得到：
+$$
+u_j^{i+1}=\frac{\tau}{h^2}(u_{j+1}^{i}-2u_j^i+u_{j-1}^i)+u_j^{i},
+$$
+其中$i=0,1,\cdots,m-1$，$j=0,1,\cdots,n-1$。&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -76,6 +236,19 @@ $$&lt;/p&gt;</description>
       
       <guid>https://wenjin1997.github.io/2021/01/24/git/</guid>
       <description>步骤 1.在本地建立一个文件夹，并定位到该文件夹下 2.输入命令git init git config --global user.name &amp;quot;wenjin1997&amp;quot; git config --global user.email &amp;quot;wenjin1997@126.com&amp;quot; 3.配置SSHssh-keygen -t rsa -C &amp;quot;xxxxxxxx@163.com&amp;quot; (登录gi</description>
+    </item>
+    
+    <item>
+      <title>《练习的心态：如何培养耐心、专注和自律》</title>
+      <link>https://wenjin1997.github.io/2020/03/10/Practices/</link>
+      <pubDate>Tue, 10 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2020/03/10/Practices/</guid>
+      <description>&lt;h2 id=&#34;书籍信息&#34;&gt;书籍信息&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;书名：《练习的心态：如何培养耐心、专注和自律》&lt;/li&gt;
+&lt;li&gt;作者：托马斯 M.斯特纳&lt;/li&gt;
+&lt;/ul&gt;</description>
     </item>
     
     <item>

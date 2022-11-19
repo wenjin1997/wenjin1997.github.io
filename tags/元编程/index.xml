@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>元编程 on Wenjin Blog</title>
+    <link>https://wenjin1997.github.io/tags/%E5%85%83%E7%BC%96%E7%A8%8B/</link>
+    <description>Recent content in 元编程 on Wenjin Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 05 Jul 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://wenjin1997.github.io/tags/%E5%85%83%E7%BC%96%E7%A8%8B/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Rust元编程</title>
+      <link>https://wenjin1997.github.io/2022/07/05/Rust-meta-programming/</link>
+      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2022/07/05/Rust-meta-programming/</guid>
+      <description>元编程技术大概分为： 简单文本替换 类型模板 反射 语法扩展 代码自动生成 Rust语言通过反射和AST语法扩展两种手段来支持元编程。 反射 反射机制一般是</description>
+    </item>
+    
+  </channel>
+</rss>

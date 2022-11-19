@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>面试 on Wenjin Blog</title>
+    <link>https://wenjin1997.github.io/tags/%E9%9D%A2%E8%AF%95/</link>
+    <description>Recent content in 面试 on Wenjin Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 06 May 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://wenjin1997.github.io/tags/%E9%9D%A2%E8%AF%95/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Hotstar一面</title>
+      <link>https://wenjin1997.github.io/2022/05/06/interview-hotstar1/</link>
+      <pubDate>Fri, 06 May 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2022/05/06/interview-hotstar1/</guid>
+      <description>面试问题： 自我介绍 数学专业为什么转计算机？ 本科专业是应用数学，为什么有计算机相关课程。 用过MySQL吗？熟悉事务吗？ 这个我没答上来，不太会。</description>
+    </item>
+    
+    <item>
+      <title>网易实习笔试题</title>
+      <link>https://wenjin1997.github.io/2022/04/19/intern-wangyi/</link>
+      <pubDate>Tue, 19 Apr 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2022/04/19/intern-wangyi/</guid>
+      <description>打印字母“O” 给一个数n，打印4n行字符串，是一个大“O”的形状。 例1: n = 1 .**. *..* *..* .**. 例2: n = 2 ..****.. .******. **....** **....** **....** **....** .******. ..****.. 例3: n = 3 ...******... ..********.. .**********. ***......*** ***......*** ***......*** ***......***</description>
+    </item>
+    
+  </channel>
+</rss>

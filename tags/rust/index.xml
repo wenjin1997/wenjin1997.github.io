@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Rust on Wenjin Blog</title>
+    <link>https://wenjin1997.github.io/tags/rust/</link>
+    <description>Recent content in Rust on Wenjin Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 23 Aug 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://wenjin1997.github.io/tags/rust/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Rust异步Web框架</title>
+      <link>https://wenjin1997.github.io/2022/08/23/rust-web/</link>
+      <pubDate>Tue, 23 Aug 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2022/08/23/rust-web/</guid>
+      <description>异步Web框架生态 Rocket tide warp tower-web Thruster gotham actix-web ntex axum Rocket框架 官方教程：The Rocket Programming Guide Rocket设计核心哲学： Security, correctness, and developer experience are paramount. All request handling information should be typed and self-contained. Decisions should not be</description>
+    </item>
+    
+    <item>
+      <title>Rust开发者大会</title>
+      <link>https://wenjin1997.github.io/2022/07/31/RustChinaConf/</link>
+      <pubDate>Thu, 07 Jul 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2022/07/31/RustChinaConf/</guid>
+      <description>Rustdoc：你可以用它做什么，以及它的未来 Rust 计算加速技术解读及高性能代码重构实践 从零开始实现Rust Fuzzer从零开始实现Rust Fuzzer 复</description>
+    </item>
+    
+    <item>
+      <title>Rust异步编程</title>
+      <link>https://wenjin1997.github.io/2022/07/07/Rust-async/</link>
+      <pubDate>Thu, 07 Jul 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2022/07/07/Rust-async/</guid>
+      <description>本章至下而上的方式来带领大家理解异步编程: 异步 I/O 模型 异步编程模型： 事件驱动模型 Futures 生成器 与 Pin async/await 异步运行时介绍：async-std、tokio、</description>
+    </item>
+    
+    <item>
+      <title>Programming Rust</title>
+      <link>https://wenjin1997.github.io/2022/07/05/Programming-Rust/</link>
+      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2022/07/05/Programming-Rust/</guid>
+      <description>记录了学习《Programming Rust》笔记。 Chapter 3. Fundamental Types Rust有类型推断 函数可以是泛型的 Rust的类型 Type Description i8,i16,i32,i64,i128,u8,u16,u32,u64,u128 isize,usize f32,f64 bool char (char, u8, i32) 元组 () struct S { x:</description>
+    </item>
+    
+    <item>
+      <title>Rust元编程</title>
+      <link>https://wenjin1997.github.io/2022/07/05/Rust-meta-programming/</link>
+      <pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2022/07/05/Rust-meta-programming/</guid>
+      <description>元编程技术大概分为： 简单文本替换 类型模板 反射 语法扩展 代码自动生成 Rust语言通过反射和AST语法扩展两种手段来支持元编程。 反射 反射机制一般是</description>
+    </item>
+    
+  </channel>
+</rss>
