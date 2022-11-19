@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>数学 on Wenjin Blog</title>
+    <link>https://wenjin1997.github.io/tags/%E6%95%B0%E5%AD%A6/</link>
+    <description>Recent content in 数学 on Wenjin Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 24 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://wenjin1997.github.io/tags/%E6%95%B0%E5%AD%A6/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>数值求解热传导方程</title>
+      <link>https://wenjin1997.github.io/2021/05/24/heat-equation/</link>
+      <pubDate>Mon, 24 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2021/05/24/heat-equation/</guid>
+      <description>&lt;h1 id=&#34;最简显格式&#34;&gt;最简显格式&lt;/h1&gt;
+&lt;p&gt;对于如下热传导方程：
+$$
+\begin{cases}
+\frac{\partial u}{\partial t} =\frac{\partial ^2 u}{\partial t}  \quad 0&amp;lt;t&amp;lt;0.03,0&amp;lt;x&amp;lt;1 \\
+u(x,0)=\sin(4\pi x) \quad 0 \le x \le 1 \\
+u(0,t)  = 0 \quad  0 \le t \le 0.03 \\
+u(1,t)  = 0 \quad 0 \le t \le 0.03
+\end{cases}
+$$&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>
