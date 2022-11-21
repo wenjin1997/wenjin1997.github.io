@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="Wenjin Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://wenjin1997.github.io/img/home-bg-mountain.jpg">
+    <meta property="twitter:image" content="https://wenjin1997.github.io/img/home-bg-mountain.jpg" />
+    
+
+    
+    <meta name="title" content="Dan Boneh Cryptography I Week1" />
+    <meta property="og:title" content="Dan Boneh Cryptography I Week1" />
+    <meta property="twitter:title" content="Dan Boneh Cryptography I Week1" />
+    
+
+    
+    <meta name="description" content="Dan Boneh Cryptography I 课程第一周笔记。">
+    <meta property="og:description" content="Dan Boneh Cryptography I 课程第一周笔记。" />
+    <meta property="twitter:description" content="Dan Boneh Cryptography I 课程第一周笔记。" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Dan Boneh Cryptography I Week1 | 文进的博客</title>
+
+    <link rel="canonical" href="/2022/11/21/Dan-Boneh-Cryptography-Week1/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    <script src="/js/lazysizes.min.js"></script>
+
+    
+    
+
+</head>
+
+
+<script type="text/javascript"
+        async
+        src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Wenjin Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/math">math</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/reading">reading</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/zkp">zkp</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/about/">ABOUT</a></li>
+                    
+		            <li>
+                        <a href="/search"><i class="fa fa-search"></i></a>
+		           </li>
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/2022-11-21-Dan-Boneh-Cryptography-Week1/background.jpg')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/zkp" title="ZKP">
+                            ZKP
+                        </a>
+                        
+                        <a class="tag" href="/tags/%E7%AC%94%E8%AE%B0" title="笔记">
+                            笔记
+                        </a>
+                        
+                        <a class="tag" href="/tags/dan-boneh-cryptography-i" title="Dan Boneh Cryptography I">
+                            Dan Boneh Cryptography I
+                        </a>
+                        
+                    </div>
+                    <h1>Dan Boneh Cryptography I Week1</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                    &#34;谢文进&#34;
+                             
+                            on 
+                            Monday, November 21, 2022
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <p>开始学习密码学，这是一套不错的课程。官方课程链接<a href="https://crypto.stanford.edu/~dabo/courses/OnlineCrypto/">Online Cryptography Course</a>。教材<a href="http://toc.cryptobook.us/">A Graduate Course in Applied Cryptography</a>，Coursera上的链接为<a href="https://www.coursera.org/learn/crypto">密码学 I</a>。</p>
+<p>下面记录第一周的学习笔记。</p>
+<h2 id="course-overview"><strong>Course Overview</strong></h2>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%201.png" alt="Untitled">
+
+</p>
+<p>密码学无处不在，DVD使用的是CSS加密，Blu-ray使用的是AACS加密。</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%202.png" alt="Untitled">
+
+</p>
+<p>常用的HTTPS底层用的是SSL/TLS。安全的交流中间是没有偷听和篡改的。</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%203.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%204.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%205.png" alt="Untitled">
+
+</p>
+<p>对称加密系统使用的是同一个key。加密算法是公开的，永远不要使用一个专有的加密算法。</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%206.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%207.png" alt="Untitled">
+
+</p>
+<p>密码学不是所有安全问题的解决方案，例如软件漏洞或者工程上的攻击。</p>
+<h2 id="what-is-cryptography"><strong>What is cryptography?</strong></h2>
+<h3 id="crypto-core">Crypto core</h3>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%208.png" alt="Untitled">
+
+</p>
+<p>密码学的核心建立密钥，保证交流的可靠和完整性。</p>
+<h3 id="but-crypto-can-do-much-more">But crypto can do much more</h3>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%209.png" alt="Untitled">
+
+</p>
+<p>密码学可以应用在匿名交流中，上图中的匿名是相互的，Alice不知道对方是谁，Bob也不知道对方是谁。</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2010.png" alt="Untitled">
+
+</p>
+<p>密码学应用在匿名电子货币，类似于我们去商店消费，不想让商店知道我们的身份，同时在网络中，要保证电子货币不能重复消费。</p>
+<h3 id="protocols"><strong>Protocols</strong></h3>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2011.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2012.png" alt="Untitled">
+
+</p>
+<p>在选举或者私有拍卖的例子中，有受信的第三方来进行公布结果。这里有一个重要的理论，任何可以使用受信第三方完成的事也可以不用第三方就能完成。</p>
+<h3 id="crypto-magic"><strong>Crypto magic</strong></h3>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2013.png" alt="Untitled">
+
+</p>
+<h3 id="a-rigorous-science"><strong>A rigorous science</strong></h3>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2014.png" alt="Untitled">
+
+</p>
+<p>密码学是一门严谨的学科，要遵循以上三个步骤。</p>
+<h2 id="history"><strong>History</strong></h2>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2015.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2016.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2017.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2018.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2019.png" alt="Untitled">
+
+</p>
+<p>替换式加密的密钥空间很大，是26个字母的全排列。</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2020.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2021.png" alt="Untitled">
+
+</p>
+<p>破解替换式加密的方法是利用了英语字母出现的频率，字母e出现的频率最高，那么我们可以对截获到的密文统计出现的频率，出现频率最高的字母就对应于字母e。接着再利用二合字母出现的频率。</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2022.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2023.png" alt="Untitled">
+
+</p>
+<p>当我们知道key中加密字母的长度时，就很好破解。</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2024.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2025.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2026.png" alt="Untitled">
+
+</p>
+<h2 id="discrete-probability"><strong>Discrete Probability</strong></h2>
+<p>这部分详细介绍见<a href="https://en.wikibooks.org/wiki/High_School_Mathematics_Extensions/Discrete_Probability">https://en.wikibooks.org/wiki/High_School_Mathematics_Extensions/Discrete_Probability</a>。</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2027.png" alt="Untitled">
+
+</p>
+<h3 id="events">Events</h3>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2028.png" alt="Untitled">
+
+</p>
+<h3 id="the-union-bound">The union bound</h3>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2029.png" alt="Untitled">
+
+</p>
+<h3 id="random-variables">Random Variables</h3>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2030.png" alt="Untitled">
+
+</p>
+<h3 id="the-uniform-random-variable">The uniform random variable</h3>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2031.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2032.png" alt="Untitled">
+
+</p>
+<h3 id="randomized-algorithms">Randomized algorithms</h3>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2033.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2034.png" alt="Untitled">
+
+</p>
+<h3 id="independence">Independence</h3>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2035.png" alt="Untitled">
+
+</p>
+<h3 id="xor">XOR</h3>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2036.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2037.png" alt="Untitled">
+
+</p>
+<p>异或中重要的一个定理是，Y是一个随机变量，X是一个独立的均匀分布变量，Y与X异或之后是一个均匀分布变量。</p>
+<h3 id="the-birthday-paradox"><strong>The birthday paradox</strong></h3>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2038.png" alt="Untitled">
+
+</p>
+<p>当$n=1.2 \times \sqrt{|U|}$时，$U$ 中存在两个变量相等的概率大于等于$1/2$。常识认为可能是$|U|/2$，因此也叫做悖论。</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2039.png" alt="Untitled">
+
+</p>
+<h2 id="the-one-time-pad">The One Time Pad</h2>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2040.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2041.png" alt="Untitled">
+
+</p>
+<p>key和要加密的消息的长度一样长。</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2042.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2043.png" alt="Untitled">
+
+</p>
+<p>key也可以算出来，是m和c的异或。</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2044.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2045.png" alt="Untitled">
+
+</p>
+<p>什么是安全的加密呢？香农的定义是，不能从密文中得到任何关于原文的信息。</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2046.png" alt="Untitled">
+
+</p>
+<p>用概率来定义 perfect secrecy，也就是从密文中无法区分任意两个原文，得到两个不同message的概率是相同的。</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2047.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2048.png" alt="Untitled">
+
+</p>
+<p>OTP是有perfect安全性的。</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2049.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2050.png" alt="Untitled">
+
+</p>
+<p>OTP是没有惟密文攻击，但是有其他攻击。</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2051.png" alt="Untitled">
+
+</p>
+<h2 id="pseudorandom-generators"><strong>Pseudorandom Generators</strong></h2>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2052.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2053.png" alt="Untitled">
+
+</p>
+<p>用伪随机key代替随机key。</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2054.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2055.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2056.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2057.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2058.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2059.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2060.png" alt="Untitled">
+
+</p>
+<p>永远不要在加密中使用glibc中的<code>random()</code>函数。</p>
+<h2 id="negligible-vs-non-negligible"><strong>Negligible vs. non-negligible</strong></h2>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2061.png" alt="Untitled">
+
+</p>
+<p>可忽略的：意思是比多项式的逆下降地还要快。</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2062.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2063.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2064.png" alt="Untitled">
+
+</p>
+<h2 id="attacks-on-otp-and-stream-ciphers"><strong>Attacks on OTP and stream ciphers</strong></h2>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2065.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2066.png" alt="Untitled">
+
+</p>
+<p>不能两次使用相同的PRG(k)。</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2067.png" alt="Untitled">
+
+</p>
+<p>客户端到服务端与服务端到客户端应该使用不同的key。</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2068.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2069.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2070.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2071.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2072.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2073.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2074.png" alt="Untitled">
+
+</p>
+<p>中间可以加入p，然后进行篡改。</p>
+<h2 id="real-world-stream-ciphers"><strong>Real-world Stream Ciphers</strong></h2>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2075.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2076.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2077.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2078.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2079.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2080.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2081.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2082.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2083.png" alt="Untitled">
+
+</p>
+<h2 id="prg-security-defs"><strong>PRG Security Defs</strong></h2>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2084.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2085.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2086.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2087.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2088.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2089.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2090.png" alt="Untitled">
+
+</p>
+<p>一个安全的PRG是不可预测的。</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2091.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2092.png" alt="Untitled">
+
+</p>
+<p>反过来也成立，一个不可预测的PRG是安全的。</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2093.png" alt="Untitled">
+
+</p>
+<p>用到了前面定理(Yao’82)的逆否命题。不安全的PRG是可预测的。</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2094.png" alt="Untitled">
+
+</p>
+<p>更一般的定义，computationally indistinguishable。</p>
+<h2 id="semantic-security">Semantic security</h2>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2095.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2096.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2097.png" alt="Untitled">
+
+</p>
+<p>前两个定义都太强了，需要一个弱一些的定义，找到存在的 $m_0$ 与 $m_1$。</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2098.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2099.png" alt="Untitled">
+
+</p>
+<p>这里给出了semantically secure 的定义。</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%20100.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%20101.png" alt="Untitled">
+
+</p>
+<p>OTP是 semantically secure 的。</p>
+<h2 id="stream-ciphers-are-semantically-secure"><strong>Stream ciphers are semantically secure</strong></h2>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%20102.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%20103.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%20104.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%20105.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%20106.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%20107.png" alt="Untitled">
+
+</p>
+<p>
+  <img src="/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%20108.png" alt="Untitled">
+
+</p>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2022/11/19/hugo-post/" data-toggle="tooltip" data-placement="top" title="如何用Hugo &#43; Github Action部署个人博客">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                </ul>
+                
+
+                
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/linux" title="linux">
+                            linux
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/rust" title="rust">
+                            rust
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E5%8D%9A%E5%AE%A2" title="博客">
+                            博客
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E5%BC%82%E6%AD%A5" title="异步">
+                            异步
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%BE%AE%E5%88%86%E6%96%B9%E7%A8%8B%E6%95%B0%E5%80%BC%E8%A7%A3" title="微分方程数值解">
+                            微分方程数值解
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E5%80%BC%E5%88%86%E6%9E%90" title="数值分析">
+                            数值分析
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8" title="服务器">
+                            服务器
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%AC%94%E8%AE%B0" title="笔记">
+                            笔记
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E7%AE%97%E6%B3%95" title="算法">
+                            算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E9%9D%A2%E8%AF%95" title="面试">
+                            面试
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://magiconch.github.io/">小旱獭的QQ空间</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:wenjinsmail@163.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/wenjin1997">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="Wenjin Blog" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; Wenjin Blog 2022
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

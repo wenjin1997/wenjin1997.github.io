@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>ZKP on Wenjin Blog</title>
+    <link>https://wenjin1997.github.io/tags/zkp/</link>
+    <description>Recent content in ZKP on Wenjin Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 21 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://wenjin1997.github.io/tags/zkp/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Dan Boneh Cryptography I Week1</title>
+      <link>https://wenjin1997.github.io/2022/11/21/Dan-Boneh-Cryptography-Week1/</link>
+      <pubDate>Mon, 21 Nov 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2022/11/21/Dan-Boneh-Cryptography-Week1/</guid>
+      <description>开始学习密码学，这是一套不错的课程。官方课程链接Online Cryptography Course。教材A Graduate Course in Applied Cryptography，Coursera上的链接</description>
+    </item>
+    
+  </channel>
+</rss>
