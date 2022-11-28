@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="Wenjin Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://wenjin1997.github.io/img/home-bg-mountain.jpg">
+    <meta property="twitter:image" content="https://wenjin1997.github.io/img/home-bg-mountain.jpg" />
+    
+
+    
+    <meta name="title" content="The Incredible Machine" />
+    <meta property="og:title" content="The Incredible Machine" />
+    <meta property="twitter:title" content="The Incredible Machine" />
+    
+
+    
+    <meta name="description" content="文章《The Incredible Machine》的笔记，通过数独的故事解释什么是零知识证明。">
+    <meta property="og:description" content="文章《The Incredible Machine》的笔记，通过数独的故事解释什么是零知识证明。" />
+    <meta property="twitter:description" content="文章《The Incredible Machine》的笔记，通过数独的故事解释什么是零知识证明。" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>The Incredible Machine | 文进的博客</title>
+
+    <link rel="canonical" href="/2022/11/28/The-Incredible-Machine/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link href="https://cdn.jsdelivr.net/gh/FortAwesome/Font-Awesome@5.15.1/css/all.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    <script src="/js/lazysizes.min.js"></script>
+
+    
+    
+
+</head>
+
+
+<script type="text/javascript"
+        async
+        src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Wenjin Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/math">math</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/reading">reading</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/tech">tech</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/zkp">zkp</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/archive/">ARCHIVE</a></li>
+                    
+                        <li><a href="/about/">ABOUT</a></li>
+                    
+		            <li>
+                        <a href="/search"><i class="fa fa-search"></i></a>
+		           </li>
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/home-bg-mountain.jpg')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/zkp" title="ZKP">
+                            ZKP
+                        </a>
+                        
+                        <a class="tag" href="/tags/%E7%AC%94%E8%AE%B0" title="笔记">
+                            笔记
+                        </a>
+                        
+                    </div>
+                    <h1>The Incredible Machine</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                    &#34;谢文进&#34;
+                             
+                            on 
+                            Monday, November 28, 2022
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <p>本篇是博客《<a href="https://medium.com/qed-it/the-incredible-machine-4d1270d7363a">The Incredible Machine</a>》的笔记，文章通过一个数独的故事来解释什么是零知识证明。</p>
+<p>先总结一下这个过程：</p>
+<ol>
+<li>交互式证明。Alice知道数独的解，先将答案写在纸上，然后盖住，Bob发起一个随机挑战，可以选择行、列或者一个3 $\times$ 3的块。如果选择行，那么收集每行的纸片到一个袋子里，混合后，每个袋子打开都是1～9的数字。重复此过程让我们理由相信Alice知道数独的解，并且这一过程没有泄漏解。</li>
+<li>模拟。上述过程在Alice和Bob事先商定随机挑战选择的顺序后，可以在不知道数独解的情况下通过挑战。这也正好证明了这一过程是零知识的。</li>
+<li>非交互式证明。由一个机器来模拟这一过程，机器内部事先焊一个随机挑战的顺序，这个顺序可以由一个仪式来完成，保证没有人知道这个顺序。这个机器也是存在缺点的，可以通过实验得到这个随机顺序。</li>
+</ol>
+<p>正文如下：</p>
+<p>How Alice, Bob, and Charlie used Zero-Knowledge and Blockchains to launch The Global Sudoku Revolution.</p>
+<p>This post is inspired by two great papers that make zero-knowledge proofs accessible to a wide audience:</p>
+<p>[1] How to Explain Zero Knowledge Protocols to Your Children (Quisquater <em>et. al.</em>)</p>
+<p>[2] Cryptographic and Physical Zero-Knowledge Proof Systems for Solutions of Sudoku Puzzles (Gradwohl <em>et. al.</em>).</p>
+<p>Alice, Bob, and Charlie loved to solve Sudoku problems.The three friends liked challenging each other with puzzles all the time (in fact, sometimes they solved Sudoku problems that were <a href="http://www.sudoku-download.net/files/Sudoku_64x64.pdf">REALLY large</a> — not just 9x9 taken from <a href="http://www.sudoku-download.net/">here</a>). Alice was the cleverest of the three. She would draw a Sudoku board on paper, and fill in some of the <strong>constraints</strong>. Then, she’d let Bob and Charlie try to solve the puzzle.</p>
+<p>
+  <img src="https://miro.medium.com/max/585/1*KwMJAvmMQ7Zdfllic4RioA.png" alt="https://miro.medium.com/max/585/1*KwMJAvmMQ7Zdfllic4RioA.png">
+
+</p>
+<h1 id="the-proof"><strong>The Proof</strong></h1>
+<p>One day, Bob, who was working on an especially difficult Sudoku that Alice had devised（设计的） sighed with despair（绝望的）. “I swear, this puzzle has no solution! Alice just gave me one of the unsolvable ones to mess with me!”</p>
+<p>He quickly came to Alice to complain.</p>
+<p>“I’ll prove to you that this puzzle has a solution, and that I know it!” declared Alice. “Good!” Said Bob, who was secretly hoping to learn the answer and later taunt（嘲讽） Charlie with it.</p>
+<p>“In fact, I’ll prove it to you with ‘zero-knowledge’, that is, without ever revealing the solution itself”. “I’d like to see you try”, said Bob, who was still thinking of all the fun he’d have teasing （戏弄）Charlie.</p>
+<h1 id="the-commitment"><strong>The Commitment</strong></h1>
+<p>Alice retrieved 81 blank index cards. She quickly wrote a single digit (from 1 to 9) on each card and carefully placed the cards on the table, in a 9-by-9 matrix, organized just like a Sudoku puzzle. All of the cards were placed face down, with the exception of the few that had the constraints that Bob had already seen written on them.</p>
+<p>
+  <img src="https://miro.medium.com/max/531/1*FcUS_t2zp0qQ4Zm_wmfLTw.png" alt="https://miro.medium.com/max/531/1*FcUS_t2zp0qQ4Zm_wmfLTw.png">
+
+</p>
+<p>随机选择行、列或者一个块来进行验证。</p>
+<h1 id="the-random-challenge"><strong>The Random Challenge</strong></h1>
+<p>Bob was excited. The solution was close. He’d been working on the problem for ages!</p>
+<p>“Bob, you aren’t allowed to peak at the cards!” Alice exclaimed to Bob’s disappointment. “Not yet anyway. But I will let you test the solution. You can choose whether you want to check the rows, the columns, or the blocks. Pick one at random.”</p>
+<p>Bob decided to pick the rows. Alice proceeded to place the cards from each row inside an opaque bag — one bag per row. She gave each bag a thorough shake, making sure the index cards inside were mixed well. She handed the bags to Bob, who gave her a quizzical look.</p>
+<p>
+  <img src="https://miro.medium.com/max/700/1*p0wq334jocZQJzi1Vl8BYg.png" alt="https://miro.medium.com/max/700/1*p0wq334jocZQJzi1Vl8BYg.png">
+
+</p>
+<h1 id="verification"><strong>Verification</strong></h1>
+<p>“Well, open them!” she said. “They should each have exactly 9 cards with all the numbers 1 through 9”. Bob opened each bag and verified that this was indeed the case.</p>
+<p>
+  <img src="https://miro.medium.com/max/363/1*jjLrBnvToa0i0Bg6EdJIGw.png" alt="https://miro.medium.com/max/363/1*jjLrBnvToa0i0Bg6EdJIGw.png">
+
+</p>
+<p>“This doesn’t prove a thing!” I can also do that! I’d just have to place the numbers 1 through 9 in each row in any order i’d like!” said Bob quickly.</p>
+<p>Alice explained that she couldn’t have known in advance that Bob would pick the rows. She’s not a mind reader! In fact, only a correct solution would have the numbers 1–9 in each row, column, and box and so if her solution was not correct, Bob would have at least a 1 in 3 chance of catching her.</p>
+<h1 id="rinse-and-repeat"><strong>Rinse and Repeat</strong></h1>
+<p>Bob thought that a 1 in 3 chance of catching Alice wasn’t good enough. He still had a gnawing suspicion that the puzzle was unsolvable. He demanded that Alice repeat the procedure with him — each time placing the same cards for the same Sudoku problem face down on the floor, but letting him pick a different test at random. After a long series of tests, Bob was forced to admit that Alice was either an extremely lucky person, or, that she simply has a solution to the Sudoku problem (or perhaps she could read his thoughts after all). He was also quite disappointed that he had gained no knowledge (zero-knowledge) about the solution. All he knew after all these tests was that it was highly likely that every row, column and block did indeed contain the numbers 1–9 exactly once, which could only be so if Alice knew the solution.</p>
+<p>The three friends had made it a habit to prove to one another that their Sudoku challenges were solvable. After all, no one wants to spend his time on an unsolvable problem. Each test was long and quite exhausting, but Sudoku is after all very serious business.</p>
+<p>如果只进行一次验证，那么Alice可能会有1/3概率作弊，因此需要重复进行随机试验，提高可信度。</p>
+<h1 id="blockchains-and-the-global-sudoku-revolution"><strong>Blockchains and The Global Sudoku Revolution</strong></h1>
+<p>One day, Alice had a great idea. Knowing that her love for Sudoku is shared by millions online, she decided to open her very own YouTube channel, where she can post her own Sudoku challenges online. She called it “The Sudoku Blockchain” (she didn’t know what blockchains were exactly, but it was such a cool buzzword（时髦术语，流行行话）). She dreamed of many channel subscribers that would send her Bitcoins and decided to include features that the competing Sudoku channels did not have: She asked Bob to verify the existence of a solution to each of the puzzles using a zero-knowledge proof. She’d film the whole thing and put it on the Sudoku Blockchain, so that everyone would know that (with high probability) each of the puzzles is indeed solvable.</p>
+<h1 id="the-simulation"><strong>The Simulation</strong></h1>
+<p>One day, Alice came over to Bob’s house to record the proof for a Sudoku challenge, but found that she left the solution to the puzzle at home. Since she was in a hurry to publish the new challenge online, she begged Bob to film it with her anyway. She convinced Bob to pretend to run the proof with her. Together they agreed on a sequence of tests (rows / columns / and blocks) that Bob would “randomly” pick. Since Alice too knew the sequence of tests, she could easily pass them without having the solution to the puzzle.</p>
+<p>Charlie, who was travelling abroad and saw the video was later surprised when Alice and Bob told him how they filmed it. “I’ll never trust you two again!” he exclaimed. “No one should trust any of your online video proofs!”.</p>
+<p>模拟，在模拟情况下有一种超能力，事先约定“随机”选择的顺序，不知道真正的解也能通过测试，这不正恰好说明没有泄漏知识嘛！</p>
+<h1 id="the-incredible-machine-and-non-interactive-proofs"><strong>The Incredible Machine and Non-Interactive Proofs</strong></h1>
+<p>Charlie was frustrated. He did not want to easily give up his Sudoku solving habit, but knowing that Alice and Bob were not trustworthy, he wanted a way to check proofs remotely. After a few sleepless nights, he declared to Alice and Bob that he had a new idea. He locked himself in his room for hours and labored frantically through the night. In the morning, Charlie presented Alice and Bob with his incredible new invention: “The Zero-Knowledge Sudoku Non-Interactive Proof Machine” (or zk-SNIPM as he like to refer to it).</p>
+<p>The Machine was basically an automated version of Alice’s test. Alice would need to place her cards on the conveyor belt, and feed Sudoku solutions to the machine. The machine would then collect the cards from rows, columns, or boxes and place them automatically into bags that would come out on the other side (after being thoroughly mixed). Then, Alice could open the bags while the camera was still rolling and reveal their contents.</p>
+<p>
+  <img src="https://miro.medium.com/max/511/1*wSsIDzJgzJHMi5CCdXFaDg.png" alt="https://miro.medium.com/max/511/1*wSsIDzJgzJHMi5CCdXFaDg.png">
+
+</p>
+<p>The machine had a control panel with a long series of dials that set the test for each set of 81 cards that Alice would feed in. Charlie had set up his own secret series of tests and then welded the control panel’s cover shut (Alice was worried that he also booby-trapped it with explosives, or filled it up with scorpions, vials of acid, or some other similarly nasty thing. Charlie was a bit extreme when it came to securing his devices).</p>
+<p>
+  <img src="https://miro.medium.com/max/564/1*jbhDHFgSlG-JRVWDOeefpQ.png" alt="https://miro.medium.com/max/564/1*jbhDHFgSlG-JRVWDOeefpQ.png">
+
+</p>
+<p>Charlie could now trust his machine to provide a series of tests that was unknown to Alice so that he could watch youtube videos of proofs and be relatively sure that Alice had not cheated together with Bob.</p>
+<h1 id="the-ceremony"><strong>The Ceremony</strong></h1>
+<p>Alice and Bob were jealous of Charlie’s zk-SNIPM machine and wanted to use it to verify all puzzles (including those that Charlie invented). The only problem was that Charlie was the one who had set up the secret series of tests, and they could not let him use it for proofs (he could easily cheat since he knows the sequence of tests). Instead, Alice suggested that they conduct a multi-party set up of the machine together. A sort of “trusted setup ceremony”. She asked Charlie to open the control panel (and remove all of his nasty traps). Each of the dials on the control panel had 3 states, and you would need to rotate it to select the test.</p>
+<p>She suggested that they place the machine in a dark room, and remove all the labels from the knobs. Each one of them would then go into the room with the machine in the dark (Bob also suggested that they’d be blindfolded just for good measure, and that they each wear a tinfoil hat to prevent mind reading side-channel attacks by Alice) and would turn the knobs on the machine to a random position (either turn them one-third of a turn clockwise, two-thirds of a turn clockwise, or leave them as they are). This way, the final setting of each knob would not be known to any single one of them (in fact, even if two participants colluded, they would not know the final state of the knob without the third person’s assistance). After the set-up ceremony was over, they’d weld the cover of the machine shut.</p>
+<h1 id="cracking-the-machine"><strong>Cracking the Machine</strong></h1>
+<p>One afternoon, when Bob and Charlie were off travelling, Alice was left alone with the machine. She started wondering if it was as secure as advertised. Thinking about it for a while she decided to feed it slightly modified Sudoku puzzle solutions in order to discover which tests the machine was using. She used a Sudoku puzzle that she could solve, and fed in many boards to see that the solution is indeed accepted by the machine. She then repeated the procedure, but changed the first board fed to the machine to simply include the numbers 1–9 in each row (without forming a legal solution in columns or boxes). The test still passed, and she then realized she can use this idea to learn the sequence of tests that were pre-set within the machine.</p>
+<p>这里Alice先用一个数独的真解喂给机器，看看机器的输出结果。接着重复这一过程，但是修改解，保证每行是数字1～9，喂给机器，查看机器的输出结果，这样可以推测出之前通过仪式得到的随机顺序。</p>
+<p>Alice felt very frustrated. Can you help Alice build a better zk-SNIPM? Can you think of a series of tests that would be harder to crack, or is the approach doomed to fail? Write us and tell us your ideas!</p>
+<h1 id="a-note-about-the-real-world"><strong>A Note About the Real World</strong></h1>
+<p>In fact, the zk-SNIPM is a tongue-in-cheek construction of a <em>non-interactive zero-knowledge prover</em>, somewhere between zk-SNARKs and tamper-proof hardware. zk-SNIPM relies on a “physical” type of zero-knowledge proof. Such physical proofs could in fact be made much more powerful, for example, by using a photocopy machine to copy the cards and check the rows, columns and boxes simultaneously on the same solution. Still, we have elected to utilize a physical proving system that has some analogies to computational proofs found in cryptographic zero-knowledge constructions.</p>
+<p>Alice’s initial proving method is analogous to an <em>interactive</em> zero-knowledge proof protocol, where the verifier sends a random <em>challenge</em> to the prover, after she commits to the solution. A prover and verifier that are colluding and share this random challenge in advance can simulate a proof, without really knowing the solutions. A <em>non-interactive</em> version that must work without this challenge step, is constructed by hiding the challenge itself in some cryptographic “machinery” in advance. This prevents the prover from having access to the challenge. Indeed, one good way to generate such a trusted challenge is through a “ceremony” enacted through multiparty computation that combines the randomness from several participants into a single random challenge, encoded in the proving system.</p>
+<p>开始的证明方法类似交互式零知识证明协议，验证者给证明方一个随机挑战，然后进行验证。证明方和验证方可以事先作弊商量随机挑战的顺序，这样他们在不知道解的情况下可以模拟一个证明。后来的机器验证过程是非交互式证明，实现构造一个随机顺序，可以通过仪式的方式，然后再进行证明。</p>
+<p>The Sudoku example in this post is taken in slightly modified form from <strong>Cryptographic and Physical Zero-Knowledge Proof Systems for Solutions of Sudoku Puzzles (Gradwohl et. al.).</strong></p>
+<p>Many thanks to Daniel Benarroch for his help with this post.</p>
+<p>This post was originally published on <a href="http://qed-it.com/2017/12/the-incredible-machine/">qed-it.com</a>.</p>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2022/11/21/Dan-Boneh-Cryptography-Week1/" data-toggle="tooltip" data-placement="top" title="Dan Boneh Cryptography I Week1">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                </ul>
+                
+
+                
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/java" title="java">
+                            java
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/linux" title="linux">
+                            linux
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/rust" title="rust">
+                            rust
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/zkp" title="zkp">
+                            zkp
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E5%8D%9A%E5%AE%A2" title="博客">
+                            博客
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E5%BC%82%E6%AD%A5" title="异步">
+                            异步
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E5%BE%AE%E5%88%86%E6%96%B9%E7%A8%8B%E6%95%B0%E5%80%BC%E8%A7%A3" title="微分方程数值解">
+                            微分方程数值解
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%95%B0%E5%80%BC%E5%88%86%E6%9E%90" title="数值分析">
+                            数值分析
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8" title="服务器">
+                            服务器
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E7%AC%94%E8%AE%B0" title="笔记">
+                            笔记
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/%E7%AE%97%E6%B3%95" title="算法">
+                            算法
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/%E9%9D%A2%E8%AF%95" title="面试">
+                            面试
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://magiconch.github.io/">小旱獭的QQ空间</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:wenjinsmail@163.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/wenjin1997">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="Wenjin Blog" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fas fa-circle fa-stack-2x"></i>
+                               <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+            
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; Wenjin Blog 2022
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

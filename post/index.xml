@@ -6,7 +6,16 @@
     <description>Recent content in Posts on Wenjin Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 21 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://wenjin1997.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 28 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://wenjin1997.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>The Incredible Machine</title>
+      <link>https://wenjin1997.github.io/2022/11/28/The-Incredible-Machine/</link>
+      <pubDate>Mon, 28 Nov 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2022/11/28/The-Incredible-Machine/</guid>
+      <description>本篇是博客《The Incredible Machine》的笔记，文章通过一个数独的故事来解释什么是零知识证明。 先总结一下这个过程： 交互式证明。Alice知道数独</description>
+    </item>
+    
     <item>
       <title>Dan Boneh Cryptography I Week1</title>
       <link>https://wenjin1997.github.io/2022/11/21/Dan-Boneh-Cryptography-Week1/</link>
