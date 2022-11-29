@@ -6,7 +6,16 @@
     <description>Recent content in ZKP on Wenjin Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 28 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://wenjin1997.github.io/categories/zkp/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 29 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://wenjin1997.github.io/categories/zkp/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Cryptographic and Physical Zero-Knowledge Proof Systems for Solutions of Sudoku Puzzles</title>
+      <link>https://wenjin1997.github.io/2022/11/29/Cryptographic-and-Physical-Zero-Knowledge-Proof-Systems-for-Solutions-of-Sudoku-Puzzles/</link>
+      <pubDate>Tue, 29 Nov 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2022/11/29/Cryptographic-and-Physical-Zero-Knowledge-Proof-Systems-for-Solutions-of-Sudoku-Puzzles/</guid>
+      <description>论文见Cryptographic and Physical Zero-Knowledge Proof Systems for Solutions of Sudoku Puzzles。本篇论文详细的介绍了关于数独问题的密码学和物理上的零知识证明协议。可以了解</description>
+    </item>
+    
     <item>
       <title>How to explain zero-knowledge protocols to your children</title>
       <link>https://wenjin1997.github.io/2022/11/28/How-to-explain-zero-knowledge-protocols-to-your-children/</link>

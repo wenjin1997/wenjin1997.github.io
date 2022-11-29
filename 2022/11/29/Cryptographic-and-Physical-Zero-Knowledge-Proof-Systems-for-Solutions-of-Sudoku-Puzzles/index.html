@@ -15,15 +15,15 @@
     
 
     
-    <meta name="title" content="How to explain zero-knowledge protocols to your children" />
-    <meta property="og:title" content="How to explain zero-knowledge protocols to your children" />
-    <meta property="twitter:title" content="How to explain zero-knowledge protocols to your children" />
+    <meta name="title" content="Cryptographic and Physical Zero-Knowledge Proof Systems for Solutions of Sudoku Puzzles" />
+    <meta property="og:title" content="Cryptographic and Physical Zero-Knowledge Proof Systems for Solutions of Sudoku Puzzles" />
+    <meta property="twitter:title" content="Cryptographic and Physical Zero-Knowledge Proof Systems for Solutions of Sudoku Puzzles" />
     
 
     
-    <meta name="description" content="文章《How to explain zero-knowledge protocols to your children》的笔记，通过阿里巴巴与大盗的故事解释什么是零知识证明。">
-    <meta property="og:description" content="文章《How to explain zero-knowledge protocols to your children》的笔记，通过阿里巴巴与大盗的故事解释什么是零知识证明。" />
-    <meta property="twitter:description" content="文章《How to explain zero-knowledge protocols to your children》的笔记，通过阿里巴巴与大盗的故事解释什么是零知识证明。" />
+    <meta name="description" content="论文《Cryptographic and Physical Zero-Knowledge Proof Systems for Solutions of Sudoku Puzzles》的笔记，数独问题的密码学和物理零知识证明系统。。">
+    <meta property="og:description" content="论文《Cryptographic and Physical Zero-Knowledge Proof Systems for Solutions of Sudoku Puzzles》的笔记，数独问题的密码学和物理零知识证明系统。。" />
+    <meta property="twitter:description" content="论文《Cryptographic and Physical Zero-Knowledge Proof Systems for Solutions of Sudoku Puzzles》的笔记，数独问题的密码学和物理零知识证明系统。。" />
     
 
     
@@ -34,9 +34,9 @@
     <meta name="keyword"  content="">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
-    <title>How to explain zero-knowledge protocols to your children | 文进的博客</title>
+    <title>Cryptographic and Physical Zero-Knowledge Proof Systems for Solutions of Sudoku Puzzles | 文进的博客</title>
 
-    <link rel="canonical" href="/2022/11/28/How-to-explain-zero-knowledge-protocols-to-your-children/">
+    <link rel="canonical" href="/2022/11/29/Cryptographic-and-Physical-Zero-Knowledge-Proof-Systems-for-Solutions-of-Sudoku-Puzzles/">
 
     
     
@@ -204,7 +204,7 @@ code.has-jax {
 
 <style type="text/css">
     header.intro-header {
-        background-image: url('/img/home-bg-mountain.jpg')
+        background-image: url('/img/2022-11-29-Cryptographic-and-Physical-Zero-Knowledge-Proof-Systems-for-Solutions-of-Sudoku-Puzzles/background.jpg')
     }
 </style>
 
@@ -225,7 +225,7 @@ code.has-jax {
                         </a>
                         
                     </div>
-                    <h1>How to explain zero-knowledge protocols to your children</h1>
+                    <h1>Cryptographic and Physical Zero-Knowledge Proof Systems for Solutions of Sudoku Puzzles</h1>
                     <h2 class="subheading"></h2>
                     <span class="meta">
                         
@@ -234,7 +234,7 @@ code.has-jax {
                                     &#34;谢文进&#34;
                              
                             on 
-                            Monday, November 28, 2022
+                            Tuesday, November 29, 2022
                             
                             
                             
@@ -260,42 +260,174 @@ code.has-jax {
                 post-container">
 
                 
-                <p>在文章 <strong><a href="http://pages.cs.wisc.edu/~mkowalcz/628.pdf">How to explain zero-knowledge protocols to your children</a></strong> 中通过阿里巴巴与神秘的洞穴的故事介绍了什么是零知识证明。中文翻译文章见<a href="https://blog.dreamerryao.wiki/archives/%E8%AF%91howtoexplainzero-knowledgeprotocolstoyourchildren">【译】How to Explain Zero-Knowledge Protocols to Your Children</a>。下面简要记录文章的笔记：</p>
-<h2 id="the-strange-cave-of-ali-baba">The Strange Cave of Ali Baba</h2>
-<p>阿里巴巴每天都去集市上，总被小偷偷东西，每次小偷都跑到一个洞穴，里面有一个岔路口，有两条道路，阿里巴巴追着小偷来到洞穴，阿里巴巴每次只能选择一个口进入，每次小偷都能逃走。在经历悲催的40次被偷后，不科学呀，每次小偷都能选择阿里巴巴不走的那条路，那小偷得多幸运，$\frac{1}{2^{40}}$的概率，不太可能！！！洞穴一定有什么不可告人的秘密！</p>
-<p>
-  <img src="/img/2022-11-28-How-to-explain-zero-knowledge-protocols-to-your-children/Untitled.png" alt="Untitled">
-
-</p>
-<p>一天阿里巴巴提前藏在洞穴里，发现小偷说出了“芝麻开门”咒语，洞穴连接了起来。</p>
-<p>
-  <img src="/img/2022-11-28-How-to-explain-zero-knowledge-protocols-to-your-children/Untitled%201.png" alt="Untitled">
-
-</p>
-<p>难怪这些小偷每次能顺利逃脱。后来阿里巴巴不断实验咒语，发现可以修改咒语，现在只有他知道新的咒语了。阿里巴巴把这个神奇的经历写在手稿上流传了下来。</p>
-<h2 id="the-fate-of-the-manuscript">The Fate of the Manuscript</h2>
-<p>后来，阿里巴巴的后代 Mick Ali 知道咒语的秘密，但是他不想告诉世人这个秘密，只想说服别人相信他知道这个秘密。一家电视台独家报道这个过程，实验是这样进行的：</p>
+                <p>论文见<a href="https://link.springer.com/content/pdf/10.1007/s00224-008-9119-9.pdf">Cryptographic and Physical Zero-Knowledge Proof Systems for Solutions of Sudoku Puzzles</a>。本篇论文详细的介绍了关于数独问题的密码学和物理上的零知识证明协议。可以了解到零知识证明协议的完整过程，一般步骤有哪些。</p>
+<h2 id="1-introduction">1 Introduction</h2>
+<p>如何在不透露解的情况下让别人相信你知道一个数独的解。关注两件事，证明者如何说明：</p>
 <ol>
-<li>摄影团队先拍摄两个死胡同的细节</li>
-<li>每个人都离开洞穴，Mick Ali 单独一人进入洞穴</li>
-<li>记者进入到洞穴的岔路口，抛一枚银币，选择左边还是右边，接着大喊让Mike从选择的那一边出来</li>
-<li>重复上述过程40次</li>
+<li>给定一个数独问题，存在一个解</li>
+<li>他知道这个解，但是不用给出关于解的任何其他信息</li>
 </ol>
-<p>Mick连续成功40次，已经能足够说服我们他知道咒语。</p>
-<h2 id="the-jealous-reporter">The Jealous Reporter</h2>
-<p>嫉妒的记者找来一个演员装扮成Mick的样子，但是他不知道咒语，记者也模拟上述过程，不过最后剪掉失败的片段，只展示连续成功40次的结果。</p>
-<p>模拟的情况和真实的情况一同向世人进行展示，人们也无法区别孰真孰假，这不恰好说明咒语的秘密没有泄露嘛！但是人们都相信Mick知道咒语的秘密。这一过程就在证明<strong>零知识</strong>！！！</p>
-<h2 id="the-tests-in-parallel">The Tests in Parallel</h2>
-<p>上面的证明过程要连续进行40次，有没有方法并行呢？可以建造这样一座大厦，每一层有一个洞穴，每一个洞穴都有自己的咒语，每个洞穴有一个演员，在同一时刻他们进入洞穴然后随机选择进入哪一边，最后出来。但是这样的话，需要在秘密的数量和拍摄场景数量上做一个平衡。</p>
-<h2 id="the-prior-agreement">The Prior Agreement</h2>
-<p>之前的模拟场景需要后期剪掉那些不成功的场景，有没有连续进行挑战成功的办法呢？那就是验证者和证明者之间事先商定随机选择走哪边，连续进行40次也能挑战成功。</p>
-<h2 id="a-single-test-a-single-secret">A Single Test, A Single Secret</h2>
-<p>如何只进行一次测试，就让人们足够相信拥有秘密呢？建造下面这样的洞穴：</p>
+<p>数独问题在计算复杂度上属于NP问题，事实上，是NP-完全问题。NP问题意味着很容易验证一个解是否正确。</p>
+<h2 id="2-definitions">2 Definitions</h2>
+<p>一般化的数独问题，数独问题的大小是 $n = k^2$，总共 $n \times n$个格子，每个小块是 $k \times k$大小的，那么数的范围是 ${ 1, &hellip;, n}$。比如常见的 $k = 3$，$9 \times 9$ 大小的数独。一个具体数独问题例子和解都是 $O(n^2 \log n)$ 位的。</p>
+<h3 id="cryptographic-functionalities">Cryptographic Functionalities</h3>
+<p>协议中有两方，一个是prover，一个是verifier。一旦prover和verifier固定下来，他们交互发的消息可以看作是一个只包含prover和verifier随机数的函数。下面讨论这个协议的一些性质：</p>
+<ol>
+<li>
+<p>completeness.</p>
+<p>一个诚实的verifier会accepect一个正确的证明。也就是一个prover有一个合法的解会遵循这个协议。</p>
+</li>
+<li>
+<p>soundness error.</p>
+<blockquote>
+<p>The <strong>soundness error</strong> (or soundness) of the protocol is the (upper bound on the) probability that a verifier accepts an incorrect proof, i.e. a proof to a fallacious statement; in our case this corresponds to the event that a prover who does not a solution to a given Sudoku puzzle, claims that it knows to solve it, and the verifier accepts this claim.</p>
+</blockquote>
+<p>对于错误的证明，会有多少的概率通过verifier的验证。</p>
+</li>
+<li>
+<p>zero-knowledge.</p>
+<blockquote>
+<p>The goal in designing the protocols is to prevent the verifier from gaining any new knowledge from a correct (interactive) proof. I.e., the protocol should be zero- knowledge in the following sense: whatever a verifier could learn by interacting with the correct prover, the verifier could learn itself.</p>
+</blockquote>
+<p>什么是零知识呢？无论verifier通过与prover交互学到了什么，那么verifier也能通过和自己交互学到这些知识，才是真的没有泄露任何别的知识。实际操作中有一个有效的模拟器。这个模拟器会生成verifier和prover之间的对话，同时只知道puzzle，而不知道数独的解。要求模拟器中verifier与prover对话之间的分布和真实的情况下两者之间的分布是一样的，这样就无法区分模拟器和真实的情况。</p>
+</li>
+<li>
+<p>proofs-of-knowledge.</p>
+<blockquote>
+<p>Our protocols should also be <em><strong>proofs-of-knowledge</strong></em>: if the prover (or anyone imper-
+sonating him) can succeed in making the verifier accept, then there is another ma-
+chine, called the <em>extractor</em>, that can communicate with the prover and actually come
+up with the solution itself. This must involve running the prover several times using
+the same randomness (which is not possible under normal circumstances), so as not
+to contradict the zero-knowledge properties.</p>
+</blockquote>
+<p>证明prover确实有知识，存在这样一个提取器，它能够通过和prover交互得到知识，当然，它不能发送通常的随机数，它可以多次使用相同的随机数。</p>
+</li>
+</ol>
+<p>论文中证明中用到的唯一的密码学工具是 commitment protocol。一个承诺协议，发送方向接收方承诺一个值，接收方不会学到任何关于这个值有用的信息。这样的一个协议包含两个阶段：</p>
+<ol>
+<li>
+<p><strong>commit phase</strong> 承诺阶段。</p>
+<p>发送方绑定一些值 $v$，接收方不能决定任何关于 $v$ 有用的信息。特别地，对于任意的$b$和$b’$，接受方无法区分$v=b$和$v=b’$。这个性质称为 <strong><strong><strong><strong><strong><strong><strong>hiding</strong></strong></strong></strong></strong></strong></strong>。</p>
+</li>
+<li>
+<p>decommit or reval phase</p>
+<p>接收方获得$v$后，确保它是原来的值，也就是说，一旦commit阶段结束，接收方会在reval阶段接收一个唯一的值。这个性质称为 <strong>binding</strong>。</p>
+</li>
+</ol>
+<p>bit commitment可以高效执行。</p>
+<h3 id="physical-protocols">Physical Protocols</h3>
+<p>在文章中使用 tamper-evident sealed envelopes，也就是防拆封信封。在数独的例子中，每个盖住的卡片当作是这样的 tamper-evident sealed envelopes，将卡片翻开就相当于拆开信封。</p>
+<h2 id="3-cryptographic-protocols">3. Cryptographic Protocols</h2>
+<p>verifer要保证两件事情：</p>
+<ol>
+<li>存在一个解</li>
+<li>the prover 知道这个解</li>
+</ol>
+<p>零知识协议证明的结构：</p>
+<blockquote>
+<ol>
+<li>The prover commits to several values. These values are functions of the instance,
+the solution and some randomization known only to the prover. 证明方承诺一些值。</li>
+<li>The verifier requests that the prover open some of the committed values—this is
+called the <em>challenge</em>. The verifier chooses the challenge at random from a collec-
+tion of possible challenges. 验证方发起挑战。</li>
+<li>The prover opens the requested values. 证明方打开要求的值。</li>
+<li>The verifier checks the consistency of the opened values with the given instance,
+and accepts or rejects accordingly. 验证方验证给定实例打开值的一致性，然后相应地接受或者拒绝。</li>
+</ol>
+</blockquote>
+<p>要求在步骤3中打开的值的分布是一个关于数独问题和步骤2中发送的挑战的有效函数。那么结合承诺协议的不可区分性质，说明了有效模拟器的存在性。</p>
+<p>模拟器的操作如下：在步骤2中随机选择一个验证方可能发起的挑战，计算步骤1中会满足挑战的值。模拟器模拟将这些值发送给验证方，然后运行验证方的算法，用刚刚得到的值和数独问题作为输入。模拟器会获得在步骤2中发送的挑战。如果这个挑战是它之前猜的值，模拟器就会打开之前发送的承诺，那么验证方自然会接受，模拟器可以继续执行这个协议，否则的话，模拟器会重置并重新开始。这里有点绕，原文如下：</p>
+<blockquote>
+<p>The simulator operates in the following way: it picks at random a challenge that the verifier might send in Step 2 (i.e. it guesses what the verifier’s challenge will be), and computes commitments for Step 1 that will satisfy this challenge. The simulator simulates sending these commitments to the verifier, then it runs the verifier’s algo- rithm with the puzzle as its input, a fresh set of random bits and these commitments being the first message it receives. It then obtains the challenge the verifier sends in Step 2. If this challenge is indeed the value it guessed, then the simulator can open the commitments it sent and the verifier should accept; the simulator can continue simulating the protocol and output the transcript of the simulated protocol execution. Otherwise, the simulator resets the simulation and starts it all over again.</p>
+</blockquote>
+<p>如果可能的挑战的数量是多项式的，那么每次模拟器猜测验证方的挑战，就是用“reasonably high”概率是正确的。这个过程保证了协议是零知识的，因为模拟器的输出和验证方从证明方交互得到的输出是不能区分的，但是模拟器这一过程的计算是没有和证明方交互的，那肯定不能得到任何关于解的知识。</p>
+<h3 id="31-a-protocol-based-on-coloring">3.1 A Protocol Based on Coloring</h3>
+<p>对于3-Colorability Protocol，证明者重新排列颜色，然后提交每个顶点重新排列之后的颜色。验证方随机选择一条边，检查边的两端颜色是否是不同的。</p>
+<p>对于数独问题，这个协议是如下这样的：</p>
 <p>
-  <img src="/img/2022-11-28-How-to-explain-zero-knowledge-protocols-to-your-children/Untitled%202.png" alt="Untitled">
+  <img src="/img/2022-11-29-Cryptographic-and-Physical-Zero-Knowledge-Proof-Systems-for-Solutions-of-Sudoku-Puzzles/Untitled.png" alt="Untitled">
 
 </p>
-<p>只需要单独一次测试就能够让人达到连续40次测试相同水平的信服度，来相信Mick是知道这个咒语的秘密的。</p>
+<p>Prover步骤1是随机选择一个排列$\sigma$，从${1,\dots,n}$映射到${1,\dots,n}$，这样避免泄漏原来的解。</p>
+<h3 id="32-an-efficient-cryptographic-protocol-with-constant-soundness-error">3.2 An Efficient Cryptographic Protocol with Constant Soundness Error</h3>
+<p>下面这种协议有常数的soundness error。这个协议的想法是将每个单元复制三份，创建关于解的行、列以及子网格的视角。复制后的每个单元随机排列，prover的工作是说明以下性质：</p>
+<ol>
+<li>对应行、列、子网格含有所有可能的数字，如${ 1,2,&hellip;,n }$。</li>
+<li>一个单元的三个版本的值都是相同的。</li>
+<li>这些复制后的单元中包含预先确定的值。</li>
+</ol>
+<p>如果上述三个条件都满足的话，说明存在这样一个解并且prover是知道它的。具体的协议如下：</p>
+<p>
+  <img src="/img/2022-11-29-Cryptographic-and-Physical-Zero-Knowledge-Proof-Systems-for-Solutions-of-Sudoku-Puzzles/Untitled%201.png" alt="Untitled">
+
+</p>
+<p>上面过程不是很好理解，例如$n=4$的情况，$3 \times n^2 = 2 \times 4^2 = 3 \times 16$，数独谜题里填的数字范围是 ${ 1,2,3,4 }$。这样有解的三个副本，分别是行、列、subgrids。</p>
+<p>
+  <img src="/img/2022-11-29-Cryptographic-and-Physical-Zero-Knowledge-Proof-Systems-for-Solutions-of-Sudoku-Puzzles/Untitled%202.png" alt="Untitled">
+
+</p>
+<p>Prover：</p>
+<ol>
+<li>提交$3 \times n^2$ 个值 $v_1,v_2,…,v_{3 \times 4^2}$。$v_{i_1}、v_{i_2}、v_{i_3}$ 是原来数独解中的值，有相同的值，$(i_1,i_2,i_3)$ 是一个三元组，是随机的下标，例如图中的$(3,16,9)$、$(80,1,17)$。</li>
+<li>提交范围${ 1,2, \dots , 3 \times n^2 }$中 $n^2$个三元组$(i_1,i_2,i_3)$，例如${ (3,16,9),(80,1,17)\dots,(i_1,i_2,i_3), \dots }$。</li>
+<li>提交步骤2中个每个三元组的名字，如$(3,16,9)$的名字就是$(rows,columns,subgrids)$，$(80,1,17)$对应的是$(subgrids,rows,columns)$。</li>
+<li>提交步骤1中$3n$组位置，对应行、列和子网格，并且在每组中不会存在相交的两个单元格。例如图中蓝色箭头部分。</li>
+</ol>
+<p>Verifier：选择以下三个中的一个进行挑战：</p>
+<p>(a) 打开步骤1中$3 \times n^2$个值，以及步骤4中$3n$组的位置。验证每组中是否含有$n$个不同的值，任意两组之间不相交。</p>
+<p>(b)打开步骤1中$3n^2$个值以及步骤2。验证提交的三元组对应下标的值都是相同的。</p>
+<p>(c)打开步骤2、3、4中提交的值以及步骤1中已经填好的数独，如图中紫色数字。验证(i)打开的值和之前设定的值是一致的，(ii)步骤4中的每个集合和之前的位置是一致的，(iii)每个三元组的名字对应是正确的。</p>
+<h3 id="overhead-of-our-protocols">Overhead of our Protocols</h3>
+<p>上面两个协议都可以通过重复执行来降低soundness error。</p>
+<h2 id="4-physical-protocols">4 Physical Protocols</h2>
+<p>物理上的协议，使用 Tamper Evidence作为物理的密码学基础，就是密封的信封。</p>
+<p>密码学协议和物理的协议的还有一个不同是：</p>
+<blockquote>
+<p>The protocol does not prevent cheating by adversaries that accept the risk of being labelled as cheaters (in this respect it is similar to the model of covert adversaries).</p>
+</blockquote>
+<p>两个函数需要用到：shuffle 和 triplicate。</p>
+<p>实现密封效果有三种方式：</p>
+<ol>
+<li>密封的信封</li>
+<li>刮刮卡</li>
+<li>验证方和证明方在同一个房间，用标准的不透明卡片，密封就是把数字盖着，揭开数字就是翻转卡片，将数字朝上。</li>
+</ol>
+<p>协议3</p>
+<blockquote>
+<p><strong>Protocol 3</strong>  <em>A physical protocol with</em> 1/9 <em>soundness error</em></p>
+<ul>
+<li><em>The prover places three scratch-off cards on each cell</em>. <em>On filled-in cells</em>, <em>he places
+three cards with the correct value</em>, <em>which are already open</em> (<em>scratched</em>).</li>
+<li><em>For each row/column/subgrid</em>, <em>the verifier chooses</em> (<em>at random</em>) <em>one of the three
+cards of each cell in the corresponding row/column/subgrid</em>.</li>
+<li><em>The prover makes packets of the verifier’s requested cards</em> (<em>i</em>.<em>e</em>. <em>for every row/
+column/subgrid</em>, <em>he assembles the requested cards</em>). <em>He then shuffles each of the</em> 3n
+<em>packets separately</em> (<em>using the shuffle functionality</em>), <em>and hands the shuffled packets
+to the verifier</em>.</li>
+<li><em>The verifier scratches off all the cards in each packet and verifies that each packet
+contains all of the numbers</em>.</li>
+</ul>
+</blockquote>
+<p>这个协议需要执行的洗牌次数比较多，对于$9 \times 9$的情况，需要进行$3 \times n = 3 \times 9 = 27$次洗牌，在实际操作中这个次数过多。</p>
+<h3 id="411-reducing-the-number-of-shuffles">4.1.1 Reducing the Number of Shuffles</h3>
+<p>
+  <img src="/img/2022-11-29-Cryptographic-and-Physical-Zero-Knowledge-Proof-Systems-for-Solutions-of-Sudoku-Puzzles/Untitled%203.png" alt="Untitled">
+
+</p>
+<p>上面的意思是在验证阶段，prover给每个袋子标记一个值，从$0$到$c-1$，如果标记的是$0$表示这个口袋不被选中。那么对于每一个标记的号$i$，如果有$t$个袋子是这个标记，就把这$t$个袋子混合在一起进行洗牌操作，最后验证里面每个数字是否出现$t$次。这样就大大减少了shuffles函数的调用次数。</p>
+<h2 id="42-a-physical-zero-knowledge-protocol-with-no-soundness-error">4.2 A Physical Zero-Knowledge Protocol with no Soundness Error</h2>
+<p>
+  <img src="/img/2022-11-29-Cryptographic-and-Physical-Zero-Knowledge-Proof-Systems-for-Solutions-of-Sudoku-Puzzles/Untitled%204.png" alt="Untitled">
+
+</p>
+<p>这种协议prover是没有办法作弊的。</p>
+<h2 id="43-a-protocol-using-scissors-and-a-sheet-of-paper">4.3 A Protocol Using Scissors and a Sheet of Paper</h2>
+<p>
+  <img src="/img/2022-11-29-Cryptographic-and-Physical-Zero-Knowledge-Proof-Systems-for-Solutions-of-Sudoku-Puzzles/Untitled%205.png" alt="Untitled">
+
+</p>
 
 
                 
@@ -305,15 +437,10 @@ code.has-jax {
                 <ul class="pager">
                     
                     <li class="previous">
-                        <a href="/2022/11/28/The-Incredible-Machine/" data-toggle="tooltip" data-placement="top" title="The Incredible Machine">&larr;
+                        <a href="/2022/11/28/How-to-explain-zero-knowledge-protocols-to-your-children/" data-toggle="tooltip" data-placement="top" title="How to explain zero-knowledge protocols to your children">&larr;
                             Previous Post</a>
                     </li>
                     
-                    
-                    <li class="next">
-                        <a href="/2022/11/29/Cryptographic-and-Physical-Zero-Knowledge-Proof-Systems-for-Solutions-of-Sudoku-Puzzles/" data-toggle="tooltip" data-placement="top" title="Cryptographic and Physical Zero-Knowledge Proof Systems for Solutions of Sudoku Puzzles">Next
-                            Post &rarr;</a>
-                    </li>
                     
                 </ul>
                 
