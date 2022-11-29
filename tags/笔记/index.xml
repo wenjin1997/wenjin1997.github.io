@@ -44,6 +44,15 @@
     </item>
     
     <item>
+      <title>Zero Knowledge Proofs: An illustrated primer</title>
+      <link>https://wenjin1997.github.io/2022/11/16/Zero-Knowledge-Proofs-An-illustrated-primer/</link>
+      <pubDate>Wed, 16 Nov 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2022/11/16/Zero-Knowledge-Proofs-An-illustrated-primer/</guid>
+      <description>原文链接：Zero Knowledge Proofs: An illustrated primer One of the best things about modern cryptography （密码学） is the beautiful terminology （术语）. You could start any number of punk bands（朋克乐队） (or Tumblrs) named after cryptography terms like ‘hard-cor</description>
+    </item>
+    
+    <item>
       <title>Rust异步Web框架</title>
       <link>https://wenjin1997.github.io/2022/08/23/rust-web/</link>
       <pubDate>Tue, 23 Aug 2022 00:00:00 +0000</pubDate>
