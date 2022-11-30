@@ -6,7 +6,16 @@
     <description>Recent content on Wenjin Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 29 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://wenjin1997.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 30 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://wenjin1997.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Zero Knowledge Proofs: An illustrated primer, Part 2</title>
+      <link>https://wenjin1997.github.io/2022/11/30/Zero-Knowledge-Proofs-An-illustrated-primer-Part2/</link>
+      <pubDate>Wed, 30 Nov 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://wenjin1997.github.io/2022/11/30/Zero-Knowledge-Proofs-An-illustrated-primer-Part2/</guid>
+      <description>原文链接：Zero Knowledge Proofs: An illustrated primer, Part 2。这篇博客通过Schnorr协议详细讲解了零知识证明中的完备性、可靠性以及零知识，对于弄懂提取器、模拟器以及</description>
+    </item>
+    
     <item>
       <title>Cryptographic and Physical Zero-Knowledge Proof Systems for Solutions of Sudoku Puzzles</title>
       <link>https://wenjin1997.github.io/2022/11/29/Cryptographic-and-Physical-Zero-Knowledge-Proof-Systems-for-Solutions-of-Sudoku-Puzzles/</link>
@@ -58,7 +67,7 @@
       <pubDate>Wed, 16 Nov 2022 00:00:00 +0000</pubDate>
       
       <guid>https://wenjin1997.github.io/2022/11/16/Zero-Knowledge-Proofs-An-illustrated-primer/</guid>
-      <description>原文链接：Zero Knowledge Proofs: An illustrated primer One of the best things about modern cryptography （密码学） is the beautiful terminology （术语）. You could start any number of punk bands（朋克乐队） (or Tumblrs) named after cryptography terms like ‘hard-cor</description>
+      <description>原文链接：Zero Knowledge Proofs: An illustrated primer。本篇文章通过图三色问题来介绍什么是零知识证明。 One of the best things about modern cryptography （密码学） is the beautiful terminology （术语）. You could start any number</description>
     </item>
     
     <item>
