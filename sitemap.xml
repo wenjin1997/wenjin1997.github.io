@@ -3,27 +3,33 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://wenjin1997.github.io/categories/</loc>
-    <lastmod>2022-11-30T00:00:00+00:00</lastmod>
+    <lastmod>2023-07-09T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://wenjin1997.github.io/post/</loc>
-    <lastmod>2022-11-30T00:00:00+00:00</lastmod>
+    <lastmod>2023-07-09T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://wenjin1997.github.io/tags/</loc>
-    <lastmod>2022-11-30T00:00:00+00:00</lastmod>
+    <lastmod>2023-07-09T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://wenjin1997.github.io/2022/11/30/Zero-Knowledge-Proofs-An-illustrated-primer-Part2/</loc>
+    <lastmod>2023-07-09T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://wenjin1997.github.io/</loc>
-    <lastmod>2022-11-30T00:00:00+00:00</lastmod>
+    <lastmod>2023-07-09T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://wenjin1997.github.io/tags/zkp/</loc>
+    <lastmod>2023-07-09T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://wenjin1997.github.io/categories/zkp/</loc>
+    <lastmod>2023-07-09T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://wenjin1997.github.io/tags/%E7%AC%94%E8%AE%B0/</loc>
+    <lastmod>2023-07-09T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://wenjin1997.github.io/2022/11/30/Zero-Knowledge-Proofs-An-illustrated-primer-Part2/</loc>
     <lastmod>2022-11-30T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://wenjin1997.github.io/tags/zkp/</loc>
-    <lastmod>2022-11-30T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://wenjin1997.github.io/categories/zkp/</loc>
-    <lastmod>2022-11-30T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://wenjin1997.github.io/tags/%E7%AC%94%E8%AE%B0/</loc>
+    <loc>https://wenjin1997.github.io/2022/11/30/sec-bit-zkp-summary/</loc>
     <lastmod>2022-11-30T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://wenjin1997.github.io/2022/11/29/Cryptographic-and-Physical-Zero-Knowledge-Proof-Systems-for-Solutions-of-Sudoku-Puzzles/</loc>

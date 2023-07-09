@@ -814,7 +814,7 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">trait</span> Future {
 </span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">type</span> <span style="color:#50fa7b">Output</span>;
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">poll</span>(self: <span style="color:#50fa7b">Pin</span><span style="color:#ff79c6">&lt;&amp;</span><span style="color:#ff79c6">mut</span> Self<span style="color:#ff79c6">&gt;</span>, cx: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">mut</span> Context<span style="color:#ff79c6">&lt;&#39;</span><span style="color:#8be9fd;font-style:italic">_</span><span style="color:#ff79c6">&gt;</span>) -&gt; <span style="color:#50fa7b">Poll</span><span style="color:#ff79c6">&lt;</span>Self::Output<span style="color:#ff79c6">&gt;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">poll</span>(self: <span style="color:#50fa7b">Pin</span><span style="color:#ff79c6">&lt;&amp;</span><span style="color:#ff79c6">mut</span> Self<span style="color:#ff79c6">&gt;</span>, cx: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">mut</span> Context<span style="color:#ff79c6">&lt;</span><span style="color:#8be9fd;font-style:italic">&#39;_</span><span style="color:#ff79c6">&gt;</span>) -&gt; <span style="color:#50fa7b">Poll</span><span style="color:#ff79c6">&lt;</span>Self::Output<span style="color:#ff79c6">&gt;</span>;
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>其中poll方法很重要，尝试去将future得到一个最终的值。如果最终的值没有准备好，也不会进行阻塞。</p>
 <p><a href="https://doc.rust-lang.org/std/task/index.html">task</a>：可以理解为创建绿色线程。</p>
@@ -944,7 +944,7 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// the vtable as the first parameter.
 </span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    data: <span style="color:#ff79c6">*</span><span style="color:#ff79c6">const</span> (),
 </span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// Virtual function pointer table that customizes the behavior of this waker.
-</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    vtable: <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&#39;</span><span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#50fa7b">RawWakerVTable</span>,
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    vtable: <span style="color:#ff79c6">&amp;</span><span style="color:#8be9fd;font-style:italic">&#39;static</span> <span style="color:#50fa7b">RawWakerVTable</span>,
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>这里Rawwaker有两个内容，一个data可以保存上下文，一个vtable是虚表。</p>
 </li>
@@ -1003,13 +1003,13 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> c <span style="color:#ff79c6">=</span> Pin::new(<span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">mut</span> gen).resume(());
-</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;{:?}&#34;</span>, c);
+</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{:?}</span><span style="color:#f1fa8c">&#34;</span>, c);
 </span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> c <span style="color:#ff79c6">=</span> Pin::new(<span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">mut</span> gen).resume(());
-</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;{:?}&#34;</span>, c);
+</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{:?}</span><span style="color:#f1fa8c">&#34;</span>, c);
 </span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> c <span style="color:#ff79c6">=</span> Pin::new(<span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">mut</span> gen).resume(());
-</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;{:?}&#34;</span>, c);
+</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{:?}</span><span style="color:#f1fa8c">&#34;</span>, c);
 </span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> c <span style="color:#ff79c6">=</span> Pin::new(<span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">mut</span> gen).resume(());
-</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;{:?}&#34;</span>, c);
+</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{:?}</span><span style="color:#f1fa8c">&#34;</span>, c);
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>生成等价代码：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">#![allow(unused)]</span>
@@ -1071,7 +1071,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    };
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">for</span> _ <span style="color:#ff79c6">in</span> <span style="color:#bd93f9">0</span><span style="color:#ff79c6">..</span><span style="color:#bd93f9">4</span> {
-</span></span><span style="display:flex;"><span>        println!(<span style="color:#f1fa8c">&#34;{:?}&#34;</span>, <span style="color:#ff79c6">unsafe</span>{ Pin::new(<span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">mut</span> gen).resume(())});
+</span></span><span style="display:flex;"><span>        println!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{:?}</span><span style="color:#f1fa8c">&#34;</span>, <span style="color:#ff79c6">unsafe</span>{ Pin::new(<span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">mut</span> gen).resume(())});
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>生成器基本用法：</p>
@@ -1095,7 +1095,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">unsafe</span> {
 </span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">for</span> _ <span style="color:#ff79c6">in</span> <span style="color:#bd93f9">0</span><span style="color:#ff79c6">..=</span><span style="color:#bd93f9">10</span>{
 </span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> c <span style="color:#ff79c6">=</span> Pin::new(<span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">mut</span> b).resume(());
-</span></span><span style="display:flex;"><span>            println!(<span style="color:#f1fa8c">&#34;{:?}&#34;</span>, c);
+</span></span><span style="display:flex;"><span>            println!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{:?}</span><span style="color:#f1fa8c">&#34;</span>, c);
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
@@ -1121,7 +1121,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">unsafe</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">for</span> _ <span style="color:#ff79c6">in</span> <span style="color:#bd93f9">0</span><span style="color:#ff79c6">..</span><span style="color:#bd93f9">10</span>{
 </span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">match</span> Pin::new(<span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">mut</span> gen).resume(()) {
-</span></span><span style="display:flex;"><span>            GeneratorState::Yielded(i) <span style="color:#ff79c6">=&gt;</span> println!(<span style="color:#f1fa8c">&#34;{:?}&#34;</span>, i),
+</span></span><span style="display:flex;"><span>            GeneratorState::Yielded(i) <span style="color:#ff79c6">=&gt;</span> println!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{:?}</span><span style="color:#f1fa8c">&#34;</span>, i),
 </span></span><span style="display:flex;"><span>            _ <span style="color:#ff79c6">=&gt;</span> println!(<span style="color:#f1fa8c">&#34;Completed&#34;</span>),
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }
@@ -1148,8 +1148,8 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">unsafe</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">for</span> i <span style="color:#ff79c6">in</span> <span style="color:#bd93f9">0</span><span style="color:#ff79c6">..=</span>limit{
 </span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">match</span> Pin::new(<span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">mut</span> gen).resume(()) {
-</span></span><span style="display:flex;"><span>            GeneratorState::Yielded(v) <span style="color:#ff79c6">=&gt;</span> println!(<span style="color:#f1fa8c">&#34;resume {:?} : Pending&#34;</span>, i),
-</span></span><span style="display:flex;"><span>            GeneratorState::Complete(v) <span style="color:#ff79c6">=&gt;</span> println!(<span style="color:#f1fa8c">&#34;resume {:?} : Ready&#34;</span>, i),
+</span></span><span style="display:flex;"><span>            GeneratorState::Yielded(v) <span style="color:#ff79c6">=&gt;</span> println!(<span style="color:#f1fa8c">&#34;resume </span><span style="color:#f1fa8c">{:?}</span><span style="color:#f1fa8c"> : Pending&#34;</span>, i),
+</span></span><span style="display:flex;"><span>            GeneratorState::Complete(v) <span style="color:#ff79c6">=&gt;</span> println!(<span style="color:#f1fa8c">&#34;resume </span><span style="color:#f1fa8c">{:?}</span><span style="color:#f1fa8c"> : Ready&#34;</span>, i),
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>    }
@@ -1173,13 +1173,13 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">impl</span><span style="color:#ff79c6">&lt;</span>T: <span style="color:#50fa7b">Generator</span><span style="color:#ff79c6">&lt;</span>ResumeTy, Yield <span style="color:#ff79c6">=</span> ()<span style="color:#ff79c6">&gt;&gt;</span> Future <span style="color:#ff79c6">for</span> GenFuture<span style="color:#ff79c6">&lt;</span>T<span style="color:#ff79c6">&gt;</span> {
 </span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">type</span> <span style="color:#50fa7b">Output</span> <span style="color:#ff79c6">=</span> T::Return;
-</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">poll</span>(self: <span style="color:#50fa7b">Pin</span><span style="color:#ff79c6">&lt;&amp;</span><span style="color:#ff79c6">mut</span> Self<span style="color:#ff79c6">&gt;</span>, cx: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">mut</span> Context<span style="color:#ff79c6">&lt;&#39;</span><span style="color:#8be9fd;font-style:italic">_</span><span style="color:#ff79c6">&gt;</span>) -&gt; <span style="color:#50fa7b">Poll</span><span style="color:#ff79c6">&lt;</span>Self::Output<span style="color:#ff79c6">&gt;</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">poll</span>(self: <span style="color:#50fa7b">Pin</span><span style="color:#ff79c6">&lt;&amp;</span><span style="color:#ff79c6">mut</span> Self<span style="color:#ff79c6">&gt;</span>, cx: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">mut</span> Context<span style="color:#ff79c6">&lt;</span><span style="color:#8be9fd;font-style:italic">&#39;_</span><span style="color:#ff79c6">&gt;</span>) -&gt; <span style="color:#50fa7b">Poll</span><span style="color:#ff79c6">&lt;</span>Self::Output<span style="color:#ff79c6">&gt;</span> {
 </span></span><span style="display:flex;"><span>            <span style="color:#6272a4">// SAFETY: Safe because we&#39;re !Unpin + !Drop, and this is just a field projection.
 </span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>            <span style="color:#8be9fd;font-style:italic">let</span> gen <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">unsafe</span> { Pin::map_unchecked_mut(self, <span style="color:#ff79c6">|</span>s<span style="color:#ff79c6">|</span> <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">mut</span> s.<span style="color:#bd93f9">0</span>) };
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>            <span style="color:#6272a4">// Resume the generator, turning the `&amp;mut Context` into a `NonNull` raw pointer. The
 </span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>            <span style="color:#6272a4">// `.await` lowering will safely cast that back to a `&amp;mut Context`.
-</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>            <span style="color:#ff79c6">match</span> gen.resume(ResumeTy(NonNull::from(cx).cast::<span style="color:#ff79c6">&lt;</span>Context<span style="color:#ff79c6">&lt;&#39;</span><span style="color:#8be9fd;font-style:italic">static</span><span style="color:#ff79c6">&gt;&gt;</span>())) {
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>            <span style="color:#ff79c6">match</span> gen.resume(ResumeTy(NonNull::from(cx).cast::<span style="color:#ff79c6">&lt;</span>Context<span style="color:#ff79c6">&lt;</span><span style="color:#8be9fd;font-style:italic">&#39;static</span><span style="color:#ff79c6">&gt;&gt;</span>())) {
 </span></span><span style="display:flex;"><span>                GeneratorState::Yielded(()) <span style="color:#ff79c6">=&gt;</span> Poll::Pending,
 </span></span><span style="display:flex;"><span>                GeneratorState::Complete(x) <span style="color:#ff79c6">=&gt;</span> Poll::Ready(x),
 </span></span><span style="display:flex;"><span>            }
@@ -1211,14 +1211,14 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>代表缓存中的过期时间，这里对Instant有一个包装，方便实现一些方法。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">#[derive(Debug)]</span>
-</span></span><span style="display:flex;"><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">CacheEntryReadGuard</span><span style="color:#ff79c6">&lt;&#39;</span><span style="color:#50fa7b">a</span>, V<span style="color:#ff79c6">&gt;</span> {
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">CacheEntryReadGuard</span><span style="color:#ff79c6">&lt;</span><span style="color:#50fa7b">&#39;a</span>, V<span style="color:#ff79c6">&gt;</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">crate</span>) entry: <span style="color:#ff79c6">*</span><span style="color:#ff79c6">const</span> CacheEntry<span style="color:#ff79c6">&lt;</span>V<span style="color:#ff79c6">&gt;</span>,
-</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">crate</span>) marker: <span style="color:#50fa7b">PhantomData</span><span style="color:#ff79c6">&lt;&amp;&#39;</span><span style="color:#50fa7b">a</span> CacheEntry<span style="color:#ff79c6">&lt;</span>V<span style="color:#ff79c6">&gt;&gt;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">crate</span>) marker: <span style="color:#50fa7b">PhantomData</span><span style="color:#ff79c6">&lt;&amp;</span><span style="color:#50fa7b">&#39;a</span> CacheEntry<span style="color:#ff79c6">&lt;</span>V<span style="color:#ff79c6">&gt;&gt;</span>,
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>对底层缓存结构的引用的一个读保护。当使用锁的时候，这个结构可以返回一个指向内部缓存 entries 的引用，也就是一个指针。同时CacheEntryReadGuard实现了Send和Sync。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#6272a4">// Stores a raw pointer to `T`, so if `T` is `Sync`, the lock guard over `T` is `Send`.
-</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span><span style="color:#ff79c6">unsafe</span> <span style="color:#ff79c6">impl</span><span style="color:#ff79c6">&lt;</span>V<span style="color:#ff79c6">&gt;</span> <span style="color:#8be9fd;font-style:italic">Send</span> <span style="color:#ff79c6">for</span> CacheEntryReadGuard<span style="color:#ff79c6">&lt;&#39;</span><span style="color:#8be9fd;font-style:italic">_</span>, V<span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">where</span> V: <span style="color:#8be9fd;font-style:italic">Sized</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">Sync</span> {}
-</span></span><span style="display:flex;"><span><span style="color:#ff79c6">unsafe</span> <span style="color:#ff79c6">impl</span><span style="color:#ff79c6">&lt;</span>V<span style="color:#ff79c6">&gt;</span> <span style="color:#8be9fd;font-style:italic">Sync</span> <span style="color:#ff79c6">for</span> CacheEntryReadGuard<span style="color:#ff79c6">&lt;&#39;</span><span style="color:#8be9fd;font-style:italic">_</span>, V<span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">where</span> V: <span style="color:#8be9fd;font-style:italic">Sized</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">Send</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">Sync</span> {}
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span><span style="color:#ff79c6">unsafe</span> <span style="color:#ff79c6">impl</span><span style="color:#ff79c6">&lt;</span>V<span style="color:#ff79c6">&gt;</span> <span style="color:#8be9fd;font-style:italic">Send</span> <span style="color:#ff79c6">for</span> CacheEntryReadGuard<span style="color:#ff79c6">&lt;</span><span style="color:#8be9fd;font-style:italic">&#39;_</span>, V<span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">where</span> V: <span style="color:#8be9fd;font-style:italic">Sized</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">Sync</span> {}
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">unsafe</span> <span style="color:#ff79c6">impl</span><span style="color:#ff79c6">&lt;</span>V<span style="color:#ff79c6">&gt;</span> <span style="color:#8be9fd;font-style:italic">Sync</span> <span style="color:#ff79c6">for</span> CacheEntryReadGuard<span style="color:#ff79c6">&lt;</span><span style="color:#8be9fd;font-style:italic">&#39;_</span>, V<span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">where</span> V: <span style="color:#8be9fd;font-style:italic">Sized</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">Send</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">Sync</span> {}
 </span></span></code></pre></div><p>cache.rs</p>
 <p>缓存结构：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">Cache</span><span style="color:#ff79c6">&lt;</span>K, V<span style="color:#ff79c6">&gt;</span> {
@@ -1350,8 +1350,8 @@ code.has-jax {
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">use</span> once_cell::sync::Lazy;
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#f1fa8c">/// 将异步任务加入到 task 中，交给 Global 执行器
-</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">spawn</span><span style="color:#ff79c6">&lt;</span>T: <span style="color:#8be9fd;font-style:italic">Send</span> <span style="color:#ff79c6">+</span> <span style="color:#ff79c6">&#39;</span><span style="color:#8be9fd;font-style:italic">static</span><span style="color:#ff79c6">&gt;</span>(future: <span style="color:#50fa7b">impl</span> Future<span style="color:#ff79c6">&lt;</span>Output <span style="color:#ff79c6">=</span> T<span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">Send</span> <span style="color:#ff79c6">+</span> <span style="color:#ff79c6">&#39;</span><span style="color:#8be9fd;font-style:italic">static</span>) -&gt; <span style="color:#50fa7b">Task</span><span style="color:#ff79c6">&lt;</span>T<span style="color:#ff79c6">&gt;</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">static</span> GLOBAL: <span style="color:#50fa7b">Lazy</span><span style="color:#ff79c6">&lt;</span>Executor<span style="color:#ff79c6">&lt;&#39;</span><span style="color:#8be9fd;font-style:italic">_</span><span style="color:#ff79c6">&gt;&gt;</span> <span style="color:#ff79c6">=</span> Lazy::new(<span style="color:#ff79c6">||</span> {
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">spawn</span><span style="color:#ff79c6">&lt;</span>T: <span style="color:#8be9fd;font-style:italic">Send</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">&#39;static</span><span style="color:#ff79c6">&gt;</span>(future: <span style="color:#50fa7b">impl</span> Future<span style="color:#ff79c6">&lt;</span>Output <span style="color:#ff79c6">=</span> T<span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">Send</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">&#39;static</span>) -&gt; <span style="color:#50fa7b">Task</span><span style="color:#ff79c6">&lt;</span>T<span style="color:#ff79c6">&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">static</span> GLOBAL: <span style="color:#50fa7b">Lazy</span><span style="color:#ff79c6">&lt;</span>Executor<span style="color:#ff79c6">&lt;</span><span style="color:#8be9fd;font-style:italic">&#39;_</span><span style="color:#ff79c6">&gt;&gt;</span> <span style="color:#ff79c6">=</span> Lazy::new(<span style="color:#ff79c6">||</span> {
 </span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">let</span> num_threads <span style="color:#ff79c6">=</span> {
 </span></span><span style="display:flex;"><span>            <span style="color:#6272a4">// Parse SMOL_THREADS or default to 1.
 </span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>            std::env::var(<span style="color:#f1fa8c">&#34;SMOL_THREADS&#34;</span>)
@@ -1362,7 +1362,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">for</span> n <span style="color:#ff79c6">in</span> <span style="color:#bd93f9">1</span><span style="color:#ff79c6">..=</span>num_threads {
 </span></span><span style="display:flex;"><span>            thread::Builder::new()
-</span></span><span style="display:flex;"><span>                .name(format!(<span style="color:#f1fa8c">&#34;smol-{}&#34;</span>, n))
+</span></span><span style="display:flex;"><span>                .name(format!(<span style="color:#f1fa8c">&#34;smol-</span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">&#34;</span>, n))
 </span></span><span style="display:flex;"><span>                .spawn(<span style="color:#ff79c6">||</span> <span style="color:#ff79c6">loop</span> {
 </span></span><span style="display:flex;"><span>                    <span style="color:#6272a4">// catch_unwind 方法
 </span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>                    <span style="color:#6272a4">// 可以捕获栈展开，运行panic线程存活并继续运行。使用标准库中的std::panic::catch_unwind()函数。
@@ -1402,17 +1402,17 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>        <span style="color:#8be9fd;font-style:italic">let</span> output <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">match</span> event {
 </span></span><span style="display:flex;"><span>            Event::Join(addr, stream) <span style="color:#ff79c6">=&gt;</span> {
 </span></span><span style="display:flex;"><span>                map.insert(addr, stream);
-</span></span><span style="display:flex;"><span>                format!(<span style="color:#f1fa8c">&#34;{} has joined\n&#34;</span>, addr)
+</span></span><span style="display:flex;"><span>                format!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c"> has joined</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">&#34;</span>, addr)
 </span></span><span style="display:flex;"><span>            }
 </span></span><span style="display:flex;"><span>            Event::Leave(addr) <span style="color:#ff79c6">=&gt;</span> {
 </span></span><span style="display:flex;"><span>                map.remove(<span style="color:#ff79c6">&amp;</span>addr);
-</span></span><span style="display:flex;"><span>                format!(<span style="color:#f1fa8c">&#34;{} has left\n&#34;</span>, addr)
+</span></span><span style="display:flex;"><span>                format!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c"> has left</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">&#34;</span>, addr)
 </span></span><span style="display:flex;"><span>            }
-</span></span><span style="display:flex;"><span>            Event::Message(addr, msg) <span style="color:#ff79c6">=&gt;</span> format!(<span style="color:#f1fa8c">&#34;{} says: {}\n&#34;</span>, addr, msg),
+</span></span><span style="display:flex;"><span>            Event::Message(addr, msg) <span style="color:#ff79c6">=&gt;</span> format!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c"> says: </span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">&#34;</span>, addr, msg),
 </span></span><span style="display:flex;"><span>        };
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>        <span style="color:#6272a4">// Display the event in the server process.
-</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>        print!(<span style="color:#f1fa8c">&#34;{}&#34;</span>, output);
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>        print!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">&#34;</span>, output);
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>        <span style="color:#6272a4">// Send the event to all active clients.
 </span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>        <span style="color:#ff79c6">for</span> stream <span style="color:#ff79c6">in</span> map.values_mut() {
@@ -1429,8 +1429,8 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>        <span style="color:#8be9fd;font-style:italic">let</span> listener <span style="color:#ff79c6">=</span> Async::<span style="color:#ff79c6">&lt;</span>TcpListener<span style="color:#ff79c6">&gt;</span>::bind(([<span style="color:#bd93f9">127</span>, <span style="color:#bd93f9">0</span>, <span style="color:#bd93f9">0</span>, <span style="color:#bd93f9">1</span>], <span style="color:#bd93f9">6000</span>))<span style="color:#ff79c6">?</span>;
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>        <span style="color:#6272a4">// Intro messages.
-</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>        println!(<span style="color:#f1fa8c">&#34;Listening on {}&#34;</span>, listener.get_ref().local_addr()<span style="color:#ff79c6">?</span>);
-</span></span><span style="display:flex;"><span>        println!(<span style="color:#f1fa8c">&#34;Start a chat client now!\n&#34;</span>);
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>        println!(<span style="color:#f1fa8c">&#34;Listening on </span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">&#34;</span>, listener.get_ref().local_addr()<span style="color:#ff79c6">?</span>);
+</span></span><span style="display:flex;"><span>        println!(<span style="color:#f1fa8c">&#34;Start a chat client now!</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">&#34;</span>);
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>        <span style="color:#6272a4">// Spawn a background task that dispatches events to clients.
 </span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>        <span style="color:#6272a4">// 通过 channel 实现消息传递
@@ -1469,9 +1469,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> stdout <span style="color:#ff79c6">=</span> Unblock::new(std::io::stdout());
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>        <span style="color:#6272a4">// Intro messages.
-</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>        println!(<span style="color:#f1fa8c">&#34;Connected to {}&#34;</span>, stream.get_ref().peer_addr()<span style="color:#ff79c6">?</span>);
-</span></span><span style="display:flex;"><span>        println!(<span style="color:#f1fa8c">&#34;My nickname: {}&#34;</span>, stream.get_ref().local_addr()<span style="color:#ff79c6">?</span>);
-</span></span><span style="display:flex;"><span>        println!(<span style="color:#f1fa8c">&#34;Type a message and hit enter!\n&#34;</span>);
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>        println!(<span style="color:#f1fa8c">&#34;Connected to </span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">&#34;</span>, stream.get_ref().peer_addr()<span style="color:#ff79c6">?</span>);
+</span></span><span style="display:flex;"><span>        println!(<span style="color:#f1fa8c">&#34;My nickname: </span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">&#34;</span>, stream.get_ref().local_addr()<span style="color:#ff79c6">?</span>);
+</span></span><span style="display:flex;"><span>        println!(<span style="color:#f1fa8c">&#34;Type a message and hit enter!</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">&#34;</span>);
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">let</span> reader <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">&amp;</span>stream;
 </span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> writer <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">&amp;</span>stream;
@@ -1638,7 +1638,7 @@ Supported platforms:</p>
 </span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
 </span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// In addition to the actual waker virtual table, it also contains pointers to several other
 </span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// methods necessary for bookkeeping the heap-allocated task.
-</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">crate</span>) vtable: <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&#39;</span><span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#50fa7b">TaskVTable</span>,
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#ff79c6">pub</span>(<span style="color:#ff79c6">crate</span>) vtable: <span style="color:#ff79c6">&amp;</span><span style="color:#8be9fd;font-style:italic">&#39;static</span> <span style="color:#50fa7b">TaskVTable</span>,
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>相当于做一些任务的处理，提供了notify、take、register三个函数。</p>
 <p>这里面任务的状态state是在state.rs中定义的。</p>
@@ -1772,12 +1772,12 @@ Supported platforms:</p>
 </span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">let</span> _ <span style="color:#ff79c6">=</span> tx2.send(<span style="color:#f1fa8c">&#34;two&#34;</span>);
 </span></span><span style="display:flex;"><span>    });
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    tokio::select<span style="color:#ff79c6">!</span> {
+</span></span><span style="display:flex;"><span>    tokio::select! {
 </span></span><span style="display:flex;"><span>        val <span style="color:#ff79c6">=</span> rx1 <span style="color:#ff79c6">=&gt;</span> {
-</span></span><span style="display:flex;"><span>            println!(<span style="color:#f1fa8c">&#34;rx1 completed first with {:?}&#34;</span>, val);
+</span></span><span style="display:flex;"><span>            println!(<span style="color:#f1fa8c">&#34;rx1 completed first with </span><span style="color:#f1fa8c">{:?}</span><span style="color:#f1fa8c">&#34;</span>, val);
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>        val <span style="color:#ff79c6">=</span> rx2 <span style="color:#ff79c6">=&gt;</span> {
-</span></span><span style="display:flex;"><span>            println!(<span style="color:#f1fa8c">&#34;rx2 completed first with {:?}&#34;</span>, val);
+</span></span><span style="display:flex;"><span>            println!(<span style="color:#f1fa8c">&#34;rx2 completed first with </span><span style="color:#f1fa8c">{:?}</span><span style="color:#f1fa8c">&#34;</span>, val);
 </span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}

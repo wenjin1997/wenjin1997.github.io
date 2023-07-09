@@ -278,7 +278,7 @@ code.has-jax {
 <p><code>Any</code>定义：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">#[stable(feature = </span><span style="color:#f1fa8c">&#34;rust1&#34;</span><span style="color:#ff79c6">, since = </span><span style="color:#f1fa8c">&#34;1.0.0&#34;</span><span style="color:#ff79c6">)]</span>
 </span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[cfg_attr(not(test), rustc_diagnostic_item = </span><span style="color:#f1fa8c">&#34;Any&#34;</span><span style="color:#ff79c6">)]</span>
-</span></span><span style="display:flex;"><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">trait</span> Any: <span style="color:#ff79c6">&#39;</span><span style="color:#8be9fd;font-style:italic">static</span> {
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">trait</span> Any: <span style="color:#8be9fd;font-style:italic">&#39;static</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// Gets the `TypeId` of `self`.
 </span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">///
 </span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#f1fa8c">/// # Examples
@@ -298,7 +298,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[stable(feature = </span><span style="color:#f1fa8c">&#34;rust1&#34;</span><span style="color:#ff79c6">, since = </span><span style="color:#f1fa8c">&#34;1.0.0&#34;</span><span style="color:#ff79c6">)]</span>
-</span></span><span style="display:flex;"><span><span style="color:#ff79c6">impl</span><span style="color:#ff79c6">&lt;</span>T: <span style="color:#ff79c6">&#39;</span><span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#ff79c6">+</span> <span style="color:#ff79c6">?</span><span style="color:#8be9fd;font-style:italic">Sized</span><span style="color:#ff79c6">&gt;</span> Any <span style="color:#ff79c6">for</span> T {
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">impl</span><span style="color:#ff79c6">&lt;</span>T: <span style="color:#8be9fd;font-style:italic">&#39;static</span> <span style="color:#ff79c6">+</span> <span style="color:#ff79c6">?</span><span style="color:#8be9fd;font-style:italic">Sized</span><span style="color:#ff79c6">&gt;</span> Any <span style="color:#ff79c6">for</span> T {
 </span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">type_id</span>(<span style="color:#ff79c6">&amp;</span>self) -&gt; <span style="color:#50fa7b">TypeId</span> {
 </span></span><span style="display:flex;"><span>        TypeId::of::<span style="color:#ff79c6">&lt;</span>T<span style="color:#ff79c6">&gt;</span>()
 </span></span><span style="display:flex;"><span>    }
@@ -332,7 +332,7 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span>    <span style="color:#ff79c6">#[must_use]</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">#[stable(feature = </span><span style="color:#f1fa8c">&#34;rust1&#34;</span><span style="color:#ff79c6">, since = </span><span style="color:#f1fa8c">&#34;1.0.0&#34;</span><span style="color:#ff79c6">)]</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">#[rustc_const_unstable(feature = </span><span style="color:#f1fa8c">&#34;const_type_id&#34;</span><span style="color:#ff79c6">, issue = </span><span style="color:#f1fa8c">&#34;77125&#34;</span><span style="color:#ff79c6">)]</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">const</span> <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">of</span><span style="color:#ff79c6">&lt;</span>T: <span style="color:#ff79c6">?</span><span style="color:#8be9fd;font-style:italic">Sized</span> <span style="color:#ff79c6">+</span> <span style="color:#ff79c6">&#39;</span><span style="color:#8be9fd;font-style:italic">static</span><span style="color:#ff79c6">&gt;</span>() -&gt; <span style="color:#50fa7b">TypeId</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">const</span> <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">of</span><span style="color:#ff79c6">&lt;</span>T: <span style="color:#ff79c6">?</span><span style="color:#8be9fd;font-style:italic">Sized</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">&#39;static</span><span style="color:#ff79c6">&gt;</span>() -&gt; <span style="color:#50fa7b">TypeId</span> {
 </span></span><span style="display:flex;"><span>        TypeId { t: <span style="color:#50fa7b">intrinsics</span>::type_id::<span style="color:#ff79c6">&lt;</span>T<span style="color:#ff79c6">&gt;</span>() }
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
@@ -391,16 +391,16 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> a: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">dyn</span> Any;
 </span></span><span style="display:flex;"><span>    a <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">&amp;</span>v1;
 </span></span><span style="display:flex;"><span>    assert!(a.is::<span style="color:#ff79c6">&lt;</span><span style="color:#8be9fd">u32</span><span style="color:#ff79c6">&gt;</span>());
-</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;{:?}&#34;</span>, TypeId::of::<span style="color:#ff79c6">&lt;</span><span style="color:#8be9fd">u32</span><span style="color:#ff79c6">&gt;</span>());
+</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{:?}</span><span style="color:#f1fa8c">&#34;</span>, TypeId::of::<span style="color:#ff79c6">&lt;</span><span style="color:#8be9fd">u32</span><span style="color:#ff79c6">&gt;</span>());
 </span></span><span style="display:flex;"><span>    a <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">&amp;</span>v2;
 </span></span><span style="display:flex;"><span>    assert!(a.is::<span style="color:#ff79c6">&lt;</span>E<span style="color:#ff79c6">&gt;</span>());
-</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;{:?}&#34;</span>, TypeId::of::<span style="color:#ff79c6">&lt;</span>E<span style="color:#ff79c6">&gt;</span>());
+</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{:?}</span><span style="color:#f1fa8c">&#34;</span>, TypeId::of::<span style="color:#ff79c6">&lt;</span>E<span style="color:#ff79c6">&gt;</span>());
 </span></span><span style="display:flex;"><span>    a <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">&amp;</span>v3;
 </span></span><span style="display:flex;"><span>    assert!(a.is::<span style="color:#ff79c6">&lt;</span>S<span style="color:#ff79c6">&gt;</span>());
-</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;{:?}&#34;</span>, TypeId::of::<span style="color:#ff79c6">&lt;</span>S<span style="color:#ff79c6">&gt;</span>());
+</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{:?}</span><span style="color:#f1fa8c">&#34;</span>, TypeId::of::<span style="color:#ff79c6">&lt;</span>S<span style="color:#ff79c6">&gt;</span>());
 </span></span><span style="display:flex;"><span>    a <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">&amp;</span>v4;
 </span></span><span style="display:flex;"><span>    assert!(a.is::<span style="color:#ff79c6">&lt;&amp;</span><span style="color:#8be9fd">str</span><span style="color:#ff79c6">&gt;</span>());
-</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;{:?}&#34;</span>, TypeId::of::<span style="color:#ff79c6">&lt;&amp;</span><span style="color:#8be9fd">str</span><span style="color:#ff79c6">&gt;</span>());
+</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{:?}</span><span style="color:#f1fa8c">&#34;</span>, TypeId::of::<span style="color:#ff79c6">&lt;&amp;</span><span style="color:#8be9fd">str</span><span style="color:#ff79c6">&gt;</span>());
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>输出结果：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>TypeId <span style="color:#ff79c6">{</span> t: <span style="color:#bd93f9">18349839772473174998</span> <span style="color:#ff79c6">}</span>
@@ -484,7 +484,7 @@ code.has-jax {
 </span></span></code></pre></div><h3 id="非静态生命周期类型">非静态生命周期类型</h3>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#f1fa8c">//! 代码清单 12-9: 非静态生命周期类型没有实现 Any
 </span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span><span style="color:#ff79c6">use</span> std::any::Any;
-</span></span><span style="display:flex;"><span><span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">Unstatic</span><span style="color:#ff79c6">&lt;&#39;</span><span style="color:#50fa7b">a</span><span style="color:#ff79c6">&gt;</span> { x: <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&#39;</span><span style="color:#50fa7b">a</span> <span style="color:#8be9fd">i32</span> }
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">Unstatic</span><span style="color:#ff79c6">&lt;</span><span style="color:#50fa7b">&#39;a</span><span style="color:#ff79c6">&gt;</span> { x: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">&#39;a</span> <span style="color:#8be9fd">i32</span> }
 </span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[test]</span>
 </span></span><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">main</span>() {
 </span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> a <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">42</span>;
@@ -498,7 +498,7 @@ code.has-jax {
 <p>修改：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">#![allow(unused)]</span>
 </span></span><span style="display:flex;"><span><span style="color:#ff79c6">use</span> std::any::Any;
-</span></span><span style="display:flex;"><span><span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">UnStatic</span><span style="color:#ff79c6">&lt;&#39;</span><span style="color:#50fa7b">a</span><span style="color:#ff79c6">&gt;</span> { x: <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&#39;</span><span style="color:#50fa7b">a</span> <span style="color:#8be9fd">i32</span> }
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">UnStatic</span><span style="color:#ff79c6">&lt;</span><span style="color:#50fa7b">&#39;a</span><span style="color:#ff79c6">&gt;</span> { x: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">&#39;a</span> <span style="color:#8be9fd">i32</span> }
 </span></span><span style="display:flex;"><span><span style="color:#ff79c6">static</span> ANSWER: <span style="color:#8be9fd">i32</span> <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">42</span>;
 </span></span><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">main</span>() {
 </span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> v <span style="color:#ff79c6">=</span> UnStatic { x: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">ANSWER</span> };
@@ -528,12 +528,12 @@ code.has-jax {
 <p>宏展开命令： cargo rustc – -Z unstable-options –pretty=expanded</p>
 <p>示例1:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">#![allow(unused)]</span>
-</span></span><span style="display:flex;"><span>macro_rules! unless {
+</span></span><span style="display:flex;"><span>macro_rules<span style="color:#ff79c6">!</span> unless {
 </span></span><span style="display:flex;"><span>      (<span style="color:#ff79c6">$arg</span>:<span style="color:#50fa7b">expr</span>, <span style="color:#ff79c6">$branch</span>:<span style="color:#50fa7b">expr</span>) <span style="color:#ff79c6">=&gt;</span> ( <span style="color:#ff79c6">if</span> <span style="color:#ff79c6">!</span><span style="color:#ff79c6">$arg</span> { <span style="color:#ff79c6">$branch</span> };);
 </span></span><span style="display:flex;"><span>  }
 </span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">cmp</span>(a: <span style="color:#8be9fd">i32</span>, b: <span style="color:#8be9fd">i32</span>) {
-</span></span><span style="display:flex;"><span>      unless<span style="color:#ff79c6">!</span>( a <span style="color:#ff79c6">&gt;</span> b, {
-</span></span><span style="display:flex;"><span>          println!(<span style="color:#f1fa8c">&#34;{} &lt; {}&#34;</span>, a, b);
+</span></span><span style="display:flex;"><span>      unless!( a <span style="color:#ff79c6">&gt;</span> b, {
+</span></span><span style="display:flex;"><span>          println!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c"> &lt; </span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">&#34;</span>, a, b);
 </span></span><span style="display:flex;"><span>      });
 </span></span><span style="display:flex;"><span>  }
 </span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">main</span>() {
@@ -554,7 +554,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>vis — a possibly empty Visibility qualifier
 </span></span><span style="display:flex;"><span>lifetime — 指代声明周期参数
 </span></span></code></pre></div><p>hashmap 1.0</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span>macro_rules! hashmap {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span>macro_rules<span style="color:#ff79c6">!</span> hashmap {
 </span></span><span style="display:flex;"><span>    (<span style="color:#ff79c6">$($key</span>:<span style="color:#50fa7b">expr</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#ff79c6">$value</span>:<span style="color:#50fa7b">expr</span>), <span style="color:#ff79c6">*</span>) <span style="color:#ff79c6">=&gt;</span> {
 </span></span><span style="display:flex;"><span>        {
 </span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> _map <span style="color:#ff79c6">=</span> ::std::collections::HashMap::new();
@@ -567,7 +567,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[test]</span>
 </span></span><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">main</span>() {
-</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> map <span style="color:#ff79c6">=</span> hashmap<span style="color:#ff79c6">!</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> map <span style="color:#ff79c6">=</span> hashmap!{
 </span></span><span style="display:flex;"><span>        <span style="color:#f1fa8c">&#34;a&#34;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">1</span>,
 </span></span><span style="display:flex;"><span>        <span style="color:#f1fa8c">&#34;b&#34;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">2</span>
 </span></span><span style="display:flex;"><span>        <span style="color:#6272a4">// &#34;c&#34; =&gt; 3, // 会报错，不支持结尾有逗号
@@ -575,9 +575,9 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    assert_eq!(map[<span style="color:#f1fa8c">&#34;a&#34;</span>], <span style="color:#bd93f9">1</span>);
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>hashmap 2.0：可以匹配结尾有逗号</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span>macro_rules! hashmap {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span>macro_rules<span style="color:#ff79c6">!</span> hashmap {
 </span></span><span style="display:flex;"><span>    (<span style="color:#ff79c6">$($key</span>:<span style="color:#50fa7b">expr</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#ff79c6">$value</span>:<span style="color:#50fa7b">expr</span>,)<span style="color:#ff79c6">*</span>) <span style="color:#ff79c6">=&gt;</span> 
-</span></span><span style="display:flex;"><span>        { hashmap<span style="color:#ff79c6">!</span>(<span style="color:#ff79c6">$($key</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#ff79c6">$value</span>),<span style="color:#ff79c6">*</span>) };
+</span></span><span style="display:flex;"><span>        { hashmap!(<span style="color:#ff79c6">$($key</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#ff79c6">$value</span>),<span style="color:#ff79c6">*</span>) };
 </span></span><span style="display:flex;"><span>    (<span style="color:#ff79c6">$($key</span>:<span style="color:#50fa7b">expr</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#ff79c6">$value</span>:<span style="color:#50fa7b">expr</span>),<span style="color:#ff79c6">*</span>) <span style="color:#ff79c6">=&gt;</span> {
 </span></span><span style="display:flex;"><span>        {
 </span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> _map <span style="color:#ff79c6">=</span> ::std::collections::HashMap::new();
@@ -590,7 +590,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[test]</span>
 </span></span><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">main</span>() {
-</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> map <span style="color:#ff79c6">=</span> hashmap<span style="color:#ff79c6">!</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> map <span style="color:#ff79c6">=</span> hashmap!{
 </span></span><span style="display:flex;"><span>        <span style="color:#f1fa8c">&#34;a&#34;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">1</span>,
 </span></span><span style="display:flex;"><span>        <span style="color:#f1fa8c">&#34;b&#34;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">2</span>,
 </span></span><span style="display:flex;"><span>        <span style="color:#f1fa8c">&#34;c&#34;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">3</span>,
@@ -598,7 +598,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    assert_eq!(map[<span style="color:#f1fa8c">&#34;a&#34;</span>], <span style="color:#bd93f9">1</span>);
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>hashmap 3.0</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span>macro_rules! hashmap {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span>macro_rules<span style="color:#ff79c6">!</span> hashmap {
 </span></span><span style="display:flex;"><span>    (<span style="color:#ff79c6">$($key</span>:<span style="color:#50fa7b">expr</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#ff79c6">$value</span>:<span style="color:#50fa7b">expr</span>),<span style="color:#ff79c6">*</span> <span style="color:#ff79c6">$(,</span>)<span style="color:#ff79c6">*</span>) <span style="color:#ff79c6">=&gt;</span> {
 </span></span><span style="display:flex;"><span>        {
 </span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> _map <span style="color:#ff79c6">=</span> ::std::collections::HashMap::new();
@@ -611,7 +611,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[test]</span>
 </span></span><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">main</span>() {
-</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> map <span style="color:#ff79c6">=</span> hashmap<span style="color:#ff79c6">!</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> map <span style="color:#ff79c6">=</span> hashmap!{
 </span></span><span style="display:flex;"><span>        <span style="color:#f1fa8c">&#34;a&#34;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">1</span>,
 </span></span><span style="display:flex;"><span>        <span style="color:#f1fa8c">&#34;b&#34;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">2</span>,
 </span></span><span style="display:flex;"><span>        <span style="color:#f1fa8c">&#34;c&#34;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">3</span>,
@@ -619,16 +619,16 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    assert_eq!(map[<span style="color:#f1fa8c">&#34;a&#34;</span>], <span style="color:#bd93f9">1</span>);
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>hashmap 4.0 ： 节省存储空间</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span>macro_rules! unit {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span>macro_rules<span style="color:#ff79c6">!</span> unit {
 </span></span><span style="display:flex;"><span>    (<span style="color:#ff79c6">$($x</span>:<span style="color:#50fa7b">tt</span>)<span style="color:#ff79c6">*</span>) <span style="color:#ff79c6">=&gt;</span> (());
 </span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>macro_rules! count {
-</span></span><span style="display:flex;"><span>    (<span style="color:#ff79c6">$($key</span>:<span style="color:#50fa7b">expr</span>),<span style="color:#ff79c6">*</span>) <span style="color:#ff79c6">=&gt;</span> (<span style="color:#ff79c6">&lt;</span>[()]<span style="color:#ff79c6">&gt;</span>::len(<span style="color:#ff79c6">&amp;</span>[<span style="color:#ff79c6">$(</span>unit<span style="color:#ff79c6">!</span>(<span style="color:#ff79c6">$key</span>)),<span style="color:#ff79c6">*</span>]));
+</span></span><span style="display:flex;"><span>macro_rules<span style="color:#ff79c6">!</span> count {
+</span></span><span style="display:flex;"><span>    (<span style="color:#ff79c6">$($key</span>:<span style="color:#50fa7b">expr</span>),<span style="color:#ff79c6">*</span>) <span style="color:#ff79c6">=&gt;</span> (<span style="color:#ff79c6">&lt;</span>[()]<span style="color:#ff79c6">&gt;</span>::len(<span style="color:#ff79c6">&amp;</span>[<span style="color:#ff79c6">$(</span>unit!(<span style="color:#ff79c6">$key</span>)),<span style="color:#ff79c6">*</span>]));
 </span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>macro_rules! hashmap {
+</span></span><span style="display:flex;"><span>macro_rules<span style="color:#ff79c6">!</span> hashmap {
 </span></span><span style="display:flex;"><span>    (<span style="color:#ff79c6">$($key</span>:<span style="color:#50fa7b">expr</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#ff79c6">$value</span>:<span style="color:#50fa7b">expr</span>),<span style="color:#ff79c6">*</span> <span style="color:#ff79c6">$(,</span>)<span style="color:#ff79c6">*</span>) <span style="color:#ff79c6">=&gt;</span> {
 </span></span><span style="display:flex;"><span>        {
-</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> _cap <span style="color:#ff79c6">=</span> count<span style="color:#ff79c6">!</span>(<span style="color:#ff79c6">$($key</span>),<span style="color:#ff79c6">*</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> _cap <span style="color:#ff79c6">=</span> count!(<span style="color:#ff79c6">$($key</span>),<span style="color:#ff79c6">*</span>);
 </span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> _map 
 </span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">=</span> ::std::collections::HashMap::with_capacity(_cap);
 </span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">$(</span>
@@ -640,7 +640,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[test]</span>
 </span></span><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">main</span>() {
-</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> map <span style="color:#ff79c6">=</span> hashmap<span style="color:#ff79c6">!</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> map <span style="color:#ff79c6">=</span> hashmap!{
 </span></span><span style="display:flex;"><span>        <span style="color:#f1fa8c">&#34;a&#34;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">1</span>,
 </span></span><span style="display:flex;"><span>        <span style="color:#f1fa8c">&#34;b&#34;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">2</span>,
 </span></span><span style="display:flex;"><span>        <span style="color:#f1fa8c">&#34;c&#34;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">3</span>,
@@ -648,12 +648,12 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    assert_eq!(map[<span style="color:#f1fa8c">&#34;a&#34;</span>], <span style="color:#bd93f9">1</span>);
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>hashmap 5.0：将声明宏放在一起</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span>macro_rules! hashmap {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span>macro_rules<span style="color:#ff79c6">!</span> hashmap {
 </span></span><span style="display:flex;"><span>    (<span style="color:#ff79c6">@</span>unit <span style="color:#ff79c6">$($x</span>:<span style="color:#50fa7b">tt</span>)<span style="color:#ff79c6">*</span>) <span style="color:#ff79c6">=&gt;</span> (());
-</span></span><span style="display:flex;"><span>    (<span style="color:#ff79c6">@</span>count <span style="color:#ff79c6">$($rest</span>:<span style="color:#50fa7b">expr</span>),<span style="color:#ff79c6">*</span>) <span style="color:#ff79c6">=&gt;</span> (<span style="color:#ff79c6">&lt;</span>[()]<span style="color:#ff79c6">&gt;</span>::len(<span style="color:#ff79c6">&amp;</span>[<span style="color:#ff79c6">$(</span>hashmap<span style="color:#ff79c6">!</span>(<span style="color:#ff79c6">@</span>unit <span style="color:#ff79c6">$rest</span>)),<span style="color:#ff79c6">*</span>]));
+</span></span><span style="display:flex;"><span>    (<span style="color:#ff79c6">@</span>count <span style="color:#ff79c6">$($rest</span>:<span style="color:#50fa7b">expr</span>),<span style="color:#ff79c6">*</span>) <span style="color:#ff79c6">=&gt;</span> (<span style="color:#ff79c6">&lt;</span>[()]<span style="color:#ff79c6">&gt;</span>::len(<span style="color:#ff79c6">&amp;</span>[<span style="color:#ff79c6">$(</span>hashmap!(<span style="color:#ff79c6">@</span>unit <span style="color:#ff79c6">$rest</span>)),<span style="color:#ff79c6">*</span>]));
 </span></span><span style="display:flex;"><span>    (<span style="color:#ff79c6">$($key</span>:<span style="color:#50fa7b">expr</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#ff79c6">$value</span>:<span style="color:#50fa7b">expr</span>),<span style="color:#ff79c6">*</span> <span style="color:#ff79c6">$(,</span>)<span style="color:#ff79c6">*</span>) <span style="color:#ff79c6">=&gt;</span> {
 </span></span><span style="display:flex;"><span>        {
-</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> _cap <span style="color:#ff79c6">=</span> hashmap<span style="color:#ff79c6">!</span>(<span style="color:#ff79c6">@</span>count <span style="color:#ff79c6">$($key</span>),<span style="color:#ff79c6">*</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> _cap <span style="color:#ff79c6">=</span> hashmap!(<span style="color:#ff79c6">@</span>count <span style="color:#ff79c6">$($key</span>),<span style="color:#ff79c6">*</span>);
 </span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> _map 
 </span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">=</span> ::std::collections::HashMap::with_capacity(_cap);
 </span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">$(</span>
@@ -665,7 +665,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span><span style="color:#ff79c6">#[test]</span>
 </span></span><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">main</span>() {
-</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> map <span style="color:#ff79c6">=</span> hashmap<span style="color:#ff79c6">!</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#8be9fd;font-style:italic">let</span> map <span style="color:#ff79c6">=</span> hashmap!{
 </span></span><span style="display:flex;"><span>        <span style="color:#f1fa8c">&#34;a&#34;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">1</span>,
 </span></span><span style="display:flex;"><span>        <span style="color:#f1fa8c">&#34;b&#34;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">2</span>,
 </span></span><span style="display:flex;"><span>        <span style="color:#f1fa8c">&#34;c&#34;</span> <span style="color:#ff79c6">=&gt;</span> <span style="color:#bd93f9">3</span>,
@@ -673,7 +673,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    assert_eq!(map[<span style="color:#f1fa8c">&#34;a&#34;</span>], <span style="color:#bd93f9">1</span>);
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>示例：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span>  macro_rules! sum {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span>  macro_rules<span style="color:#ff79c6">!</span> sum {
 </span></span><span style="display:flex;"><span>      (<span style="color:#ff79c6">$e</span>:<span style="color:#50fa7b">expr</span>) <span style="color:#ff79c6">=&gt;</span> ({
 </span></span><span style="display:flex;"><span>          <span style="color:#8be9fd;font-style:italic">let</span> a <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">2</span>;
 </span></span><span style="display:flex;"><span>          <span style="color:#ff79c6">$e</span> <span style="color:#ff79c6">+</span> a
@@ -681,7 +681,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>  }
 </span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">main</span>(){
 </span></span><span style="display:flex;"><span>      <span style="color:#6272a4">// error[E0425]: cannot find value `a` in this scope
-</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>      <span style="color:#8be9fd;font-style:italic">let</span> four <span style="color:#ff79c6">=</span> sum<span style="color:#ff79c6">!</span>(a);
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>      <span style="color:#8be9fd;font-style:italic">let</span> four <span style="color:#ff79c6">=</span> sum!(a);
 </span></span><span style="display:flex;"><span>  }
 </span></span></code></pre></div><ul>
 <li>注意这里会报错，宏里面的 <code>a</code> 变量是局部的。</li>
@@ -721,10 +721,10 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">parse</span>(input: <span style="color:#50fa7b">ParseStream</span>) -&gt; <span style="color:#8be9fd;font-style:italic">Result</span><span style="color:#ff79c6">&lt;</span>Self<span style="color:#ff79c6">&gt;</span> {
 </span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> content;
 </span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> model: <span style="color:#50fa7b">Type</span> <span style="color:#ff79c6">=</span> input.parse()<span style="color:#ff79c6">?</span>;
-</span></span><span style="display:flex;"><span>            input.parse::<span style="color:#ff79c6">&lt;</span>Token<span style="color:#ff79c6">!</span>[-&gt;]<span style="color:#ff79c6">&gt;</span>()<span style="color:#ff79c6">?</span>;
+</span></span><span style="display:flex;"><span>            input.parse::<span style="color:#ff79c6">&lt;</span>Token![-&gt;]<span style="color:#ff79c6">&gt;</span>()<span style="color:#ff79c6">?</span>;
 </span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> table: <span style="color:#50fa7b">Ident</span> <span style="color:#ff79c6">=</span> input.parse()<span style="color:#ff79c6">?</span>;
-</span></span><span style="display:flex;"><span>            input.parse::<span style="color:#ff79c6">&lt;</span>Token<span style="color:#ff79c6">!</span>[::]<span style="color:#ff79c6">&gt;</span>()<span style="color:#ff79c6">?</span>;
-</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> bracket_token <span style="color:#ff79c6">=</span> bracketed<span style="color:#ff79c6">!</span>(content <span style="color:#ff79c6">in</span> input);
+</span></span><span style="display:flex;"><span>            input.parse::<span style="color:#ff79c6">&lt;</span>Token![::]<span style="color:#ff79c6">&gt;</span>()<span style="color:#ff79c6">?</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> bracket_token <span style="color:#ff79c6">=</span> bracketed!(content <span style="color:#ff79c6">in</span> input);
 </span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> content <span style="color:#ff79c6">=</span> content.parse()<span style="color:#ff79c6">?</span>;
 </span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">Ok</span>(DbOpByOrBy {
 </span></span><span style="display:flex;"><span>                model,
@@ -738,11 +738,11 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">impl</span> Parse <span style="color:#ff79c6">for</span> FieldContentOr {
 </span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">parse</span>(input: <span style="color:#50fa7b">ParseStream</span>) -&gt; <span style="color:#8be9fd;font-style:italic">Result</span><span style="color:#ff79c6">&lt;</span>Self<span style="color:#ff79c6">&gt;</span> {
 </span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> name1: <span style="color:#50fa7b">Ident</span> <span style="color:#ff79c6">=</span> input.parse()<span style="color:#ff79c6">?</span>;
-</span></span><span style="display:flex;"><span>            input.parse::<span style="color:#ff79c6">&lt;</span>Token<span style="color:#ff79c6">!</span>[:]<span style="color:#ff79c6">&gt;</span>()<span style="color:#ff79c6">?</span>;
+</span></span><span style="display:flex;"><span>            input.parse::<span style="color:#ff79c6">&lt;</span>Token![:]<span style="color:#ff79c6">&gt;</span>()<span style="color:#ff79c6">?</span>;
 </span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> ty1: <span style="color:#50fa7b">Type</span> <span style="color:#ff79c6">=</span> input.parse()<span style="color:#ff79c6">?</span>;
-</span></span><span style="display:flex;"><span>            input.parse::<span style="color:#ff79c6">&lt;</span>Token<span style="color:#ff79c6">!</span>[<span style="color:#ff79c6">||</span>]<span style="color:#ff79c6">&gt;</span>()<span style="color:#ff79c6">?</span>;
+</span></span><span style="display:flex;"><span>            input.parse::<span style="color:#ff79c6">&lt;</span>Token![<span style="color:#ff79c6">||</span>]<span style="color:#ff79c6">&gt;</span>()<span style="color:#ff79c6">?</span>;
 </span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> name2: <span style="color:#50fa7b">Ident</span> <span style="color:#ff79c6">=</span> input.parse()<span style="color:#ff79c6">?</span>;
-</span></span><span style="display:flex;"><span>            input.parse::<span style="color:#ff79c6">&lt;</span>Token<span style="color:#ff79c6">!</span>[:]<span style="color:#ff79c6">&gt;</span>()<span style="color:#ff79c6">?</span>;
+</span></span><span style="display:flex;"><span>            input.parse::<span style="color:#ff79c6">&lt;</span>Token![:]<span style="color:#ff79c6">&gt;</span>()<span style="color:#ff79c6">?</span>;
 </span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">let</span> ty2: <span style="color:#50fa7b">Type</span> <span style="color:#ff79c6">=</span> input.parse()<span style="color:#ff79c6">?</span>;
 </span></span><span style="display:flex;"><span>            <span style="color:#8be9fd;font-style:italic">Ok</span>(FieldContentOr {
 </span></span><span style="display:flex;"><span>                name1,
@@ -764,13 +764,13 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>            table,
 </span></span><span style="display:flex;"><span>            bracket_token,
 </span></span><span style="display:flex;"><span>            content,
-</span></span><span style="display:flex;"><span>        } <span style="color:#ff79c6">=</span> parse_macro_input<span style="color:#ff79c6">!</span>(input <span style="color:#ff79c6">as</span> DbOpByOrBy);
+</span></span><span style="display:flex;"><span>        } <span style="color:#ff79c6">=</span> parse_macro_input!(input <span style="color:#ff79c6">as</span> DbOpByOrBy);
 </span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">let</span> (name1, name2) <span style="color:#ff79c6">=</span> (content.name1, content.name2);
 </span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">let</span> (ty1, ty2) <span style="color:#ff79c6">=</span> (content.ty1, content.ty2);
-</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">let</span> fn_name <span style="color:#ff79c6">=</span> format!(<span style="color:#f1fa8c">&#34;find_by_{}_or_{}&#34;</span>, name1, name2);
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">let</span> fn_name <span style="color:#ff79c6">=</span> format!(<span style="color:#f1fa8c">&#34;find_by_</span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">_or_</span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">&#34;</span>, name1, name2);
 </span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">let</span> fn_name <span style="color:#ff79c6">=</span> Ident::new(<span style="color:#ff79c6">&amp;</span>fn_name, proc_macro2::Span::call_site());
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">let</span> expanded <span style="color:#ff79c6">=</span> quote<span style="color:#ff79c6">!</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">let</span> expanded <span style="color:#ff79c6">=</span> quote! {
 </span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">impl</span> #model {
 </span></span><span style="display:flex;"><span>                <span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">fn</span> #fn_name(conn: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">PgConnection</span>, #name1: #ty1, #name2: #ty2) -&gt; <span style="color:#50fa7b">QueryResult</span><span style="color:#ff79c6">&lt;</span>#model<span style="color:#ff79c6">&gt;</span> {
 </span></span><span style="display:flex;"><span>                    #table::table

@@ -416,12 +416,12 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>assert_eq!((<span style="color:#ff79c6">-</span><span style="color:#bd93f9">4_</span><span style="color:#ff79c6">i32</span>).abs(), <span style="color:#bd93f9">4</span>);
 </span></span><span style="display:flex;"><span>assert_eq!(<span style="color:#bd93f9">0b101101_</span><span style="color:#ff79c6">u8</span>.count_ones(), <span style="color:#bd93f9">4</span>);
 </span></span></code></pre></div><p>看下面这段代码</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span>println!(<span style="color:#f1fa8c">&#34;{}&#34;</span>, (<span style="color:#ff79c6">-</span><span style="color:#bd93f9">4</span>).abs());
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span>println!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">&#34;</span>, (<span style="color:#ff79c6">-</span><span style="color:#bd93f9">4</span>).abs());
 </span></span></code></pre></div><p>这里没有给出数值的类型，是不是默认 <code>i32</code> 呢？但其实会报错：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>error: can&#39;t call method `abs` on ambiguous numeric type `{integer}`
 </span></span></code></pre></div><p>为什么会这样子呢？因为Rust想要在调用一个类型自己的方法之前明确地知道一个值的整数类型。i32 的默认值仅适用于在所有方法调用都已解决后类型仍然不明确的情况，在这里就太晚了，因此会报错。换句话说，就是这里我要先调用 <code>abs()</code>方法，这个时候需要确定类型，还没等推断出默认类型，就已经报错了。解决方案：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span>println!(<span style="color:#f1fa8c">&#34;{}&#34;</span>, (<span style="color:#ff79c6">-</span><span style="color:#bd93f9">4_</span><span style="color:#ff79c6">i32</span>).abs());
-</span></span><span style="display:flex;"><span>println!(<span style="color:#f1fa8c">&#34;{}&#34;</span>, <span style="color:#8be9fd">i32</span>::abs(<span style="color:#ff79c6">-</span><span style="color:#bd93f9">4</span>));
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span>println!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">&#34;</span>, (<span style="color:#ff79c6">-</span><span style="color:#bd93f9">4_</span><span style="color:#ff79c6">i32</span>).abs());
+</span></span><span style="display:flex;"><span>println!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">&#34;</span>, <span style="color:#8be9fd">i32</span>::abs(<span style="color:#ff79c6">-</span><span style="color:#bd93f9">4</span>));
 </span></span></code></pre></div><p>注意<strong>方法调用会发生在一元前缀操作符之前</strong>，所以处理负数的时候要当心。比如<code>-4_i32.abs()</code>，这里没有括号，会先调用函数<code>4_i32.abs()</code>，然后再取负号，最终结果为-4。</p>
 <h4 id="checked-wrapping-saturating-and-overflowing-arithmetic">Checked, Wrapping, Saturating, and Overflowing Arithmetic</h4>
 <p>在Debug模式下，如果整数数值操作溢出，会报错。但是在发布模式构建的时候，会 <em>wraps</em>。</p>
@@ -608,24 +608,24 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">  Singing of Mount Abora&#34;</span>);
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#6272a4">// 去掉换行
-</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>println!(&#34;It was a bright, cold day <span style="color:#ff79c6">in</span> April, and \
-</span></span><span style="display:flex;"><span>      there were four of us—\
-</span></span><span style="display:flex;"><span>      more or less.<span style="color:#f1fa8c">&#34;)
-</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">
-</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">// raw strings
-</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">let default_win_install_path = r&#34;</span>C:\Program Files\Gorillas<span style="color:#f1fa8c">&#34;; 
-</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">let pattern = Regex::new(r&#34;</span>\d<span style="color:#ff79c6">+</span>(\.\d<span style="color:#ff79c6">+</span>)<span style="color:#ff79c6">*</span><span style="color:#f1fa8c">&#34;);
-</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">
-</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">// 包含双引号
-</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">println!(r###&#34;</span>
-</span></span><span style="display:flex;"><span>      This raw string started with <span style="color:#ff79c6">&#39;</span><span style="color:#50fa7b">r</span>###<span style="color:#f1fa8c">&#34;&#39;.
-</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">      Therefore it does not end until we reach a quote mark (&#39;&#34;</span><span style="color:#ff79c6">&#39;</span>)
-</span></span><span style="display:flex;"><span>      followed immediately by three pound signs (<span style="color:#ff79c6">&#39;</span>###<span style="color:#ff79c6">&#39;</span>):
-</span></span><span style="display:flex;"><span>&#34;###);
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>println!(<span style="color:#f1fa8c">&#34;It was a bright, cold day in April, and </span><span style="color:#f1fa8c">\</span><span style="color:#f1fa8c">
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">      there were four of us—</span><span style="color:#f1fa8c">\</span><span style="color:#f1fa8c">
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">      more or less.&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">// raw strings
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span><span style="color:#8be9fd;font-style:italic">let</span> default_win_install_path <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">r</span><span style="color:#f1fa8c">&#34;C:\Program Files\Gorillas&#34;</span>; 
+</span></span><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> pattern <span style="color:#ff79c6">=</span> Regex::new(<span style="color:#f1fa8c">r</span><span style="color:#f1fa8c">&#34;\d+(\.\d+)*&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#6272a4">// 包含双引号
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>println!(<span style="color:#f1fa8c">r</span><span style="color:#f1fa8c">###&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">      This raw string started with &#39;r###&#34;&#39;.
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">      Therefore it does not end until we reach a quote mark (&#39;&#34;&#39;)
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">      followed immediately by three pound signs (&#39;###&#39;):
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">&#34;###</span>);
 </span></span></code></pre></div><h4 id="byte-strings">Byte Strings</h4>
 <p>带有 b 前缀的是一个字节字面量。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> method <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">b&#34;GET&#34;</span>; <span style="color:#6272a4">// &amp;[u8; 3] 类型
-</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>assert_eq!(method, <span style="color:#ff79c6">&amp;</span>[<span style="color:#f1fa8c">b&#39;G&#39;</span>, <span style="color:#f1fa8c">b&#39;E&#39;</span>, <span style="color:#f1fa8c">b&#39;T&#39;</span>]);
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> method <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">b</span><span style="color:#f1fa8c">&#34;GET&#34;</span>; <span style="color:#6272a4">// &amp;[u8; 3] 类型
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>assert_eq!(method, <span style="color:#ff79c6">&amp;</span>[<span style="color:#f1fa8c">b</span><span style="color:#f1fa8c">&#39;G&#39;</span>, <span style="color:#f1fa8c">b</span><span style="color:#f1fa8c">&#39;E&#39;</span>, <span style="color:#f1fa8c">b</span><span style="color:#f1fa8c">&#39;T&#39;</span>]);
 </span></span></code></pre></div><h4 id="strings-in-memory">Strings in Memory</h4>
 <p>内存中以UTF-8编码存储。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> noodles <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34;noodles&#34;</span>.to_string(); <span style="color:#6272a4">// String 底层是 Vec&lt;u8&gt;
@@ -643,7 +643,7 @@ code.has-jax {
 </span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span><span style="color:#8be9fd;font-style:italic">let</span> error_message <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34;too many pets&#34;</span>.to_string();
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#6272a4">// format!
-</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>assert_eq!(format!(<span style="color:#f1fa8c">&#34;{}°{:02}′{:02}′′N&#34;</span>, <span style="color:#bd93f9">24</span>, <span style="color:#bd93f9">5</span>, <span style="color:#bd93f9">23</span>),
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>assert_eq!(format!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">°</span><span style="color:#f1fa8c">{:02}</span><span style="color:#f1fa8c">′</span><span style="color:#f1fa8c">{:02}</span><span style="color:#f1fa8c">′′N&#34;</span>, <span style="color:#bd93f9">24</span>, <span style="color:#bd93f9">5</span>, <span style="color:#bd93f9">23</span>),
 </span></span><span style="display:flex;"><span>                     <span style="color:#f1fa8c">&#34;24°05′23′′N&#34;</span>.to_string());
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#6272a4">// 数组、向量的 concat、join 方法
@@ -682,7 +682,7 @@ code.has-jax {
 <p>在Rust中，所有权的概念是内建在语言中的，并且会通过编译器检查强制执行。每个值都有一个所有者，这个所有者决定它的生命周期。当所有者被释放时，它所拥有的值也会被释放。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span>{
 </span></span><span style="display:flex;"><span>  <span style="color:#8be9fd;font-style:italic">let</span> point <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">Box</span>::new((<span style="color:#bd93f9">0.625</span>, <span style="color:#bd93f9">0.5</span>)); <span style="color:#6272a4">// point allocated here 
-</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>  <span style="color:#8be9fd;font-style:italic">let</span> label <span style="color:#ff79c6">=</span> format!(<span style="color:#f1fa8c">&#34;{:?}&#34;</span>, point); <span style="color:#6272a4">// label allocated here , 这里返回 String
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>  <span style="color:#8be9fd;font-style:italic">let</span> label <span style="color:#ff79c6">=</span> format!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{:?}</span><span style="color:#f1fa8c">&#34;</span>, point); <span style="color:#6272a4">// label allocated here , 这里返回 String
 </span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>  assert_eq!(label, <span style="color:#f1fa8c">&#34;(0.625, 0.5)&#34;</span>);
 </span></span><span style="display:flex;"><span>}									  <span style="color:#6272a4">// both dropped here
 </span></span></span></code></pre></div><p>内存布局：</p>
@@ -702,7 +702,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>composers.push(Person { name: <span style="color:#f1fa8c">&#34;Lully&#34;</span>.to_string(),
 </span></span><span style="display:flex;"><span>												birth: <span style="color:#bd93f9">1632</span> }); 
 </span></span><span style="display:flex;"><span><span style="color:#ff79c6">for</span> composer <span style="color:#ff79c6">in</span> <span style="color:#ff79c6">&amp;</span>composers {
-</span></span><span style="display:flex;"><span>		println!(<span style="color:#f1fa8c">&#34;{}, born {}&#34;</span>, composer.name, composer.birth);
+</span></span><span style="display:flex;"><span>		println!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">, born </span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">&#34;</span>, composer.name, composer.birth);
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>内存布局：</p>
 <p>
@@ -815,7 +815,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#ff79c6">for</span> <span style="color:#ff79c6">mut</span> s <span style="color:#ff79c6">in</span> v { 
 </span></span><span style="display:flex;"><span>    s.push(<span style="color:#f1fa8c">&#39;!&#39;</span>);
-</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;{}&#34;</span>, s);
+</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">&#34;</span>, s);
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>这里在for循环中，v 的所有权给了for循环，v 就变成未初始化的状态，然后 for 循环分离每一个元素，将所有权给每一个。因为 s 有所有权，就可以在内部修改字符串了。</p>
 <p>由于在循环中将 v 的所有权给了循环，因此后面就不能再使用 v 了，下面代码就会报错。</p>
@@ -825,7 +825,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#ff79c6">for</span> <span style="color:#ff79c6">mut</span> s <span style="color:#ff79c6">in</span> v { 
 </span></span><span style="display:flex;"><span>    s.push(<span style="color:#f1fa8c">&#39;!&#39;</span>);
-</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;{}&#34;</span>, s);
+</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">&#34;</span>, s);
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> _u <span style="color:#ff79c6">=</span> v; <span style="color:#6272a4">// error[E0382]: use of moved value: `v`
 </span></span></span></code></pre></div><p>如果想得到结构体中的元素值，可以调用 <code>std::mem::replace</code>方法，将原来的值用<code>None</code>来占位。</p>
@@ -875,9 +875,9 @@ code.has-jax {
 </ul>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">show</span>(table: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">Table</span>) {
 </span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">for</span> (artist, works) <span style="color:#ff79c6">in</span> table {
-</span></span><span style="display:flex;"><span>  	println!(<span style="color:#f1fa8c">&#34;works by {}:&#34;</span>, artist); 
+</span></span><span style="display:flex;"><span>  	println!(<span style="color:#f1fa8c">&#34;works by </span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">:&#34;</span>, artist); 
 </span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">for</span> work <span style="color:#ff79c6">in</span> works {
-</span></span><span style="display:flex;"><span>      println!(<span style="color:#f1fa8c">&#34;  {}&#34;</span>, work);
+</span></span><span style="display:flex;"><span>      println!(<span style="color:#f1fa8c">&#34;  </span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">&#34;</span>, work);
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>  } 
 </span></span><span style="display:flex;"><span>}
@@ -888,7 +888,7 @@ code.has-jax {
 <h4 id="rust-references-versus-c-references"><strong>Rust References Versus C++ References</strong></h4>
 <p>In Rust, references are created explicitly with the <code>&amp;</code> operator, and dereferenced explicitly with the <code>*</code> operator.</p>
 <p>Since references are so widely used in Rust, the . operator implicitly dereferences its left operand, if needed.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">Anime</span> { name: <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&#39;</span><span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd">str</span>, bechdel_pass: <span style="color:#8be9fd">bool</span> };
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">Anime</span> { name: <span style="color:#ff79c6">&amp;</span><span style="color:#8be9fd;font-style:italic">&#39;static</span> <span style="color:#8be9fd">str</span>, bechdel_pass: <span style="color:#8be9fd">bool</span> };
 </span></span><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> aria <span style="color:#ff79c6">=</span> Anime { name: <span style="color:#f1fa8c">&#34;Aria: The Animation&#34;</span>, bechdel_pass: <span style="color:#50fa7b">true</span> };
 </span></span><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> anime_ref <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">&amp;</span>aria;
 </span></span><span style="display:flex;"><span>assert_eq!(anime_ref.name, <span style="color:#f1fa8c">&#34;Aria: The Animation&#34;</span>); 
@@ -1001,12 +1001,12 @@ code.has-jax {
 <h4 id="passing-references-to-functions"><strong>Passing References to Functions</strong></h4>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#6272a4">// This could be written more briefly: fn g(p: &amp;i32), 
 </span></span></span><span style="display:flex;"><span><span style="color:#6272a4">// but let&#39;s write out the lifetimes for now.
-</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">g</span><span style="color:#ff79c6">&lt;&#39;</span><span style="color:#50fa7b">a</span><span style="color:#ff79c6">&gt;</span>(p: <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&#39;</span><span style="color:#50fa7b">a</span> <span style="color:#8be9fd">i32</span>) { <span style="color:#ff79c6">..</span>. }
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">g</span><span style="color:#ff79c6">&lt;</span><span style="color:#50fa7b">&#39;a</span><span style="color:#ff79c6">&gt;</span>(p: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">&#39;a</span> <span style="color:#8be9fd">i32</span>) { <span style="color:#ff79c6">..</span>. }
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> x <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">10</span>; 
 </span></span><span style="display:flex;"><span>g(<span style="color:#ff79c6">&amp;</span>x);
 </span></span></code></pre></div><p>从g的签名看，Rust知道它不会把p保存到超出调用生命周期的变量里；任何涵盖调用的生命周期都满足<code>'a</code>。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">f</span>(p: <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&#39;</span><span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd">i32</span>) { <span style="color:#ff79c6">..</span>. }
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">f</span>(p: <span style="color:#ff79c6">&amp;</span><span style="color:#8be9fd;font-style:italic">&#39;static</span> <span style="color:#8be9fd">i32</span>) { <span style="color:#ff79c6">..</span>. }
 </span></span><span style="display:flex;"><span>       
 </span></span><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> x <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">10</span>; 
 </span></span><span style="display:flex;"><span>f(<span style="color:#ff79c6">&amp;</span>x); <span style="color:#6272a4">// error
@@ -1024,20 +1024,20 @@ code.has-jax {
 <h4 id="structs-containing-references"><strong>Structs Containing References</strong></h4>
 <p>当引用类型出现在另一个类型的定义中时，必须写出其生命周期。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">S</span> {
-</span></span><span style="display:flex;"><span>	r: <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&#39;</span><span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd">i32</span> <span style="color:#6272a4">// 这里 r 必须写上生命周期
+</span></span><span style="display:flex;"><span>	r: <span style="color:#ff79c6">&amp;</span><span style="color:#8be9fd;font-style:italic">&#39;static</span> <span style="color:#8be9fd">i32</span> <span style="color:#6272a4">// 这里 r 必须写上生命周期
 </span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>}
 </span></span></code></pre></div><p>或者</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">S</span><span style="color:#ff79c6">&lt;&#39;</span><span style="color:#50fa7b">a</span><span style="color:#ff79c6">&gt;</span>{
-</span></span><span style="display:flex;"><span>  r: <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&#39;</span><span style="color:#50fa7b">a</span> <span style="color:#8be9fd">i32</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">S</span><span style="color:#ff79c6">&lt;</span><span style="color:#50fa7b">&#39;a</span><span style="color:#ff79c6">&gt;</span>{
+</span></span><span style="display:flex;"><span>  r: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">&#39;a</span> <span style="color:#8be9fd">i32</span>
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>保存在r中的任何引用的生命周期最好包含<code>'a</code>，而<code>'a</code>也必须比保存在S的任何值都长寿。</p>
 <p>The lifetime of any reference you store in r had better enclose &lsquo;a, and &lsquo;a must outlast the lifetime of wherever you store the S.</p>
 <p>The assignment s = S { &hellip; } stores this S in a variable whose lifetime extends to the end of the example, constraining &lsquo;a to outlast the lifetime of s.</p>
 <p>And now Rust has arrived at the same contradictory constraints as before: &lsquo;a must not outlive x, yet must live at least as long as s.</p>
 <h4 id="distinct-lifetime-parameters"><strong>Distinct Lifetime Parameters</strong></h4>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">S</span><span style="color:#ff79c6">&lt;&#39;</span><span style="color:#50fa7b">a</span><span style="color:#ff79c6">&gt;</span> { 
-</span></span><span style="display:flex;"><span>  x: <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&#39;</span><span style="color:#50fa7b">a</span> <span style="color:#8be9fd">i32</span>,
-</span></span><span style="display:flex;"><span>  y: <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&#39;</span><span style="color:#50fa7b">a</span> <span style="color:#8be9fd">i32</span> 
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">S</span><span style="color:#ff79c6">&lt;</span><span style="color:#50fa7b">&#39;a</span><span style="color:#ff79c6">&gt;</span> { 
+</span></span><span style="display:flex;"><span>  x: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">&#39;a</span> <span style="color:#8be9fd">i32</span>,
+</span></span><span style="display:flex;"><span>  y: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">&#39;a</span> <span style="color:#8be9fd">i32</span> 
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>如下代码：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> x <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">10</span>; <span style="color:#8be9fd;font-style:italic">let</span> r;
@@ -1048,7 +1048,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    r <span style="color:#ff79c6">=</span> s.x; 
 </span></span><span style="display:flex;"><span>  }
 </span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>println!(<span style="color:#f1fa8c">&#34;{}&#34;</span>, r);
+</span></span><span style="display:flex;"><span>println!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">&#34;</span>, r);
 </span></span></code></pre></div><p>If you work through the code carefully, you can follow its reasoning:</p>
 <ul>
 <li>Both fields of S are references with the same lifetime &lsquo;a, so Rust must find a single lifetime that works for both s.x and s.y.</li>
@@ -1276,7 +1276,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    display_weather(hometown, <span style="color:#ff79c6">&amp;</span>report);
 </span></span><span style="display:flex;"><span>  }
 </span></span><span style="display:flex;"><span>  <span style="color:#8be9fd;font-style:italic">Err</span>(err) <span style="color:#ff79c6">=&gt;</span> {
-</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;error querying the weather: {}&#34;</span>, err);
+</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;error querying the weather: </span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">&#34;</span>, err);
 </span></span><span style="display:flex;"><span>    schedule_weather_retry();
 </span></span><span style="display:flex;"><span>  }
 </span></span><span style="display:flex;"><span>}
@@ -1351,7 +1351,7 @@ code.has-jax {
 <li><code>?</code>不能将<code>std::num::ParseIntError</code>转换为<code>std::io::Error</code>类型。</li>
 <li>所有标准库中的错误都可以转成<code>Box&lt;dyn std::error::Error + Send + Sync + 'static'&gt;</code>类型。</li>
 </ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">type</span> <span style="color:#50fa7b">GenericError</span> <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">Box</span><span style="color:#ff79c6">&lt;</span><span style="color:#ff79c6">dyn</span> std::error::Error <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">Send</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">Sync</span> <span style="color:#ff79c6">+</span> <span style="color:#ff79c6">&#39;</span><span style="color:#8be9fd;font-style:italic">static</span><span style="color:#ff79c6">&gt;</span>;
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">type</span> <span style="color:#50fa7b">GenericError</span> <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">Box</span><span style="color:#ff79c6">&lt;</span><span style="color:#ff79c6">dyn</span> std::error::Error <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">Send</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">Sync</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">&#39;static</span><span style="color:#ff79c6">&gt;</span>;
 </span></span><span style="display:flex;"><span><span style="color:#ff79c6">type</span> <span style="color:#50fa7b">GenericResult</span> <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">Result</span><span style="color:#ff79c6">&lt;</span>T, GenericError<span style="color:#ff79c6">&gt;</span>;
 </span></span></code></pre></div><p><code>?</code>会调用<code>GenericError::from()</code>方法来进行自动转换。</p>
 <ul>
@@ -1543,7 +1543,7 @@ code.has-jax {
 </span></span><span style="display:flex;"><span>    growth_rate: <span style="color:#bd93f9">0.001</span>
 </span></span><span style="display:flex;"><span>   };
 </span></span><span style="display:flex;"><span>  run_simulation(<span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">mut</span> fern, <span style="color:#bd93f9">1000</span>);
-</span></span><span style="display:flex;"><span>  println!(<span style="color:#f1fa8c">&#34;final fern size: {}&#34;</span>, fern.size);
+</span></span><span style="display:flex;"><span>  println!(<span style="color:#f1fa8c">&#34;final fern size: </span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">&#34;</span>, fern.size);
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>Because we’ve put this file into <em>src/bin</em>, Cargo will compile both the fern_sim library and this program the next time we run cargo build. We can run the efern program using cargo run &ndash;bin efern. Here’s what it looks like, using &ndash;verbose to show the commands Cargo is running.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-toml" data-lang="toml"><span style="display:flex;"><span>[dependencies]
@@ -1794,7 +1794,7 @@ code.has-jax {
 </span></span></code></pre></div><p>For associated function calls, you can supply the type parameter explicitly using the ::&lt;&gt; (turbofish) notation:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> q <span style="color:#ff79c6">=</span> Queue::<span style="color:#ff79c6">&lt;</span><span style="color:#8be9fd">char</span><span style="color:#ff79c6">&gt;</span>::new();
 </span></span></code></pre></div><h3 id="structs-with-lifetime-parameters"><strong>Structs with Lifetime Parameters</strong></h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">find_extrema</span><span style="color:#ff79c6">&lt;&#39;</span><span style="color:#50fa7b">s</span><span style="color:#ff79c6">&gt;</span>(slice: <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&#39;</span><span style="color:#50fa7b">s</span> [<span style="color:#8be9fd">i32</span>]) -&gt; <span style="color:#50fa7b">Extrema</span><span style="color:#ff79c6">&lt;&#39;</span><span style="color:#50fa7b">s</span><span style="color:#ff79c6">&gt;</span> { 
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">find_extrema</span><span style="color:#ff79c6">&lt;</span><span style="color:#50fa7b">&#39;s</span><span style="color:#ff79c6">&gt;</span>(slice: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">&#39;s</span> [<span style="color:#8be9fd">i32</span>]) -&gt; <span style="color:#50fa7b">Extrema</span><span style="color:#ff79c6">&lt;</span><span style="color:#50fa7b">&#39;s</span><span style="color:#ff79c6">&gt;</span> { 
 </span></span><span style="display:flex;"><span>  <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> greatest <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">&amp;</span>slice[<span style="color:#bd93f9">0</span>];
 </span></span><span style="display:flex;"><span>  <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> least <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">&amp;</span>slice[<span style="color:#bd93f9">0</span>];
 </span></span><span style="display:flex;"><span>
@@ -2032,7 +2032,7 @@ which integers to use:</p>
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h4 id="tuple-and-struct-patterns">Tuple and Struct Patterns</h4>
 <p>元组模式匹配元组：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">describe_point</span>(x: <span style="color:#8be9fd">i32</span>, y: <span style="color:#8be9fd">i32</span>) -&gt; <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&#39;</span><span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd">str</span> { 
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">describe_point</span>(x: <span style="color:#8be9fd">i32</span>, y: <span style="color:#8be9fd">i32</span>) -&gt; <span style="color:#ff79c6">&amp;</span><span style="color:#8be9fd;font-style:italic">&#39;static</span> <span style="color:#8be9fd">str</span> { 
 </span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">use</span> std::cmp::Ordering::<span style="color:#ff79c6">*</span>;
 </span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">match</span> (x.cmp(<span style="color:#ff79c6">&amp;</span><span style="color:#bd93f9">0</span>), y.cmp(<span style="color:#ff79c6">&amp;</span><span style="color:#bd93f9">0</span>)) {
 </span></span><span style="display:flex;"><span>    (Equal, Equal) <span style="color:#ff79c6">=&gt;</span> <span style="color:#f1fa8c">&#34;at the origin&#34;</span>,
@@ -2046,9 +2046,9 @@ which integers to use:</p>
 </span></span></code></pre></div><p>结构体模式使用花括号：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">match</span> balloon.location {
 </span></span><span style="display:flex;"><span>  Point { x: <span style="color:#bd93f9">0</span>, y: <span style="color:#50fa7b">height</span> } <span style="color:#ff79c6">=&gt;</span>
-</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;straight up {} meters&#34;</span>, height), 
+</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;straight up </span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c"> meters&#34;</span>, height), 
 </span></span><span style="display:flex;"><span>  Point { x: <span style="color:#50fa7b">x</span>, y: <span style="color:#50fa7b">y</span> } <span style="color:#ff79c6">=&gt;</span>
-</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;at ({}m, {}m)&#34;</span>, x, y),
+</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;at (</span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">m, </span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">m)&#34;</span>, x, y),
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>在结构体模式匹配中，可以使用<code>...</code>来告诉Rust你并不关心其他字段：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">Some</span>(Account { name, language, <span style="color:#ff79c6">..</span> }) <span style="color:#ff79c6">=&gt;</span>
@@ -2066,9 +2066,9 @@ which integers to use:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">greet_people</span>(names: <span style="color:#ff79c6">&amp;</span>[<span style="color:#ff79c6">&amp;</span><span style="color:#8be9fd">str</span>]) { 
 </span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">match</span> names {
 </span></span><span style="display:flex;"><span>    [] <span style="color:#ff79c6">=&gt;</span> { println!(<span style="color:#f1fa8c">&#34;Hello, nobody.&#34;</span>) },
-</span></span><span style="display:flex;"><span>    [a] <span style="color:#ff79c6">=&gt;</span> { println!(<span style="color:#f1fa8c">&#34;Hello, {}.&#34;</span>, a) },
-</span></span><span style="display:flex;"><span>    [a, b] <span style="color:#ff79c6">=&gt;</span> { println!(<span style="color:#f1fa8c">&#34;Hello, {} and {}.&#34;</span>, a, b) },
-</span></span><span style="display:flex;"><span>    [a, <span style="color:#ff79c6">..</span>, b] <span style="color:#ff79c6">=&gt;</span> { println!(<span style="color:#f1fa8c">&#34;Hello, everyone from {} to {}.&#34;</span>, a, b) }
+</span></span><span style="display:flex;"><span>    [a] <span style="color:#ff79c6">=&gt;</span> { println!(<span style="color:#f1fa8c">&#34;Hello, </span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">.&#34;</span>, a) },
+</span></span><span style="display:flex;"><span>    [a, b] <span style="color:#ff79c6">=&gt;</span> { println!(<span style="color:#f1fa8c">&#34;Hello, </span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c"> and </span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">.&#34;</span>, a, b) },
+</span></span><span style="display:flex;"><span>    [a, <span style="color:#ff79c6">..</span>, b] <span style="color:#ff79c6">=&gt;</span> { println!(<span style="color:#f1fa8c">&#34;Hello, everyone from </span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c"> to </span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">.&#34;</span>, a, b) }
 </span></span><span style="display:flex;"><span>  } 
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h4 id="reference-patterns">Reference Patterns</h4>
@@ -2102,7 +2102,7 @@ which integers to use:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">Some</span>(<span style="color:#ff79c6">&amp;</span>Car { <span style="color:#ff79c6">ref</span> engine, <span style="color:#ff79c6">..</span> }) <span style="color:#ff79c6">=&gt;</span> <span style="color:#6272a4">// ok, engine is a reference
 </span></span></span></code></pre></div><p>可以使用<code>&amp;</code>模式取得引用所指向的字符：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">match</span> chars.peek() { <span style="color:#6272a4">// chars.peek() 返回 Option&lt;&amp;char&gt;
-</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>  <span style="color:#8be9fd;font-style:italic">Some</span>(<span style="color:#ff79c6">&amp;</span>c) <span style="color:#ff79c6">=&gt;</span> println!(<span style="color:#f1fa8c">&#34;coming up: {:?}&#34;</span>, c), 
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>  <span style="color:#8be9fd;font-style:italic">Some</span>(<span style="color:#ff79c6">&amp;</span>c) <span style="color:#ff79c6">=&gt;</span> println!(<span style="color:#f1fa8c">&#34;coming up: </span><span style="color:#f1fa8c">{:?}</span><span style="color:#f1fa8c">&#34;</span>, c), 
 </span></span><span style="display:flex;"><span>  <span style="color:#8be9fd;font-style:italic">None</span> <span style="color:#ff79c6">=&gt;</span> println!(<span style="color:#f1fa8c">&#34;end of chars&#34;</span>),
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h4 id="match-guards">Match Guards</h4>
@@ -2156,7 +2156,7 @@ which integers to use:</p>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#6272a4">// ...iterate over keys and values of a HashMap
 </span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span><span style="color:#ff79c6">for</span> (id, document) <span style="color:#ff79c6">in</span> <span style="color:#ff79c6">&amp;</span>cache_map {
-</span></span><span style="display:flex;"><span>  println!(<span style="color:#f1fa8c">&#34;Document #{}: {}&#34;</span>, id, document.title);
+</span></span><span style="display:flex;"><span>  println!(<span style="color:#f1fa8c">&#34;Document #</span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">: </span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">&#34;</span>, id, document.title);
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#6272a4">// ...automatically dereference an argument to a closure
@@ -2274,7 +2274,7 @@ which integers to use:</p>
 </span></span></code></pre></div><p>生命周期参数：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#f1fa8c">/// Return a reference to the point in `candidates` that&#39;s
 </span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">/// closest to the `target` point.
-</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">nearest</span><span style="color:#ff79c6">&lt;&#39;</span><span style="color:#50fa7b">t</span>, <span style="color:#ff79c6">&#39;</span><span style="color:#50fa7b">c</span>, P<span style="color:#ff79c6">&gt;</span>(target: <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&#39;</span><span style="color:#50fa7b">t</span> <span style="color:#50fa7b">P</span>, candidates: <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&#39;</span><span style="color:#50fa7b">c</span> [P]) -&gt; <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&#39;</span><span style="color:#50fa7b">c</span> <span style="color:#50fa7b">P</span>
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c"></span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">nearest</span><span style="color:#ff79c6">&lt;</span><span style="color:#50fa7b">&#39;t</span>, <span style="color:#50fa7b">&#39;c</span>, P<span style="color:#ff79c6">&gt;</span>(target: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">&#39;t</span> <span style="color:#50fa7b">P</span>, candidates: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">&#39;c</span> [P]) -&gt; <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">&#39;c</span> <span style="color:#50fa7b">P</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">where</span> P: <span style="color:#50fa7b">MeasureDistance</span> 
 </span></span><span style="display:flex;"><span>{
 </span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">..</span>. 
@@ -2469,7 +2469,7 @@ which integers to use:</p>
 </span></span></code></pre></div><p>trait object:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">dump</span>(iter: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">mut</span> <span style="color:#ff79c6">dyn</span> <span style="color:#8be9fd;font-style:italic">Iterator</span><span style="color:#ff79c6">&lt;</span>Item<span style="color:#ff79c6">=</span><span style="color:#8be9fd;font-style:italic">String</span><span style="color:#ff79c6">&gt;</span>) { 
 </span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">for</span> (index, s) <span style="color:#ff79c6">in</span> iter.enumerate() {
-</span></span><span style="display:flex;"><span>  	println!(<span style="color:#f1fa8c">&#34;{}: {:?}&#34;</span>, index, s);
+</span></span><span style="display:flex;"><span>  	println!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">: </span><span style="color:#f1fa8c">{:?}</span><span style="color:#f1fa8c">&#34;</span>, index, s);
 </span></span><span style="display:flex;"><span>  }
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h4 id="generic-traits-or-how-operator-overloading-works">Generic Traits (or How Operator Overloading Works)</h4>
@@ -2511,16 +2511,16 @@ which integers to use:</p>
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>It’s important to note that <strong>Rust doesn’t allow trait methods to use <code>impl Trait</code> return values</strong>.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">print</span><span style="color:#ff79c6">&lt;</span>T: <span style="color:#50fa7b">Display</span><span style="color:#ff79c6">&gt;</span>(val: <span style="color:#50fa7b">T</span>) { 
-</span></span><span style="display:flex;"><span>  println!(<span style="color:#f1fa8c">&#34;{}&#34;</span>, val);
+</span></span><span style="display:flex;"><span>  println!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">&#34;</span>, val);
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">print</span>(val: <span style="color:#50fa7b">impl</span> Display) { 
-</span></span><span style="display:flex;"><span>  println!(<span style="color:#f1fa8c">&#34;{}&#34;</span>, val);
+</span></span><span style="display:flex;"><span>  println!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">&#34;</span>, val);
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>There is one important exception. Using generics allows callers of the function to specify the type of the generic arguments, like <code>print::&lt;i32&gt;(42)</code>, while using impl Trait does not.</p>
 <h4 id="associated-consts-1">Associated Consts</h4>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-RUST" data-lang="RUST"><span style="display:flex;"><span><span style="color:#ff79c6">trait</span> Greet {
-</span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">const</span> GREETING: <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&#39;</span><span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd">str</span> <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34;Hello&#34;</span>; 
+</span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">const</span> GREETING: <span style="color:#ff79c6">&amp;</span><span style="color:#8be9fd;font-style:italic">&#39;static</span> <span style="color:#8be9fd">str</span> <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34;Hello&#34;</span>; 
 </span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">greet</span>(<span style="color:#ff79c6">&amp;</span>self) -&gt; <span style="color:#8be9fd;font-style:italic">String</span>;
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">fib</span><span style="color:#ff79c6">&lt;</span>T: <span style="color:#50fa7b">Float</span> <span style="color:#ff79c6">+</span> Add<span style="color:#ff79c6">&lt;</span>Output<span style="color:#ff79c6">=</span>T<span style="color:#ff79c6">&gt;&gt;</span>(n: <span style="color:#8be9fd">usize</span>) -&gt; <span style="color:#50fa7b">T</span> { 
@@ -2801,12 +2801,12 @@ which integers to use:</p>
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>Rust’s automatically generated implementation is essentially identical to our hand-written code, comparing each field or element of the type in turn.</p>
 <p>This means that comparing non-Copy values like Strings, Vecs, or HashMaps doesn’t cause them to be moved, which would be troublesome:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> s <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34;d\x6fv\x65t\x61i\x6c&#34;</span>.to_string();
-</span></span><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> t <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34;\x64o\x76e\x74a\x69l&#34;</span>.to_string(); 
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> s <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34;d</span><span style="color:#f1fa8c">\x6f</span><span style="color:#f1fa8c">v</span><span style="color:#f1fa8c">\x65</span><span style="color:#f1fa8c">t</span><span style="color:#f1fa8c">\x61</span><span style="color:#f1fa8c">i</span><span style="color:#f1fa8c">\x6c</span><span style="color:#f1fa8c">&#34;</span>.to_string();
+</span></span><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> t <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">\x64</span><span style="color:#f1fa8c">o</span><span style="color:#f1fa8c">\x76</span><span style="color:#f1fa8c">e</span><span style="color:#f1fa8c">\x74</span><span style="color:#f1fa8c">a</span><span style="color:#f1fa8c">\x69</span><span style="color:#f1fa8c">l&#34;</span>.to_string(); 
 </span></span><span style="display:flex;"><span>assert!(s <span style="color:#ff79c6">==</span> t); <span style="color:#6272a4">// s and t are only borrowed...
 </span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>
 </span></span><span style="display:flex;"><span><span style="color:#6272a4">// ... so they still have their values here.
-</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>assert_eq!(format!(<span style="color:#f1fa8c">&#34;{} {}&#34;</span>, s, t), <span style="color:#f1fa8c">&#34;dovetail dovetail&#34;</span>);
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>assert_eq!(format!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c"> </span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">&#34;</span>, s, t), <span style="color:#f1fa8c">&#34;dovetail dovetail&#34;</span>);
 </span></span></code></pre></div><p>Why is this trait called PartialEq? The traditional mathematical definition of an <em>equivalence relation</em>, of which equality is one instance, imposes three requirements. For any values x and y:</p>
 <ul>
 <li>
@@ -3121,7 +3121,7 @@ which integers to use:</p>
 <p><code>Deref</code>和<code>DerefMut</code> trait的设计初衷是为了实现<strong>智能指针类型</strong>（如<code>Box</code>、<code>Rc</code>和<code>Arc</code>），以及某些<strong>频繁通过引用来使用的类型的所有者版本</strong>（如<code>Vec&lt;T&gt;</code>和<code>String</code>就是<code>[T]</code>和<code>str</code>的所有者版本）。</p>
 <p>Rust通过应用解引用强制转换来解决类型冲突，但<strong>不会应用它来满足类型变量的绑定</strong>。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">use</span> std::fmt::Display;
-</span></span><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">show_it_generic</span><span style="color:#ff79c6">&lt;</span>T: <span style="color:#50fa7b">Display</span><span style="color:#ff79c6">&gt;</span>(thing: <span style="color:#50fa7b">T</span>) { println!(<span style="color:#f1fa8c">&#34;{}&#34;</span>, thing); } show_it_generic(<span style="color:#ff79c6">&amp;</span>s); <span style="color:#6272a4">// error
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">show_it_generic</span><span style="color:#ff79c6">&lt;</span>T: <span style="color:#50fa7b">Display</span><span style="color:#ff79c6">&gt;</span>(thing: <span style="color:#50fa7b">T</span>) { println!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">&#34;</span>, thing); } show_it_generic(<span style="color:#ff79c6">&amp;</span>s); <span style="color:#6272a4">// error
 </span></span></span></code></pre></div><p>Rust不会在满足类型变量的绑定时应用解引用强制类型转换，所以检查失败。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#6272a4">// 解决这个问题
 </span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>show_it_generic(<span style="color:#ff79c6">&amp;</span>s <span style="color:#ff79c6">as</span> <span style="color:#ff79c6">&amp;</span><span style="color:#8be9fd">str</span>);
@@ -3207,7 +3207,7 @@ which integers to use:</p>
 </span></span></code></pre></div><p>So, for example, <code>Vec&lt;T&gt;</code> implements <code>AsRef&lt;[T]&gt;</code>, and String implements <code>AsRef&lt;str&gt;</code>. You can also borrow a String’s contents as an array of bytes, so String implements AsRef&lt;[u8]&gt; as well.</p>
 <p>But this can’t be the whole story. A string literal is a &amp;str, but the type that implements <code>AsRef&lt;Path&gt;</code> is str, without an &amp;. And as we explained in “Deref and DerefMut”, Rust doesn’t try deref coercions to satisfy type variable bounds, so they won’t help here either.</p>
 <p>Fortunately, the standard library includes the blanket implementation:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">impl</span><span style="color:#ff79c6">&lt;&#39;</span><span style="color:#50fa7b">a</span>, T, U<span style="color:#ff79c6">&gt;</span> <span style="color:#8be9fd;font-style:italic">AsRef</span><span style="color:#ff79c6">&lt;</span>U<span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">for</span> <span style="color:#ff79c6">&amp;&#39;</span><span style="color:#50fa7b">a</span> T 
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">impl</span><span style="color:#ff79c6">&lt;</span><span style="color:#50fa7b">&#39;a</span>, T, U<span style="color:#ff79c6">&gt;</span> <span style="color:#8be9fd;font-style:italic">AsRef</span><span style="color:#ff79c6">&lt;</span>U<span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">for</span> <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">&#39;a</span> T 
 </span></span><span style="display:flex;"><span>	<span style="color:#ff79c6">where</span> T: <span style="color:#8be9fd;font-style:italic">AsRef</span><span style="color:#ff79c6">&lt;</span>U<span style="color:#ff79c6">&gt;</span>,
 </span></span><span style="display:flex;"><span>				T: <span style="color:#ff79c6">?</span><span style="color:#8be9fd;font-style:italic">Sized</span>, U: <span style="color:#ff79c6">?</span><span style="color:#8be9fd;font-style:italic">Sized</span>
 </span></span><span style="display:flex;"><span>{
@@ -3253,15 +3253,15 @@ which integers to use:</p>
 <p>Given an appropriate From implementation, the standard library automatically implements the corresponding Into trait.</p>
 <p>However, cheap conversions are not part of Into and From’s contract. Whereas AsRef and AsMut conversions are expected to be cheap, From and Into conversions may allocate, copy, or otherwise process the value’s contents.</p>
 <p>The <code>?</code> operator uses From and Into to help clean up code in functions that could fail in multiple ways by automatically converting from specific error types to general ones when needed.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">type</span> <span style="color:#50fa7b">GenericError</span> <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">Box</span><span style="color:#ff79c6">&lt;</span><span style="color:#ff79c6">dyn</span> std::error::Error <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">Send</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">Sync</span> <span style="color:#ff79c6">+</span> <span style="color:#ff79c6">&#39;</span><span style="color:#8be9fd;font-style:italic">static</span><span style="color:#ff79c6">&gt;</span>; 
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">type</span> <span style="color:#50fa7b">GenericError</span> <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">Box</span><span style="color:#ff79c6">&lt;</span><span style="color:#ff79c6">dyn</span> std::error::Error <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">Send</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">Sync</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">&#39;static</span><span style="color:#ff79c6">&gt;</span>; 
 </span></span><span style="display:flex;"><span><span style="color:#ff79c6">type</span> <span style="color:#50fa7b">GenericResult</span><span style="color:#ff79c6">&lt;</span>T<span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">Result</span><span style="color:#ff79c6">&lt;</span>T, GenericError<span style="color:#ff79c6">&gt;</span>;
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">parse_i32_bytes</span>(b: <span style="color:#ff79c6">&amp;</span>[<span style="color:#8be9fd">u8</span>]) -&gt; <span style="color:#50fa7b">GenericResult</span><span style="color:#ff79c6">&lt;</span><span style="color:#8be9fd">i32</span><span style="color:#ff79c6">&gt;</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#8be9fd;font-style:italic">Ok</span>(std::<span style="color:#8be9fd">str</span>::from_utf8(b)<span style="color:#ff79c6">?</span>.parse::<span style="color:#ff79c6">&lt;</span><span style="color:#8be9fd">i32</span><span style="color:#ff79c6">&gt;</span>()<span style="color:#ff79c6">?</span>)
 </span></span><span style="display:flex;"><span>}	
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">impl</span><span style="color:#ff79c6">&lt;&#39;</span><span style="color:#50fa7b">a</span>, E: <span style="color:#50fa7b">Error</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">Send</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">Sync</span> <span style="color:#ff79c6">+</span> <span style="color:#ff79c6">&#39;</span><span style="color:#50fa7b">a</span><span style="color:#ff79c6">&gt;</span> <span style="color:#8be9fd;font-style:italic">From</span><span style="color:#ff79c6">&lt;</span>E<span style="color:#ff79c6">&gt;</span> 
-</span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">for</span> <span style="color:#8be9fd;font-style:italic">Box</span><span style="color:#ff79c6">&lt;</span><span style="color:#ff79c6">dyn</span> Error <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">Send</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">Sync</span> <span style="color:#ff79c6">+</span> <span style="color:#ff79c6">&#39;</span><span style="color:#50fa7b">a</span><span style="color:#ff79c6">&gt;</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">from</span>(err: <span style="color:#50fa7b">E</span>) -&gt; <span style="color:#8be9fd;font-style:italic">Box</span><span style="color:#ff79c6">&lt;</span><span style="color:#ff79c6">dyn</span> Error <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">Send</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">Sync</span> <span style="color:#ff79c6">+</span> <span style="color:#ff79c6">&#39;</span><span style="color:#50fa7b">a</span><span style="color:#ff79c6">&gt;</span> { 
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">impl</span><span style="color:#ff79c6">&lt;</span><span style="color:#50fa7b">&#39;a</span>, E: <span style="color:#50fa7b">Error</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">Send</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">Sync</span> <span style="color:#ff79c6">+</span> <span style="color:#50fa7b">&#39;a</span><span style="color:#ff79c6">&gt;</span> <span style="color:#8be9fd;font-style:italic">From</span><span style="color:#ff79c6">&lt;</span>E<span style="color:#ff79c6">&gt;</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">for</span> <span style="color:#8be9fd;font-style:italic">Box</span><span style="color:#ff79c6">&lt;</span><span style="color:#ff79c6">dyn</span> Error <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">Send</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">Sync</span> <span style="color:#ff79c6">+</span> <span style="color:#50fa7b">&#39;a</span><span style="color:#ff79c6">&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">from</span>(err: <span style="color:#50fa7b">E</span>) -&gt; <span style="color:#8be9fd;font-style:italic">Box</span><span style="color:#ff79c6">&lt;</span><span style="color:#ff79c6">dyn</span> Error <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">Send</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">Sync</span> <span style="color:#ff79c6">+</span> <span style="color:#50fa7b">&#39;a</span><span style="color:#ff79c6">&gt;</span> { 
 </span></span><span style="display:flex;"><span>      <span style="color:#8be9fd;font-style:italic">Box</span>::new(err)
 </span></span><span style="display:flex;"><span>    } 
 </span></span><span style="display:flex;"><span>}
@@ -3286,10 +3286,10 @@ which integers to use:</p>
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h3 id="borrow-and-toowned-at-work-the-humble-cow"><strong>Borrow and ToOwned at Work: The Humble Cow</strong></h3>
 <p>But in some cases you cannot decide whether to borrow or own until the program is running ; the std::borrow::Cow type (for “clone on write”) provides one way to do this.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">enum</span> <span style="color:#50fa7b">Cow</span><span style="color:#ff79c6">&lt;&#39;</span><span style="color:#50fa7b">a</span>, B: <span style="color:#ff79c6">?</span><span style="color:#8be9fd;font-style:italic">Sized</span><span style="color:#ff79c6">&gt;</span> 
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">enum</span> <span style="color:#50fa7b">Cow</span><span style="color:#ff79c6">&lt;</span><span style="color:#50fa7b">&#39;a</span>, B: <span style="color:#ff79c6">?</span><span style="color:#8be9fd;font-style:italic">Sized</span><span style="color:#ff79c6">&gt;</span> 
 </span></span><span style="display:flex;"><span>	<span style="color:#ff79c6">where</span> B: <span style="color:#8be9fd;font-style:italic">ToOwned</span>
 </span></span><span style="display:flex;"><span>{
-</span></span><span style="display:flex;"><span>  Borrowed(<span style="color:#ff79c6">&amp;&#39;</span><span style="color:#50fa7b">a</span> B),
+</span></span><span style="display:flex;"><span>  Borrowed(<span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">&#39;a</span> B),
 </span></span><span style="display:flex;"><span>  Owned(<span style="color:#ff79c6">&lt;</span>B <span style="color:#ff79c6">as</span> <span style="color:#8be9fd;font-style:italic">ToOwned</span><span style="color:#ff79c6">&gt;</span>::Owned),
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>A <code>Cow&lt;B&gt;</code> either borrows a shared reference to a B or owns a value from which we could borrow such a reference. Since Cow implements Deref, you can call methods on it as if it were a shared reference to a B: if it’s Owned, it borrows a shared reference to the owned value; and if it’s Borrowed, it just hands out the reference it’s holding.</p>
@@ -3298,14 +3298,14 @@ which integers to use:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#ff79c6">use</span> std::path::PathBuf;
 </span></span><span style="display:flex;"><span><span style="color:#ff79c6">use</span> std::borrow::Cow;
-</span></span><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">describe</span>(error: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">Error</span>) -&gt; <span style="color:#50fa7b">Cow</span><span style="color:#ff79c6">&lt;&#39;</span><span style="color:#8be9fd;font-style:italic">static</span>, <span style="color:#8be9fd">str</span><span style="color:#ff79c6">&gt;</span> {
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">describe</span>(error: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">Error</span>) -&gt; <span style="color:#50fa7b">Cow</span><span style="color:#ff79c6">&lt;</span><span style="color:#8be9fd;font-style:italic">&#39;static</span>, <span style="color:#8be9fd">str</span><span style="color:#ff79c6">&gt;</span> {
 </span></span><span style="display:flex;"><span>	<span style="color:#ff79c6">match</span> <span style="color:#ff79c6">*</span>error {
 </span></span><span style="display:flex;"><span>		Error::OutOfMemory <span style="color:#ff79c6">=&gt;</span> <span style="color:#f1fa8c">&#34;out of memory&#34;</span>.into(), 
 </span></span><span style="display:flex;"><span>    Error::StackOverflow <span style="color:#ff79c6">=&gt;</span> <span style="color:#f1fa8c">&#34;stack overflow&#34;</span>.into(), 
 </span></span><span style="display:flex;"><span>    Error::MachineOnFire <span style="color:#ff79c6">=&gt;</span> <span style="color:#f1fa8c">&#34;machine on fire&#34;</span>.into(), 
 </span></span><span style="display:flex;"><span>    Error::Unfathomable <span style="color:#ff79c6">=&gt;</span> <span style="color:#f1fa8c">&#34;machine bewildered&#34;</span>.into(),
 </span></span><span style="display:flex;"><span>    Error::FileNotFound(<span style="color:#ff79c6">ref</span> path) <span style="color:#ff79c6">=&gt;</span> {
-</span></span><span style="display:flex;"><span>    	format!(<span style="color:#f1fa8c">&#34;file not found: {}&#34;</span>, path.display()).into()
+</span></span><span style="display:flex;"><span>    	format!(<span style="color:#f1fa8c">&#34;file not found: </span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">&#34;</span>, path.display()).into()
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>	} 
 </span></span><span style="display:flex;"><span>}
@@ -3469,12 +3469,12 @@ which integers to use:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span>println!(<span style="color:#f1fa8c">&#34;There&#39;s:&#34;</span>);
 </span></span><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> v <span style="color:#ff79c6">=</span> vec![<span style="color:#f1fa8c">&#34;antimony&#34;</span>, <span style="color:#f1fa8c">&#34;arsenic&#34;</span>, <span style="color:#f1fa8c">&#34;aluminum&#34;</span>, <span style="color:#f1fa8c">&#34;selenium&#34;</span>];
 </span></span><span style="display:flex;"><span><span style="color:#ff79c6">for</span> element <span style="color:#ff79c6">in</span> <span style="color:#ff79c6">&amp;</span>v { 
-</span></span><span style="display:flex;"><span>  println!(<span style="color:#f1fa8c">&#34;{}&#34;</span>, element);
+</span></span><span style="display:flex;"><span>  println!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">&#34;</span>, element);
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>等价于</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> iterator <span style="color:#ff79c6">=</span> (<span style="color:#ff79c6">&amp;</span>v).into_iter();
 </span></span><span style="display:flex;"><span><span style="color:#ff79c6">while</span> <span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#8be9fd;font-style:italic">Some</span>(element) <span style="color:#ff79c6">=</span> iterator.next() {
-</span></span><span style="display:flex;"><span>  println!(<span style="color:#f1fa8c">&#34;{}&#34;</span>, element);
+</span></span><span style="display:flex;"><span>  println!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">&#34;</span>, element);
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>Although a for loop always calls into_iter on its operand, you can also pass iterators to for loops directly; this occurs when you loop over a Range, for example. All iterators automatically implement IntoIterator, with an into_iter method that simply returns the iterator.</p>
 <h3 id="creating-iterators"><strong>Creating Iterators</strong></h3>
@@ -3506,7 +3506,7 @@ which integers to use:</p>
 </span></span><span style="display:flex;"><span>				U: <span style="color:#50fa7b">Debug</span>
 </span></span><span style="display:flex;"><span>{
 </span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">for</span> u <span style="color:#ff79c6">in</span> t {
-</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;{:?}&#34;</span>, u);
+</span></span><span style="display:flex;"><span>    println!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{:?}</span><span style="color:#f1fa8c">&#34;</span>, u);
 </span></span><span style="display:flex;"><span>  }
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h4 id="from_fn-and-successors"><strong>from_fn and successors</strong></h4>
@@ -3572,12 +3572,12 @@ which integers to use:</p>
 <h3 id="iterator-adapters"><strong>Iterator Adapters</strong></h3>
 <h4 id="map-and-filter"><strong>map and filter</strong></h4>
 <p>The Iterator trait’s map adapter lets you transform an iterator by applying a closure to its items. The filter adapter lets you filter out items from an iterator, using a closure to decide which to keep and which to drop.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> text <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34; ponies \n giraffes\niguanas \nsquid&#34;</span>.to_string(); 
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> text <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34; ponies </span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c"> giraffes</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">iguanas </span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">squid&#34;</span>.to_string(); 
 </span></span><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> v: <span style="color:#8be9fd;font-style:italic">Vec</span><span style="color:#ff79c6">&lt;&amp;</span><span style="color:#8be9fd">str</span><span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">=</span> text.lines()
 </span></span><span style="display:flex;"><span>	.map(<span style="color:#8be9fd">str</span>::trim)
 </span></span><span style="display:flex;"><span>	.collect();
 </span></span><span style="display:flex;"><span>assert_eq!(v, [<span style="color:#f1fa8c">&#34;ponies&#34;</span>, <span style="color:#f1fa8c">&#34;giraffes&#34;</span>, <span style="color:#f1fa8c">&#34;iguanas&#34;</span>, <span style="color:#f1fa8c">&#34;squid&#34;</span>]);
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> text <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34; ponies \n giraffes\niguanas \nsquid&#34;</span>.to_string(); 
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> text <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34; ponies </span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c"> giraffes</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">iguanas </span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">squid&#34;</span>.to_string(); 
 </span></span><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> v: <span style="color:#8be9fd;font-style:italic">Vec</span><span style="color:#ff79c6">&lt;&amp;</span><span style="color:#8be9fd">str</span><span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">=</span> text.lines()
 </span></span><span style="display:flex;"><span>	.map(<span style="color:#8be9fd">str</span>::trim)
 </span></span><span style="display:flex;"><span>	.filter(<span style="color:#ff79c6">|</span>s<span style="color:#ff79c6">|</span> <span style="color:#ff79c6">*</span>s <span style="color:#ff79c6">!=</span> <span style="color:#f1fa8c">&#34;iguanas&#34;</span>) .collect();
@@ -3596,11 +3596,11 @@ which integers to use:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">filter_map</span><span style="color:#ff79c6">&lt;</span>B, F<span style="color:#ff79c6">&gt;</span>(self, f: <span style="color:#50fa7b">F</span>) -&gt; <span style="color:#50fa7b">impl</span> <span style="color:#8be9fd;font-style:italic">Iterator</span><span style="color:#ff79c6">&lt;</span>Item<span style="color:#ff79c6">=</span>B<span style="color:#ff79c6">&gt;</span> 
 </span></span><span style="display:flex;"><span>	<span style="color:#ff79c6">where</span> Self: <span style="color:#8be9fd;font-style:italic">Sized</span>, F: <span style="color:#8be9fd;font-style:italic">FnMut</span>(Self::Item) -&gt; <span style="color:#8be9fd;font-style:italic">Option</span><span style="color:#ff79c6">&lt;</span>B<span style="color:#ff79c6">&gt;</span>;
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">use</span> std::<span style="color:#8be9fd">str</span>::FromStr;
-</span></span><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> text <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34;1\nfrond .25 289\n3.1415 estuary\n&#34;</span>; 
+</span></span><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> text <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34;1</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">frond .25 289</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">3.1415 estuary</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">&#34;</span>; 
 </span></span><span style="display:flex;"><span><span style="color:#ff79c6">for</span> number <span style="color:#ff79c6">in</span> text
 </span></span><span style="display:flex;"><span>	.split_whitespace()
 </span></span><span style="display:flex;"><span>	.filter_map(<span style="color:#ff79c6">|</span>w<span style="color:#ff79c6">|</span> <span style="color:#8be9fd">f64</span>::from_str(w).ok()) {
-</span></span><span style="display:flex;"><span>      println!(<span style="color:#f1fa8c">&#34;{:4.2}&#34;</span>, number.sqrt());
+</span></span><span style="display:flex;"><span>      println!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{:4.2}</span><span style="color:#f1fa8c">&#34;</span>, number.sqrt());
 </span></span><span style="display:flex;"><span>  }
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">flat_map</span><span style="color:#ff79c6">&lt;</span>U, F<span style="color:#ff79c6">&gt;</span>(self, f: <span style="color:#50fa7b">F</span>) -&gt; <span style="color:#50fa7b">impl</span> <span style="color:#8be9fd;font-style:italic">Iterator</span><span style="color:#ff79c6">&lt;</span>Item<span style="color:#ff79c6">=</span>U::Item<span style="color:#ff79c6">&gt;</span>
 </span></span><span style="display:flex;"><span>	<span style="color:#ff79c6">where</span> F: <span style="color:#8be9fd;font-style:italic">FnMut</span>(Self::Item) -&gt; <span style="color:#50fa7b">U</span>, U: <span style="color:#8be9fd;font-style:italic">IntoIterator</span>;
@@ -3610,7 +3610,7 @@ which integers to use:</p>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> countries <span style="color:#ff79c6">=</span> [<span style="color:#f1fa8c">&#34;Japan&#34;</span>, <span style="color:#f1fa8c">&#34;Brazil&#34;</span>, <span style="color:#f1fa8c">&#34;Kenya&#34;</span>];
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#ff79c6">for</span> <span style="color:#ff79c6">&amp;</span>city <span style="color:#ff79c6">in</span> countries.iter().flat_map(<span style="color:#ff79c6">|</span>country<span style="color:#ff79c6">|</span> <span style="color:#ff79c6">&amp;</span>major_cities[country]) { 		println!(<span style="color:#f1fa8c">&#34;{}&#34;</span>, city);
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">for</span> <span style="color:#ff79c6">&amp;</span>city <span style="color:#ff79c6">in</span> countries.iter().flat_map(<span style="color:#ff79c6">|</span>country<span style="color:#ff79c6">|</span> <span style="color:#ff79c6">&amp;</span>major_cities[country]) { 		println!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">&#34;</span>, city);
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>运行结果：</p>
 <pre tabindex="0"><code>Tokyo
@@ -3641,13 +3641,13 @@ Mombasa
 </span></span><span style="display:flex;"><span>	<span style="color:#ff79c6">where</span> Self: <span style="color:#8be9fd;font-style:italic">Sized</span>;
 </span></span><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">take_while</span><span style="color:#ff79c6">&lt;</span>P<span style="color:#ff79c6">&gt;</span>(self, predicate: <span style="color:#50fa7b">P</span>) -&gt; <span style="color:#50fa7b">impl</span> <span style="color:#8be9fd;font-style:italic">Iterator</span><span style="color:#ff79c6">&lt;</span>Item<span style="color:#ff79c6">=</span>Self::Item<span style="color:#ff79c6">&gt;</span> 
 </span></span><span style="display:flex;"><span>	<span style="color:#ff79c6">where</span> Self: <span style="color:#8be9fd;font-style:italic">Sized</span>, P: <span style="color:#8be9fd;font-style:italic">FnMut</span>(<span style="color:#ff79c6">&amp;</span>Self::Item) -&gt; <span style="color:#8be9fd">bool</span>;
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> message <span style="color:#ff79c6">=</span> &#34;To: <span style="color:#50fa7b">jimb</span>\r\n\
-</span></span><span style="display:flex;"><span>							 <span style="color:#8be9fd;font-style:italic">From</span>: <span style="color:#50fa7b">superego</span> <span style="color:#ff79c6">&lt;</span>editor<span style="color:#ff79c6">@</span>oreilly.com<span style="color:#ff79c6">&gt;</span>\r\n\
-</span></span><span style="display:flex;"><span>							 \r\n\
-</span></span><span style="display:flex;"><span>							 Did you get any writing done today<span style="color:#ff79c6">?</span>\r\n\
-</span></span><span style="display:flex;"><span>							 When will you stop wasting time plotting fractals<span style="color:#ff79c6">?</span>\r\n<span style="color:#f1fa8c">&#34;;
-</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">for header in message.lines().take_while(|l| !l.is_empty()) { 
-</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">  println!(&#34;</span>{}&#34; , header);
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> message <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34;To: jimb</span><span style="color:#f1fa8c">\r\n\</span><span style="color:#f1fa8c">
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">							 From: superego &lt;editor@oreilly.com&gt;</span><span style="color:#f1fa8c">\r\n\</span><span style="color:#f1fa8c">
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">							 </span><span style="color:#f1fa8c">\r\n\</span><span style="color:#f1fa8c">
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">							 Did you get any writing done today?</span><span style="color:#f1fa8c">\r\n\</span><span style="color:#f1fa8c">
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">							 When will you stop wasting time plotting fractals?</span><span style="color:#f1fa8c">\r\n</span><span style="color:#f1fa8c">&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">for</span> header <span style="color:#ff79c6">in</span> message.lines().take_while(<span style="color:#ff79c6">|</span>l<span style="color:#ff79c6">|</span> <span style="color:#ff79c6">!</span>l.is_empty()) { 
+</span></span><span style="display:flex;"><span>  println!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">&#34;</span> , header);
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>结果：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span>To: <span style="color:#50fa7b">jimb</span>
@@ -3661,7 +3661,7 @@ Mombasa
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">for</span> body <span style="color:#ff79c6">in</span> message.lines() 
 </span></span><span style="display:flex;"><span>	.skip_while(<span style="color:#ff79c6">|</span>l<span style="color:#ff79c6">|</span> <span style="color:#ff79c6">!</span>l.is_empty()) 
 </span></span><span style="display:flex;"><span>	.skip(<span style="color:#bd93f9">1</span>) {
-</span></span><span style="display:flex;"><span>	println!(<span style="color:#f1fa8c">&#34;{}&#34;</span> , body);
+</span></span><span style="display:flex;"><span>	println!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">&#34;</span> , body);
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>输出结果为：</p>
 <pre tabindex="0"><code>Did you get any writing done today?
@@ -3675,7 +3675,7 @@ When will you stop wasting time plotting fractals?
 <p><code>fuse</code> 适配器可以将任何适配器转换为第一次返回<code>None</code>之后始终继续返回<code>None</code>的迭代器。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">Flaky</span>(<span style="color:#8be9fd">bool</span>);
 </span></span><span style="display:flex;"><span><span style="color:#ff79c6">impl</span> <span style="color:#8be9fd;font-style:italic">Iterator</span> <span style="color:#ff79c6">for</span> Flaky {
-</span></span><span style="display:flex;"><span>	<span style="color:#ff79c6">type</span> <span style="color:#50fa7b">Item</span> <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">&amp;&#39;</span><span style="color:#8be9fd;font-style:italic">static</span> <span style="color:#8be9fd">str</span>;
+</span></span><span style="display:flex;"><span>	<span style="color:#ff79c6">type</span> <span style="color:#50fa7b">Item</span> <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">&amp;</span><span style="color:#8be9fd;font-style:italic">&#39;static</span> <span style="color:#8be9fd">str</span>;
 </span></span><span style="display:flex;"><span>	<span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">next</span>(<span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">mut</span> self) -&gt; <span style="color:#8be9fd;font-style:italic">Option</span><span style="color:#ff79c6">&lt;</span>Self::Item<span style="color:#ff79c6">&gt;</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">if</span> self.<span style="color:#bd93f9">0</span> {
 </span></span><span style="display:flex;"><span>      self.<span style="color:#bd93f9">0</span> <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">false</span>;
@@ -3723,9 +3723,9 @@ When will you stop wasting time plotting fractals?
 </span></span><span style="display:flex;"><span>assert_eq!(iter.next(), <span style="color:#8be9fd;font-style:italic">None</span>);
 </span></span></code></pre></div><h4 id="inspect"><strong>inspect</strong></h4>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> upper_case: <span style="color:#8be9fd;font-style:italic">String</span> <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34;große&#34;</span>.chars() 
-</span></span><span style="display:flex;"><span>	.inspect(<span style="color:#ff79c6">|</span>c<span style="color:#ff79c6">|</span> println!(<span style="color:#f1fa8c">&#34;before: {:?}&#34;</span>, c)) 
+</span></span><span style="display:flex;"><span>	.inspect(<span style="color:#ff79c6">|</span>c<span style="color:#ff79c6">|</span> println!(<span style="color:#f1fa8c">&#34;before: </span><span style="color:#f1fa8c">{:?}</span><span style="color:#f1fa8c">&#34;</span>, c)) 
 </span></span><span style="display:flex;"><span>	.flat_map(<span style="color:#ff79c6">|</span>c<span style="color:#ff79c6">|</span> c.to_uppercase())
-</span></span><span style="display:flex;"><span>	.inspect(<span style="color:#ff79c6">|</span>c<span style="color:#ff79c6">|</span> println!(<span style="color:#f1fa8c">&#34; after: {:?}&#34;</span>, c)) 
+</span></span><span style="display:flex;"><span>	.inspect(<span style="color:#ff79c6">|</span>c<span style="color:#ff79c6">|</span> println!(<span style="color:#f1fa8c">&#34; after: </span><span style="color:#f1fa8c">{:?}</span><span style="color:#f1fa8c">&#34;</span>, c)) 
 </span></span><span style="display:flex;"><span>	.collect();
 </span></span><span style="display:flex;"><span>assert_eq!(upper_case, <span style="color:#f1fa8c">&#34;GROSSE&#34;</span>);
 </span></span></code></pre></div><h4 id="chain"><strong>chain</strong></h4>
@@ -3757,21 +3757,21 @@ When will you stop wasting time plotting fractals?
 </span></span><span style="display:flex;"><span>                       (<span style="color:#f1fa8c">&#34;going&#34;</span>, <span style="color:#f1fa8c">&#34;chicken soup with rice&#34;</span>)]);
 </span></span></code></pre></div><h4 id="by_ref"><strong>by_ref</strong></h4>
 <p>An iterator’s by_ref method borrows a mutable reference to the iterator so that you can apply adapters to the reference. When you’re done consuming items from these adapters, you drop them, the borrow ends, and you regain access to your original iterator.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> message <span style="color:#ff79c6">=</span> &#34;To: <span style="color:#50fa7b">jimb</span>\r\n\ 
-</span></span><span style="display:flex;"><span>							<span style="color:#8be9fd;font-style:italic">From</span>: <span style="color:#50fa7b">id</span>\r\n\
-</span></span><span style="display:flex;"><span>							\r\n\
-</span></span><span style="display:flex;"><span>							Oooooh, donuts<span style="color:#ff79c6">!!</span>\r\n<span style="color:#f1fa8c">&#34;;
-</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">
-</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">let mut lines = message.lines();
-</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">
-</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">println!(&#34;</span>Headers:<span style="color:#f1fa8c">&#34;);
-</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">for header in lines.by_ref().take_while(|l| !l.is_empty()) {
-</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">  println!(&#34;</span>{}<span style="color:#f1fa8c">&#34; , header);
-</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">}
-</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">
-</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">println!(&#34;</span>\nBody:<span style="color:#f1fa8c">&#34;); 
-</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">for body in lines {
-</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">  println!(&#34;</span>{}&#34; , body);
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> message <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34;To: jimb</span><span style="color:#f1fa8c">\r\n</span><span style="color:#f1fa8c">\ 
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">							From: id</span><span style="color:#f1fa8c">\r\n\</span><span style="color:#f1fa8c">
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">							</span><span style="color:#f1fa8c">\r\n\</span><span style="color:#f1fa8c">
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">							Oooooh, donuts!!</span><span style="color:#f1fa8c">\r\n</span><span style="color:#f1fa8c">&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#8be9fd;font-style:italic">let</span> <span style="color:#ff79c6">mut</span> lines <span style="color:#ff79c6">=</span> message.lines();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>println!(<span style="color:#f1fa8c">&#34;Headers:&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">for</span> header <span style="color:#ff79c6">in</span> lines.by_ref().take_while(<span style="color:#ff79c6">|</span>l<span style="color:#ff79c6">|</span> <span style="color:#ff79c6">!</span>l.is_empty()) {
+</span></span><span style="display:flex;"><span>  println!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">&#34;</span> , header);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>println!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">Body:&#34;</span>); 
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">for</span> body <span style="color:#ff79c6">in</span> lines {
+</span></span><span style="display:flex;"><span>  println!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">&#34;</span> , body);
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><h4 id="cloned-copied">cloned, copied</h4>
 <p>The cloned adapter takes an iterator that produces references and returns an iterator that produces values cloned from those references, much like iter.map(|item| item.clone()). Naturally, the referent type must implement Clone.</p>
@@ -3916,7 +3916,7 @@ When will you stop wasting time plotting fractals?
 </span></span><span style="display:flex;"><span>      .try_fold(<span style="color:#bd93f9">0</span>, <span style="color:#ff79c6">|</span>sum, line<span style="color:#ff79c6">|</span> -&gt; <span style="color:#8be9fd;font-style:italic">Result</span><span style="color:#ff79c6">&lt;</span><span style="color:#8be9fd">u64</span>, <span style="color:#8be9fd;font-style:italic">Box</span><span style="color:#ff79c6">&lt;</span><span style="color:#ff79c6">dyn</span> Error<span style="color:#ff79c6">&gt;&gt;</span> {
 </span></span><span style="display:flex;"><span>        <span style="color:#8be9fd;font-style:italic">Ok</span>(sum <span style="color:#ff79c6">+</span> <span style="color:#8be9fd">u64</span>::from_str(<span style="color:#ff79c6">&amp;</span>line<span style="color:#ff79c6">?</span>.trim())<span style="color:#ff79c6">?</span>) 
 </span></span><span style="display:flex;"><span>      })<span style="color:#ff79c6">?</span>;
-</span></span><span style="display:flex;"><span>  println!(<span style="color:#f1fa8c">&#34;{}&#34;</span>, sum);
+</span></span><span style="display:flex;"><span>  println!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">&#34;</span>, sum);
 </span></span><span style="display:flex;"><span>  <span style="color:#8be9fd;font-style:italic">Ok</span>(()) 
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">all</span><span style="color:#ff79c6">&lt;</span>P<span style="color:#ff79c6">&gt;</span>(<span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">mut</span> self, <span style="color:#ff79c6">mut</span> predicate: <span style="color:#50fa7b">P</span>) -&gt; <span style="color:#8be9fd">bool</span> 
@@ -3978,11 +3978,11 @@ When will you stop wasting time plotting fractals?
 </span></span><span style="display:flex;"><span>    F: <span style="color:#8be9fd;font-style:italic">FnMut</span>(<span style="color:#ff79c6">&amp;</span>Self::Item) -&gt; <span style="color:#8be9fd">bool</span>,
 </span></span><span style="display:flex;"><span>{
 </span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">#[inline]</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">extend</span><span style="color:#ff79c6">&lt;&#39;</span><span style="color:#50fa7b">a</span>, T, B: <span style="color:#8be9fd;font-style:italic">Extend</span><span style="color:#ff79c6">&lt;</span>T<span style="color:#ff79c6">&gt;&gt;</span>(
-</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">mut</span> f: <span style="color:#50fa7b">impl</span> <span style="color:#8be9fd;font-style:italic">FnMut</span>(<span style="color:#ff79c6">&amp;</span>T) -&gt; <span style="color:#8be9fd">bool</span> <span style="color:#ff79c6">+</span> <span style="color:#ff79c6">&#39;</span><span style="color:#50fa7b">a</span>,
-</span></span><span style="display:flex;"><span>        left: <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&#39;</span><span style="color:#50fa7b">a</span> <span style="color:#50fa7b">mut</span> B,
-</span></span><span style="display:flex;"><span>        right: <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&#39;</span><span style="color:#50fa7b">a</span> <span style="color:#50fa7b">mut</span> B,
-</span></span><span style="display:flex;"><span>    ) -&gt; <span style="color:#50fa7b">impl</span> <span style="color:#8be9fd;font-style:italic">FnMut</span>((), T) <span style="color:#ff79c6">+</span> <span style="color:#ff79c6">&#39;</span><span style="color:#50fa7b">a</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">extend</span><span style="color:#ff79c6">&lt;</span><span style="color:#50fa7b">&#39;a</span>, T, B: <span style="color:#8be9fd;font-style:italic">Extend</span><span style="color:#ff79c6">&lt;</span>T<span style="color:#ff79c6">&gt;&gt;</span>(
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">mut</span> f: <span style="color:#50fa7b">impl</span> <span style="color:#8be9fd;font-style:italic">FnMut</span>(<span style="color:#ff79c6">&amp;</span>T) -&gt; <span style="color:#8be9fd">bool</span> <span style="color:#ff79c6">+</span> <span style="color:#50fa7b">&#39;a</span>,
+</span></span><span style="display:flex;"><span>        left: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">&#39;a</span> <span style="color:#50fa7b">mut</span> B,
+</span></span><span style="display:flex;"><span>        right: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">&#39;a</span> <span style="color:#50fa7b">mut</span> B,
+</span></span><span style="display:flex;"><span>    ) -&gt; <span style="color:#50fa7b">impl</span> <span style="color:#8be9fd;font-style:italic">FnMut</span>((), T) <span style="color:#ff79c6">+</span> <span style="color:#50fa7b">&#39;a</span> {
 </span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">move</span> <span style="color:#ff79c6">|</span>(), x<span style="color:#ff79c6">|</span> {
 </span></span><span style="display:flex;"><span>            <span style="color:#ff79c6">if</span> f(<span style="color:#ff79c6">&amp;</span>x) {
 </span></span><span style="display:flex;"><span>                left.extend_one(x);
@@ -4019,10 +4019,10 @@ When will you stop wasting time plotting fractals?
 </span></span><span style="display:flex;"><span>      .zip(<span style="color:#bd93f9">2</span><span style="color:#ff79c6">..</span><span style="color:#bd93f9">5</span>)
 </span></span><span style="display:flex;"><span>      .rev()
 </span></span><span style="display:flex;"><span>      .map(<span style="color:#ff79c6">|</span>((item, kind), quantity)<span style="color:#ff79c6">|</span> {
-</span></span><span style="display:flex;"><span>          format!(<span style="color:#f1fa8c">&#34;{} {} {}&#34;</span>, quantity, kind, item)
+</span></span><span style="display:flex;"><span>          format!(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c"> </span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c"> </span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">&#34;</span>, quantity, kind, item)
 </span></span><span style="display:flex;"><span>      })
 </span></span><span style="display:flex;"><span>      .for_each(<span style="color:#ff79c6">|</span>gift<span style="color:#ff79c6">|</span> {
-</span></span><span style="display:flex;"><span>          println!(<span style="color:#f1fa8c">&#34;You have received: {}&#34;</span>, gift);
+</span></span><span style="display:flex;"><span>          println!(<span style="color:#f1fa8c">&#34;You have received: </span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">&#34;</span>, gift);
 </span></span><span style="display:flex;"><span>});
 </span></span></code></pre></div><p>打印输出：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>You have received: <span style="color:#bd93f9">4</span> calling birds
@@ -4099,7 +4099,7 @@ When will you stop wasting time plotting fractals?
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">TreeIter</span><span style="color:#ff79c6">&lt;&#39;</span><span style="color:#50fa7b">a</span>, T<span style="color:#ff79c6">&gt;</span> {
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">struct</span> <span style="color:#50fa7b">TreeIter</span><span style="color:#ff79c6">&lt;</span><span style="color:#50fa7b">&#39;a</span>, T<span style="color:#ff79c6">&gt;</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// A stack of references to tree nodes. Since we use `Vec`&#39;s
 </span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    <span style="color:#6272a4">// `push` and `pop` methods, the top of the stack in the end of the
 </span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    <span style="color:#6272a4">// vector.
@@ -4107,11 +4107,11 @@ When will you stop wasting time plotting fractals?
 </span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    <span style="color:#6272a4">// The node the iterator will visit next is at the top of the stack,
 </span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    <span style="color:#6272a4">// with those ancestors still unvisited below it. If the stack is empty,
 </span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    <span style="color:#6272a4">// the iteration is over.
-</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    unvisited: <span style="color:#8be9fd;font-style:italic">Vec</span><span style="color:#ff79c6">&lt;&amp;&#39;</span><span style="color:#50fa7b">a</span> TreeNode<span style="color:#ff79c6">&lt;</span>T<span style="color:#ff79c6">&gt;&gt;</span>
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>    unvisited: <span style="color:#8be9fd;font-style:italic">Vec</span><span style="color:#ff79c6">&lt;&amp;</span><span style="color:#50fa7b">&#39;a</span> TreeNode<span style="color:#ff79c6">&lt;</span>T<span style="color:#ff79c6">&gt;&gt;</span>
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#ff79c6">impl</span><span style="color:#ff79c6">&lt;&#39;</span><span style="color:#50fa7b">a</span>, T: <span style="color:#ff79c6">&#39;</span><span style="color:#50fa7b">a</span><span style="color:#ff79c6">&gt;</span> TreeIter<span style="color:#ff79c6">&lt;&#39;</span><span style="color:#50fa7b">a</span>, T<span style="color:#ff79c6">&gt;</span>  {
-</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">push_left_edge</span>(<span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">mut</span> self, <span style="color:#ff79c6">mut</span> tree: <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">&#39;</span><span style="color:#50fa7b">a</span> <span style="color:#50fa7b">BinaryTree</span><span style="color:#ff79c6">&lt;</span>T<span style="color:#ff79c6">&gt;</span>) {
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">impl</span><span style="color:#ff79c6">&lt;</span><span style="color:#50fa7b">&#39;a</span>, T: <span style="color:#50fa7b">&#39;a</span><span style="color:#ff79c6">&gt;</span> TreeIter<span style="color:#ff79c6">&lt;</span><span style="color:#50fa7b">&#39;a</span>, T<span style="color:#ff79c6">&gt;</span>  {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">push_left_edge</span>(<span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">mut</span> self, <span style="color:#ff79c6">mut</span> tree: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">&#39;a</span> <span style="color:#50fa7b">BinaryTree</span><span style="color:#ff79c6">&lt;</span>T<span style="color:#ff79c6">&gt;</span>) {
 </span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">while</span> <span style="color:#8be9fd;font-style:italic">let</span> NonEmpty(<span style="color:#ff79c6">ref</span> node) <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">*</span>tree {
 </span></span><span style="display:flex;"><span>            self.unvisited.push(node);
 </span></span><span style="display:flex;"><span>            tree <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">&amp;</span>node.left;
@@ -4127,19 +4127,19 @@ When will you stop wasting time plotting fractals?
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#ff79c6">impl</span><span style="color:#ff79c6">&lt;&#39;</span><span style="color:#50fa7b">a</span>, T: <span style="color:#ff79c6">&#39;</span><span style="color:#50fa7b">a</span><span style="color:#ff79c6">&gt;</span> <span style="color:#8be9fd;font-style:italic">IntoIterator</span> <span style="color:#ff79c6">for</span> <span style="color:#ff79c6">&amp;&#39;</span><span style="color:#50fa7b">a</span> BinaryTree<span style="color:#ff79c6">&lt;</span>T<span style="color:#ff79c6">&gt;</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">type</span> <span style="color:#50fa7b">Item</span> <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">&amp;&#39;</span><span style="color:#50fa7b">a</span> T;
-</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">type</span> <span style="color:#50fa7b">IntoIter</span> <span style="color:#ff79c6">=</span> TreeIter<span style="color:#ff79c6">&lt;&#39;</span><span style="color:#50fa7b">a</span>, T<span style="color:#ff79c6">&gt;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">impl</span><span style="color:#ff79c6">&lt;</span><span style="color:#50fa7b">&#39;a</span>, T: <span style="color:#50fa7b">&#39;a</span><span style="color:#ff79c6">&gt;</span> <span style="color:#8be9fd;font-style:italic">IntoIterator</span> <span style="color:#ff79c6">for</span> <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">&#39;a</span> BinaryTree<span style="color:#ff79c6">&lt;</span>T<span style="color:#ff79c6">&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">type</span> <span style="color:#50fa7b">Item</span> <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">&#39;a</span> T;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">type</span> <span style="color:#50fa7b">IntoIter</span> <span style="color:#ff79c6">=</span> TreeIter<span style="color:#ff79c6">&lt;</span><span style="color:#50fa7b">&#39;a</span>, T<span style="color:#ff79c6">&gt;</span>;
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">into_iter</span>(self) -&gt; <span style="color:#50fa7b">Self</span>::IntoIter {
 </span></span><span style="display:flex;"><span>        self.iter()
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#ff79c6">impl</span><span style="color:#ff79c6">&lt;&#39;</span><span style="color:#50fa7b">a</span>, T<span style="color:#ff79c6">&gt;</span> <span style="color:#8be9fd;font-style:italic">Iterator</span> <span style="color:#ff79c6">for</span> TreeIter<span style="color:#ff79c6">&lt;&#39;</span><span style="color:#50fa7b">a</span>, T<span style="color:#ff79c6">&gt;</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">type</span> <span style="color:#50fa7b">Item</span> <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">&amp;&#39;</span><span style="color:#50fa7b">a</span> T;
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">impl</span><span style="color:#ff79c6">&lt;</span><span style="color:#50fa7b">&#39;a</span>, T<span style="color:#ff79c6">&gt;</span> <span style="color:#8be9fd;font-style:italic">Iterator</span> <span style="color:#ff79c6">for</span> TreeIter<span style="color:#ff79c6">&lt;</span><span style="color:#50fa7b">&#39;a</span>, T<span style="color:#ff79c6">&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">type</span> <span style="color:#50fa7b">Item</span> <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">&#39;a</span> T;
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">next</span>(<span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">mut</span> self) -&gt; <span style="color:#8be9fd;font-style:italic">Option</span><span style="color:#ff79c6">&lt;&amp;&#39;</span><span style="color:#50fa7b">a</span> T<span style="color:#ff79c6">&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">next</span>(<span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">mut</span> self) -&gt; <span style="color:#8be9fd;font-style:italic">Option</span><span style="color:#ff79c6">&lt;&amp;</span><span style="color:#50fa7b">&#39;a</span> T<span style="color:#ff79c6">&gt;</span> {
 </span></span><span style="display:flex;"><span>        <span style="color:#6272a4">// Find the node this iteration must produce,
 </span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>        <span style="color:#6272a4">// or finish the iteration. (Use the `?` operator
 </span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>        <span style="color:#6272a4">// to return immediately if it&#39;s `None`.)
@@ -4170,7 +4170,7 @@ When will you stop wasting time plotting fractals?
 </span></span><span style="display:flex;"><span>    assert_eq!(v, [<span style="color:#f1fa8c">&#34;droid&#34;</span>, <span style="color:#f1fa8c">&#34;jaeger&#34;</span>, <span style="color:#f1fa8c">&#34;mecha&#34;</span>, <span style="color:#f1fa8c">&#34;robot&#34;</span>]);
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    assert_eq!(tree.iter()
-</span></span><span style="display:flex;"><span>                .map(<span style="color:#ff79c6">|</span>name<span style="color:#ff79c6">|</span> format!(<span style="color:#f1fa8c">&#34;mega-{}&#34;</span>, name))
+</span></span><span style="display:flex;"><span>                .map(<span style="color:#ff79c6">|</span>name<span style="color:#ff79c6">|</span> format!(<span style="color:#f1fa8c">&#34;mega-</span><span style="color:#f1fa8c">{}</span><span style="color:#f1fa8c">&#34;</span>, name))
 </span></span><span style="display:flex;"><span>                .collect::<span style="color:#ff79c6">&lt;</span><span style="color:#8be9fd;font-style:italic">Vec</span><span style="color:#ff79c6">&lt;</span>_<span style="color:#ff79c6">&gt;&gt;</span>(),
 </span></span><span style="display:flex;"><span>                vec![<span style="color:#f1fa8c">&#34;mega-droid&#34;</span>, <span style="color:#f1fa8c">&#34;mega-jaeger&#34;</span>,
 </span></span><span style="display:flex;"><span>                     <span style="color:#f1fa8c">&#34;mega-mecha&#34;</span>, <span style="color:#f1fa8c">&#34;mega-robot&#34;</span>]);
@@ -4240,8 +4240,8 @@ When will you stop wasting time plotting fractals?
 </span></span></code></pre></div><p><code>spawn</code> 函数定义：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">spawn</span><span style="color:#ff79c6">&lt;</span>F, T<span style="color:#ff79c6">&gt;</span>(f: <span style="color:#50fa7b">F</span>) -&gt; <span style="color:#50fa7b">JoinHandle</span><span style="color:#ff79c6">&lt;</span>T<span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">where</span>
 </span></span><span style="display:flex;"><span>    F: <span style="color:#8be9fd;font-style:italic">FnOnce</span>() -&gt; <span style="color:#50fa7b">T</span>,
-</span></span><span style="display:flex;"><span>    F: <span style="color:#8be9fd;font-style:italic">Send</span> <span style="color:#ff79c6">+</span> <span style="color:#ff79c6">&#39;</span><span style="color:#8be9fd;font-style:italic">static</span>,
-</span></span><span style="display:flex;"><span>    T: <span style="color:#8be9fd;font-style:italic">Send</span> <span style="color:#ff79c6">+</span> <span style="color:#ff79c6">&#39;</span><span style="color:#8be9fd;font-style:italic">static</span>, 
+</span></span><span style="display:flex;"><span>    F: <span style="color:#8be9fd;font-style:italic">Send</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">&#39;static</span>,
+</span></span><span style="display:flex;"><span>    T: <span style="color:#8be9fd;font-style:italic">Send</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">&#39;static</span>, 
 </span></span></code></pre></div><p>因此 <code>thread::spawn(move || process_files(worklist))</code> 会返回 <code>JoinHandle</code> ，并将它们放进一个 vector 中。</p>
 <h4 id="error-handling-across-threads">Error Handling Across Threads</h4>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span>handle.join().unwrap()<span style="color:#ff79c6">?</span>;
@@ -4479,8 +4479,8 @@ When will you stop wasting time plotting fractals?
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">use</span> std::thread;
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#ff79c6">impl</span><span style="color:#ff79c6">&lt;</span>T<span style="color:#ff79c6">&gt;</span> OffThreadExt <span style="color:#ff79c6">for</span> T
-</span></span><span style="display:flex;"><span><span style="color:#ff79c6">where</span> T: <span style="color:#8be9fd;font-style:italic">Iterator</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">Send</span> <span style="color:#ff79c6">+</span> <span style="color:#ff79c6">&#39;</span><span style="color:#8be9fd;font-style:italic">static</span>,
-</span></span><span style="display:flex;"><span>      T::Item: <span style="color:#8be9fd;font-style:italic">Send</span> <span style="color:#ff79c6">+</span> <span style="color:#ff79c6">&#39;</span><span style="color:#8be9fd;font-style:italic">static</span>
+</span></span><span style="display:flex;"><span><span style="color:#ff79c6">where</span> T: <span style="color:#8be9fd;font-style:italic">Iterator</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">Send</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">&#39;static</span>,
+</span></span><span style="display:flex;"><span>      T::Item: <span style="color:#8be9fd;font-style:italic">Send</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">&#39;static</span>
 </span></span><span style="display:flex;"><span>{
 </span></span><span style="display:flex;"><span>  <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">off_thread</span>(self) -&gt; <span style="color:#50fa7b">mpsc</span>::IntoIter<span style="color:#ff79c6">&lt;</span>Self::Item<span style="color:#ff79c6">&gt;</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#6272a4">// Create a channel to transfer items from the worker thread.
@@ -4653,7 +4653,7 @@ When will you stop wasting time plotting fractals?
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">use</span> lazy_static::lazy_static;
 </span></span><span style="display:flex;"><span><span style="color:#ff79c6">use</span> std::sync::Mutex;
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>lazy_static<span style="color:#ff79c6">!</span> {
+</span></span><span style="display:flex;"><span>lazy_static! {
 </span></span><span style="display:flex;"><span>	<span style="color:#ff79c6">static</span> <span style="color:#ff79c6">ref</span> HOSTNAME: <span style="color:#50fa7b">Mutex</span><span style="color:#ff79c6">&lt;</span><span style="color:#8be9fd;font-style:italic">String</span><span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">=</span> Mutex::new(<span style="color:#8be9fd;font-style:italic">String</span>::new());
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>Using lazy_static! imposes a tiny performance cost on each access to the static data. The implementation uses std::sync::Once, a low-level synchronization primitive designed for one-time initialization. Behind the scenes, each time a lazy static is accessed, the program executes an atomic load instruction to check that initialization has already occurred. (Once is rather special purpose, so we will not cover it in detail here. It is usually more convenient to use lazy_static! instead. However, it is handy for initializing non-Rust libraries; for an example, see “A Safe Interface to libgit2”.)</p>
@@ -4671,7 +4671,7 @@ When will you stop wasting time plotting fractals?
 <p><code>std::future::Future</code></p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">trait</span> Future {
 </span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">type</span> <span style="color:#50fa7b">Output</span>;
-</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">poll</span>(self: <span style="color:#50fa7b">Pin</span><span style="color:#ff79c6">&lt;&amp;</span><span style="color:#ff79c6">mut</span> Self<span style="color:#ff79c6">&gt;</span>, cx: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">mut</span> Context<span style="color:#ff79c6">&lt;&#39;</span><span style="color:#8be9fd;font-style:italic">_</span><span style="color:#ff79c6">&gt;</span>) -&gt; <span style="color:#50fa7b">Poll</span><span style="color:#ff79c6">&lt;</span>Self::Output<span style="color:#ff79c6">&gt;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#ff79c6">fn</span> <span style="color:#50fa7b">poll</span>(self: <span style="color:#50fa7b">Pin</span><span style="color:#ff79c6">&lt;&amp;</span><span style="color:#ff79c6">mut</span> Self<span style="color:#ff79c6">&gt;</span>, cx: <span style="color:#ff79c6">&amp;</span><span style="color:#50fa7b">mut</span> Context<span style="color:#ff79c6">&lt;</span><span style="color:#8be9fd;font-style:italic">&#39;_</span><span style="color:#ff79c6">&gt;</span>) -&gt; <span style="color:#50fa7b">Poll</span><span style="color:#ff79c6">&lt;</span>Self::Output<span style="color:#ff79c6">&gt;</span>;
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">pub</span> <span style="color:#ff79c6">enum</span> <span style="color:#50fa7b">Poll</span><span style="color:#ff79c6">&lt;</span>T<span style="color:#ff79c6">&gt;</span> {
 </span></span><span style="display:flex;"><span>    <span style="color:#f1fa8c">/// Represents that a value is immediately ready.
@@ -4712,7 +4712,7 @@ When will you stop wasting time plotting fractals?
 <h4 id="unintended-consenquences">Unintended Consenquences</h4>
 <p>正确的 <code>assert_eq!</code> 宏的定义是这样的：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#6272a4">// 标准库中的定义
-</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>macro_rules! assert_eq {
+</span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>macro_rules<span style="color:#ff79c6">!</span> assert_eq {
 </span></span><span style="display:flex;"><span>    (<span style="color:#ff79c6">$left</span>:<span style="color:#50fa7b">expr</span>, <span style="color:#ff79c6">$right</span>:<span style="color:#50fa7b">expr</span> <span style="color:#ff79c6">$(,</span>)<span style="color:#ff79c6">?</span>) <span style="color:#ff79c6">=&gt;</span> {
 </span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">match</span> (<span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">$left</span>, <span style="color:#ff79c6">&amp;</span><span style="color:#ff79c6">$right</span>) {				<span style="color:#6272a4">// 这里用的是引用
 </span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>            (left_val, right_val) <span style="color:#ff79c6">=&gt;</span> {
@@ -4729,12 +4729,12 @@ When will you stop wasting time plotting fractals?
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>为什么不这样写呢？</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="color:#ff79c6">if</span> <span style="color:#ff79c6">!</span>(<span style="color:#ff79c6">$left</span> <span style="color:#ff79c6">==</span> <span style="color:#ff79c6">$right</span>) {
-</span></span><span style="display:flex;"><span>  panic!(&#34;assertion failed: `(left <span style="color:#ff79c6">==</span> right)` \
-</span></span><span style="display:flex;"><span>    				(left: `{:<span style="color:#ff79c6">?</span>}`, right: `{:<span style="color:#ff79c6">?</span>}`)&#34;, <span style="color:#ff79c6">$left</span>, <span style="color:#ff79c6">$right</span>)
+</span></span><span style="display:flex;"><span>  panic!(<span style="color:#f1fa8c">&#34;assertion failed: `(left == right)` </span><span style="color:#f1fa8c">\</span><span style="color:#f1fa8c">
+</span></span></span><span style="display:flex;"><span><span style="color:#f1fa8c">    				(left: `</span><span style="color:#f1fa8c">{:?}</span><span style="color:#f1fa8c">`, right: `</span><span style="color:#f1fa8c">{:?}</span><span style="color:#f1fa8c">`)&#34;</span>, <span style="color:#ff79c6">$left</span>, <span style="color:#ff79c6">$right</span>)
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>如果 <code>assert_eq!(letters.pop(), Some('z'))</code> 这样调用，由于 <code>letters.pop()</code> 会从一个 vector 中移除一个值，那么当第二次调用的时候就会产生一个不同的值，这也就是为什么实际宏当中 <code>$left</code> 和 <code>$right</code> 只会保存一次它们的值。</p>
 <p>那为什么宏里面要用引用，不能这样写吗？</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span>macro_rules! bad_assert_eq {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span>macro_rules<span style="color:#ff79c6">!</span> bad_assert_eq {
 </span></span><span style="display:flex;"><span>    (<span style="color:#ff79c6">$left</span>:<span style="color:#50fa7b">expr</span>, <span style="color:#ff79c6">$right</span>:<span style="color:#50fa7b">expr</span>) <span style="color:#ff79c6">=&gt;</span> {
 </span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">match</span> (<span style="color:#ff79c6">$left</span>, <span style="color:#ff79c6">$right</span>) {		<span style="color:#6272a4">// 这里不用引用
 </span></span></span><span style="display:flex;"><span><span style="color:#6272a4"></span>            (left_val, right_val) <span style="color:#ff79c6">=&gt;</span> {
@@ -4751,15 +4751,15 @@ When will you stop wasting time plotting fractals?
 </blockquote>
 <h4 id="repetition">Repetition</h4>
 <p>标准库中 <code>vec!</code> 宏</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span>macro_rules! vec {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span>macro_rules<span style="color:#ff79c6">!</span> vec {
 </span></span><span style="display:flex;"><span>    () <span style="color:#ff79c6">=&gt;</span> (
-</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">$crate</span>::__rust_force_expr<span style="color:#ff79c6">!</span>(<span style="color:#ff79c6">$crate</span>::vec::<span style="color:#8be9fd;font-style:italic">Vec</span>::new())
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">$crate</span>::__rust_force_expr!(<span style="color:#ff79c6">$crate</span>::vec::<span style="color:#8be9fd;font-style:italic">Vec</span>::new())
 </span></span><span style="display:flex;"><span>    );
 </span></span><span style="display:flex;"><span>    (<span style="color:#ff79c6">$elem</span>:<span style="color:#50fa7b">expr</span>; <span style="color:#ff79c6">$n</span>:<span style="color:#50fa7b">expr</span>) <span style="color:#ff79c6">=&gt;</span> (
-</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">$crate</span>::__rust_force_expr<span style="color:#ff79c6">!</span>(<span style="color:#ff79c6">$crate</span>::vec::from_elem(<span style="color:#ff79c6">$elem</span>, <span style="color:#ff79c6">$n</span>))
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">$crate</span>::__rust_force_expr!(<span style="color:#ff79c6">$crate</span>::vec::from_elem(<span style="color:#ff79c6">$elem</span>, <span style="color:#ff79c6">$n</span>))
 </span></span><span style="display:flex;"><span>    );
 </span></span><span style="display:flex;"><span>    (<span style="color:#ff79c6">$($x</span>:<span style="color:#50fa7b">expr</span>),<span style="color:#ff79c6">+</span> <span style="color:#ff79c6">$(,</span>)<span style="color:#ff79c6">?</span>) <span style="color:#ff79c6">=&gt;</span> (
-</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">$crate</span>::__rust_force_expr<span style="color:#ff79c6">!</span>(<span style="color:#ff79c6">&lt;</span>[_]<span style="color:#ff79c6">&gt;</span>::into_vec(<span style="color:#ff79c6">box</span> [<span style="color:#ff79c6">$($x</span>),<span style="color:#ff79c6">+</span>]))
+</span></span><span style="display:flex;"><span>        <span style="color:#ff79c6">$crate</span>::__rust_force_expr!(<span style="color:#ff79c6">&lt;</span>[_]<span style="color:#ff79c6">&gt;</span>::into_vec(<span style="color:#ff79c6">box</span> [<span style="color:#ff79c6">$($x</span>),<span style="color:#ff79c6">+</span>]))
 </span></span><span style="display:flex;"><span>    );
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><ul>
