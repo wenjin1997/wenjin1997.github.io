@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Dan Boneh Cryptography I on Jade's Blog</title><link>https://wenjin1997.github.io/tags/dan-boneh-cryptography-i/</link><description>Recent content in Dan Boneh Cryptography I on Jade's Blog</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 21 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://wenjin1997.github.io/tags/dan-boneh-cryptography-i/index.xml" rel="self" type="application/rss+xml"/><item><title>Dan Boneh Cryptography I Week1</title><link>https://wenjin1997.github.io/2022/11/21/Dan-Boneh-Cryptography-Week1/</link><pubDate>Mon, 21 Nov 2022 00:00:00 +0000</pubDate><guid>https://wenjin1997.github.io/2022/11/21/Dan-Boneh-Cryptography-Week1/</guid><description>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/background.jpg" alt="Featured image of post Dan Boneh Cryptography I Week1" />&lt;p>开始学习密码学，这是一套不错的课程。官方课程链接&lt;a class="link" href="https://crypto.stanford.edu/~dabo/courses/OnlineCrypto/" target="_blank" rel="noopener"
+>Online Cryptography Course&lt;/a>。教材&lt;a class="link" href="http://toc.cryptobook.us/" target="_blank" rel="noopener"
+>A Graduate Course in Applied Cryptography&lt;/a>，Coursera上的链接为&lt;a class="link" href="https://www.coursera.org/learn/crypto" target="_blank" rel="noopener"
+>密码学 I&lt;/a>。&lt;/p>
+&lt;p>下面记录第一周的学习笔记。&lt;/p>
+&lt;h2 id="course-overview">&lt;strong>Course Overview&lt;/strong>
+&lt;/h2>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%201.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>密码学无处不在，DVD使用的是CSS加密，Blu-ray使用的是AACS加密。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%202.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>常用的HTTPS底层用的是SSL/TLS。安全的交流中间是没有偷听和篡改的。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%203.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%204.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%205.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>对称加密系统使用的是同一个key。加密算法是公开的，永远不要使用一个专有的加密算法。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%206.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%207.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>密码学不是所有安全问题的解决方案，例如软件漏洞或者工程上的攻击。&lt;/p>
+&lt;h2 id="what-is-cryptography">&lt;strong>What is cryptography?&lt;/strong>
+&lt;/h2>&lt;h3 id="crypto-core">Crypto core
+&lt;/h3>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%208.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>密码学的核心建立密钥，保证交流的可靠和完整性。&lt;/p>
+&lt;h3 id="but-crypto-can-do-much-more">But crypto can do much more
+&lt;/h3>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%209.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>密码学可以应用在匿名交流中，上图中的匿名是相互的，Alice不知道对方是谁，Bob也不知道对方是谁。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2010.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>密码学应用在匿名电子货币，类似于我们去商店消费，不想让商店知道我们的身份，同时在网络中，要保证电子货币不能重复消费。&lt;/p>
+&lt;h3 id="protocols">&lt;strong>Protocols&lt;/strong>
+&lt;/h3>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2011.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2012.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>在选举或者私有拍卖的例子中，有受信的第三方来进行公布结果。这里有一个重要的理论，任何可以使用受信第三方完成的事也可以不用第三方就能完成。&lt;/p>
+&lt;h3 id="crypto-magic">&lt;strong>Crypto magic&lt;/strong>
+&lt;/h3>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2013.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;h3 id="a-rigorous-science">&lt;strong>A rigorous science&lt;/strong>
+&lt;/h3>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2014.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>密码学是一门严谨的学科，要遵循以上三个步骤。&lt;/p>
+&lt;h2 id="history">&lt;strong>History&lt;/strong>
+&lt;/h2>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2015.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2016.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2017.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2018.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2019.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>替换式加密的密钥空间很大，是26个字母的全排列。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2020.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2021.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>破解替换式加密的方法是利用了英语字母出现的频率，字母e出现的频率最高，那么我们可以对截获到的密文统计出现的频率，出现频率最高的字母就对应于字母e。接着再利用二合字母出现的频率。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2022.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2023.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>当我们知道key中加密字母的长度时，就很好破解。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2024.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2025.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2026.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;h2 id="discrete-probability">&lt;strong>Discrete Probability&lt;/strong>
+&lt;/h2>&lt;p>这部分详细介绍见&lt;a class="link" href="https://en.wikibooks.org/wiki/High_School_Mathematics_Extensions/Discrete_Probability" target="_blank" rel="noopener"
+>https://en.wikibooks.org/wiki/High_School_Mathematics_Extensions/Discrete_Probability&lt;/a>。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2027.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;h3 id="events">Events
+&lt;/h3>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2028.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;h3 id="the-union-bound">The union bound
+&lt;/h3>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2029.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;h3 id="random-variables">Random Variables
+&lt;/h3>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2030.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;h3 id="the-uniform-random-variable">The uniform random variable
+&lt;/h3>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2031.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2032.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;h3 id="randomized-algorithms">Randomized algorithms
+&lt;/h3>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2033.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2034.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;h3 id="independence">Independence
+&lt;/h3>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2035.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;h3 id="xor">XOR
+&lt;/h3>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2036.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2037.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>异或中重要的一个定理是，Y是一个随机变量，X是一个独立的均匀分布变量，Y与X异或之后是一个均匀分布变量。&lt;/p>
+&lt;h3 id="the-birthday-paradox">&lt;strong>The birthday paradox&lt;/strong>
+&lt;/h3>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2038.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>当$n=1.2 \times \sqrt{|U|}$时，$U$ 中存在两个变量相等的概率大于等于$1/2$。常识认为可能是$|U|/2$，因此也叫做悖论。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2039.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;h2 id="the-one-time-pad">The One Time Pad
+&lt;/h2>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2040.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2041.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>key和要加密的消息的长度一样长。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2042.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2043.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>key也可以算出来，是m和c的异或。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2044.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2045.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>什么是安全的加密呢？香农的定义是，不能从密文中得到任何关于原文的信息。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2046.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>用概率来定义 perfect secrecy，也就是从密文中无法区分任意两个原文，得到两个不同message的概率是相同的。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2047.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2048.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>OTP是有perfect安全性的。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2049.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2050.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>OTP是没有惟密文攻击，但是有其他攻击。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2051.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;h2 id="pseudorandom-generators">&lt;strong>Pseudorandom Generators&lt;/strong>
+&lt;/h2>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2052.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2053.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>用伪随机key代替随机key。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2054.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2055.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2056.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2057.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2058.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2059.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2060.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>永远不要在加密中使用glibc中的&lt;code>random()&lt;/code>函数。&lt;/p>
+&lt;h2 id="negligible-vs-non-negligible">&lt;strong>Negligible vs. non-negligible&lt;/strong>
+&lt;/h2>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2061.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>可忽略的：意思是比多项式的逆下降地还要快。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2062.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2063.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2064.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;h2 id="attacks-on-otp-and-stream-ciphers">&lt;strong>Attacks on OTP and stream ciphers&lt;/strong>
+&lt;/h2>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2065.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2066.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>不能两次使用相同的PRG(k)。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2067.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>客户端到服务端与服务端到客户端应该使用不同的key。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2068.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2069.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2070.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2071.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2072.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2073.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2074.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>中间可以加入p，然后进行篡改。&lt;/p>
+&lt;h2 id="real-world-stream-ciphers">&lt;strong>Real-world Stream Ciphers&lt;/strong>
+&lt;/h2>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2075.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2076.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2077.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2078.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2079.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2080.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2081.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2082.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2083.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;h2 id="prg-security-defs">&lt;strong>PRG Security Defs&lt;/strong>
+&lt;/h2>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2084.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2085.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2086.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2087.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2088.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2089.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2090.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>一个安全的PRG是不可预测的。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2091.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2092.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>反过来也成立，一个不可预测的PRG是安全的。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2093.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>用到了前面定理(Yao’82)的逆否命题。不安全的PRG是可预测的。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2094.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>更一般的定义，computationally indistinguishable。&lt;/p>
+&lt;h2 id="semantic-security">Semantic security
+&lt;/h2>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2095.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2096.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2097.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>前两个定义都太强了，需要一个弱一些的定义，找到存在的 $m_0$ 与 $m_1$。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2098.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2099.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>这里给出了semantically secure 的定义。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%20100.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%20101.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>OTP是 semantically secure 的。&lt;/p>
+&lt;h2 id="stream-ciphers-are-semantically-secure">&lt;strong>Stream ciphers are semantically secure&lt;/strong>
+&lt;/h2>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%20102.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%20103.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%20104.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%20105.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%20106.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%20107.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%20108.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p></description></item></channel></rss>

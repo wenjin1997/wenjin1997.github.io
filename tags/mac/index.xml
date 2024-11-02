@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Mac on Jade's Blog</title><link>https://wenjin1997.github.io/tags/mac/</link><description>Recent content in Mac on Jade's Blog</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 01 Aug 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://wenjin1997.github.io/tags/mac/index.xml" rel="self" type="application/rss+xml"/><item><title>Mac用ssh远程连接服务器</title><link>https://wenjin1997.github.io/2022/08/01/Linux-ssh/</link><pubDate>Mon, 01 Aug 2022 00:00:00 +0000</pubDate><guid>https://wenjin1997.github.io/2022/08/01/Linux-ssh/</guid><description>&lt;p>在mac本地打开终端，创建密钥对。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">ssh-keygen -t rsa -C &lt;span class="s1">&amp;#39;your email@domain.com&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>-t 指定密钥类型，默认即 rsa ，可以省略
+-C 设置注释文字，比如你的邮箱，可以省略&lt;/p>
+&lt;p>接着就按回车，如果发现之前的 id_rsa 文件需要覆盖，则可以另外创建文件存储密钥。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">Enter file in which to save the key &lt;span class="o">(&lt;/span>/Users/zheng/.ssh/id_rsa&lt;span class="o">)&lt;/span>: linux_id_rsa
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>接着在用户文件夹下能找到 linux_id_rsa 和 linux_id_rsa.pub 这两个文件，将它们复制到 /.ssh 目录下。&lt;/p>
+&lt;p>下面将生成的公钥复制到服务器，就是将mac本地的 linux_id_rsa.pub 中的内容复制到服务器上 ~/.ssh/authorized_keys 文件中。我这里没有用命令，直接用面板复制过去，也可以用 scp 命令。&lt;/p>
+&lt;p>接着配置本地&lt;code>~/.ssh/config&lt;/code> 文件，因为我们的是 linux_id_rsa 文件。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">Host &lt;span class="nb">alias&lt;/span> &lt;span class="c1">#自定义别名&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">HostName hostname &lt;span class="c1">#替换为你的ssh服务器ip或domain&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Port port &lt;span class="c1">#ssh服务器端口，默认为22&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">User user &lt;span class="c1">#ssh服务器用户名&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">IdentityFile ~/.ssh/linux_id_rsa &lt;span class="c1">#第一个步骤生成的公钥文件对应的私钥文件&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>本来登录命令是：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">ssh -p &amp;lt;端口号&amp;gt; &amp;lt;用户名&amp;gt;@&amp;lt;ip地址&amp;gt;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>现在直接用别名就可以登录了。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">ssh &lt;span class="nb">alias&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="参考资料">参考资料
+&lt;/h2>&lt;ul>
+&lt;li>&lt;a class="link" href="jianshu.com/p/7990ca55da69" >Mac使用ssh密钥登录Linux&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://www.runoob.com/w3cnote/set-ssh-login-key.html" target="_blank" rel="noopener"
+>设置 SSH 通过密钥登录&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://blog.csdn.net/zheng911209/article/details/49909113" target="_blank" rel="noopener"
+>github生成多个ssh key，如何解决&lt;/a>&lt;/li>
+&lt;/ul></description></item></channel></rss>

@@ -1,0 +1,834 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>并发 on Jade's Blog</title><link>https://wenjin1997.github.io/tags/%E5%B9%B6%E5%8F%91/</link><description>Recent content in 并发 on Jade's Blog</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 28 Mar 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://wenjin1997.github.io/tags/%E5%B9%B6%E5%8F%91/index.xml" rel="self" type="application/rss+xml"/><item><title>Java并发编程的艺术笔记</title><link>https://wenjin1997.github.io/2022/03/28/The-Art-of-Java-Concurrency-Programming/</link><pubDate>Mon, 28 Mar 2022 00:00:00 +0000</pubDate><guid>https://wenjin1997.github.io/2022/03/28/The-Art-of-Java-Concurrency-Programming/</guid><description>&lt;img src="https://wenjin1997.github.io/img/2022-03-28-The-Art-of-Java-Concurrency-Programming/background.jpg" alt="Featured image of post Java并发编程的艺术笔记" />&lt;h1 id="第2章-java并发机制的底层实现原理">第2章 Java并发机制的底层实现原理
+&lt;/h1>&lt;h2 id="21-volatile的应用">2.1 volatile的应用
+&lt;/h2>&lt;p>volatile的两条实现原则：&lt;/p>
+&lt;ul>
+&lt;li>Lock前缀指令会引起处理器缓存回写到内存。&lt;/li>
+&lt;li>一个处理器的缓存回写到内存会导致其他处理器的缓存无效。&lt;/li>
+&lt;/ul>
+&lt;h2 id="22-synchronized的实现原理与应用">2.2 synchronized的实现原理与应用
+&lt;/h2>&lt;p>synchronized实现同步的基础：Java中的每一个对象都可以作为锁。具体表现为以下3种形式：&lt;/p>
+&lt;ul>
+&lt;li>对于普通同步方法，锁是当前实例对象。&lt;/li>
+&lt;li>对于静态同步方法，锁是当前类的Class对象。&lt;/li>
+&lt;li>对于同步方法块，锁是Synchonized括号里配置的对象。&lt;/li>
+&lt;/ul>
+&lt;p>Synchonized在JVM里的实现，JVM基于进入和退出Monitor对象来实现方法同步和代码块同步。代码块同步是使用monitorenter和monitorexit指令实现的。&lt;/p>
+&lt;p>monitorenter指令在编译后插入到同步代码块的开始位置，而monitorexit是插入到方法结束处和异常处，JVM保证每个monitorenter必须有对应的monitorexit与之配对。&lt;/p>
+&lt;h3 id="221-java对象头">2.2.1 Java对象头
+&lt;/h3>&lt;h1 id="第3章-java内存模型">第3章 Java内存模型
+&lt;/h1>&lt;h2 id="31-java内存模型的基础">3.1 Java内存模型的基础
+&lt;/h2>&lt;h3 id="311-并发编程模型的两个关键问题">3.1.1 并发编程模型的两个关键问题
+&lt;/h3>&lt;ul>
+&lt;li>线程之间如何通信&lt;/li>
+&lt;li>线程之间如何同步，同步是指程序中用于控制不同线程间操作发生相对顺序的机制。&lt;/li>
+&lt;/ul>
+&lt;p>线程之间的通信机制：共享内存和消息传递。&lt;/p>
+&lt;p>&lt;strong>Java的并发采用的是共享内存模型&lt;/strong>，Java线程之间的通信总是隐式进行，整个通信过程对程序员完全透明。&lt;/p>
+&lt;h3 id="312-java内存模型的抽象结构">3.1.2 Java内存模型的抽象结构
+&lt;/h3>&lt;p>在Java中，所有实例域、静态域和数组元素都存储在堆内存中，堆内存在线程之间共享。&lt;/p>
+&lt;p>JMM定义了线程和主内存之间的抽象关系：&lt;strong>线程之间的共享变量存储在主内存中，每个线程都有一个私有的本地内存，本地内存中存储了该线程以读/写共享变量的副本。&lt;/strong>&lt;/p>
+&lt;h3 id="313-从源代码到指令序列的重排序">3.1.3 从源代码到指令序列的重排序
+&lt;/h3>&lt;p>重排序分为3种：&lt;/p>
+&lt;ol>
+&lt;li>编译器优化的重排序&lt;/li>
+&lt;li>指令级并行的重排序&lt;/li>
+&lt;li>内存系统的重排序&lt;/li>
+&lt;/ol>
+&lt;h3 id="314-并发编程模型的分类">3.1.4 并发编程模型的分类
+&lt;/h3>&lt;p>由于写缓冲区仅对自己的处理器可见，它会导致处理器执行内存操作的顺序可能会与内存实际的操作执行顺序不一致。&lt;/p>
+&lt;p>常见的处理器都允许Store-Load重排序，常见的处理器都不允许对存在数据依赖的操作做重排序。&lt;/p>
+&lt;h3 id="315-happens-before简介">3.1.5 happens-before简介
+&lt;/h3>&lt;p>happens-before仅仅要求前一个操作（执行的结果）对后一个操作可见，且前一个操作按顺序排在第二个操作之前。&lt;/p>
+&lt;p>一个happens-before规则对应于一个或多个编译器和处理器重排序规则。&lt;/p>
+&lt;h2 id="32-重排序">3.2 重排序
+&lt;/h2>&lt;h3 id="321-数据依赖性">3.2.1 数据依赖性
+&lt;/h3>&lt;p>如果两个操作访问同一个变量，且这两个操作中有一个为写操作，此时这两个操作之间就存在数据依赖性。&lt;/p>
+&lt;p>编译器和处理器不会改变存在数据依赖关系的两个操作的执行顺序。&lt;/p>
+&lt;h3 id="322-as-if-serial语义">3.2.2 as-if-serial语义
+&lt;/h3>&lt;p>as-if-serial语义：不管怎么重排序（编译器和处理器为了提高并行度），（单线程）程序的执行结果不能被改变。&lt;/p>
+&lt;h3 id="323-程序顺序规则">3.2.3 程序顺序规则
+&lt;/h3>&lt;p>A happens-before B，当实际执行时B却可以排在A之前执行。
+软件技术和硬件技术的共同目标：在不改变程序执行结果的前提下，尽可能提高并行度。&lt;/p>
+&lt;h3 id="324-重排序对多线程的影响">3.2.4 重排序对多线程的影响
+&lt;/h3>&lt;p>当代码中存在控制依赖时，会影响指令序列执行的并行度。为此，编译器和处理器会采用猜测执行来控制相关性对并行度的影响。&lt;/p>
+&lt;p>在多线程程序中，对存在控制依赖的操作重排序，可能会改变程序的执行结果。&lt;/p>
+&lt;h2 id="33-顺序一致性">3.3 顺序一致性
+&lt;/h2>&lt;h3 id="331-数据竞争与顺序一致性">3.3.1 数据竞争与顺序一致性
+&lt;/h3>&lt;p>如果程序是正确同步的，程序的执行将具有顺序一致性。&lt;/p>
+&lt;h3 id="332-顺序一致性内存模型">3.3.2 顺序一致性内存模型
+&lt;/h3>&lt;p>顺序一致性内存模型有两大特性：&lt;/p>
+&lt;ol>
+&lt;li>一个线程中的所有操作必须按照程序的顺序来执行。&lt;/li>
+&lt;li>（不管程序是否同步）所有线程都只能看到一个单一的操作执行顺序。在顺序一致性内存模型中，每个操作都必须原子执行且立刻对所有线程可见。&lt;/li>
+&lt;/ol>
+&lt;p>未同步程序在JMM中不但整体的执行顺序是无序的，而且所有线程看到的操作执行顺序也可能不一致。&lt;/p>
+&lt;h3 id="333-同步程序的顺序一致性结果">3.3.3 同步程序的顺序一致性结果
+&lt;/h3>&lt;p>在JMM中，临界区内的代码可以重排序（但JMM不允许临界区内的代码“逸出”到临界区之外，那样会破坏监视器的语义）。&lt;/p>
+&lt;h3 id="334-未同步程序的执行特性">3.3.4 未同步程序的执行特性
+&lt;/h3>&lt;p>对于未同步或未正确同步的多线程程序，JMM只提供最小安全性：线程执行时读取到的值，要么是之前某个线程写入的值，要么是默认值（0，Null，False），JMM保证线程读操作读取到的值不会无中生有的冒出来。&lt;/p>
+&lt;p>JMM不保证对64位的long型和double型变量的写操作具有原子性，而顺序一致性模型保证对所有的内存读/写操作都具有原子性。&lt;/p>
+&lt;p>从JSR-133内存模型开始（即从JDK5开始），仅仅只允许把一个64位long/double型变量的写操作拆分为两个32位的写操作来执行，任意的读操作在JSR-133中都必须具有原子性（即任意读操作必须要在单个读事务中执行）。&lt;/p>
+&lt;h2 id="34-volatile的内存语义">3.4 volatile的内存语义
+&lt;/h2>&lt;h3 id="341-volatile的特性">3.4.1 volatile的特性
+&lt;/h3>&lt;p>把对volatile变量的单个读/写，看成是使用同一个锁对这些单个读/写操作做了同步。&lt;/p>
+&lt;ul>
+&lt;li>可见性。对一个volatile变量的读，总是能看到（任意线程）对这个volatile变量最后的写入。&lt;/li>
+&lt;li>原子性：对任意单个volatile变量的读/写具有原子性，但类似于volatile++这种复合操作不具有原子性。&lt;/li>
+&lt;/ul>
+&lt;h3 id="342-volatile写-读建立的happens-before关系">3.4.2 volatile写-读建立的happens-before关系
+&lt;/h3>&lt;p>volatile写和锁的释放有相同的内存语义；volatile读与锁的获取有相同的内存语义。&lt;/p>
+&lt;h3 id="343-volatile写-读的内存语义">3.4.3 volatile写-读的内存语义
+&lt;/h3>&lt;p>当写一个volatile变量时，JMM会把该线程对应的本地内存中的共享变量值刷新到主内存。
+当读一个volatile变量时，JMM会把该线程对应的本地内存置为无效。线程接下来将从主内存中读取共享变量。&lt;/p>
+&lt;p>可以看作是在两个线程之间在进行消息传递。&lt;/p>
+&lt;h3 id="344-volatile内存语义的实现">3.4.4 volatile内存语义的实现
+&lt;/h3>&lt;ul>
+&lt;li>当第二个操作是volatile写时，不管第一个操作是什么，都不能重排序。&lt;/li>
+&lt;li>当第一个操作时volatile读时，不管第二个操作是什么，都不能重排序。&lt;/li>
+&lt;li>当第一个操作时volatile写，第二个操作是volatile读时，不能重排序。&lt;/li>
+&lt;/ul>
+&lt;p>基于保守策略的JMM内存屏障插入策略：&lt;/p>
+&lt;ul>
+&lt;li>在每个volatile写操作的前面插入一个StoreStore屏障。&lt;/li>
+&lt;li>在每个volatile写操作的后面插入一个StoreLoad屏障。&lt;/li>
+&lt;li>在每个volatile读操作的后面插入一个LoadLoad屏障。&lt;/li>
+&lt;li>在每个volatile读操作的后面插入一个LoadStore屏障。&lt;/li>
+&lt;/ul>
+&lt;p>因为x86仅会对写-读操作做重排序，因此JMM仅需在volatile写操作的后面插入一个StoreLoad屏障。&lt;/p>
+&lt;h3 id="345-jsr-133为什么要增强volatile的内存语义">3.4.5 JSR-133为什么要增强volatile的内存语义
+&lt;/h3>&lt;p>严格限制编译器和处理器对volatile变量与普通变量的重排序，确保volatile的写-读和锁的释放-获取具有相同的内存语义。&lt;/p>
+&lt;p>在功能上，锁比volatile更强大；在可伸缩性和执行性能上，volatile更有优势。&lt;/p>
+&lt;h2 id="35-锁的内存语义">3.5 锁的内存语义
+&lt;/h2>&lt;h3 id="351-锁的释放-获取建立的happens-before关系">3.5.1 锁的释放-获取建立的happens-before关系
+&lt;/h3>&lt;p>锁除了让临界区互斥执行外，还可以让释放锁的线程向获取同一个锁的线程发送消息。&lt;/p>
+&lt;h3 id="352-锁的释放和获取的内存语义">3.5.2 锁的释放和获取的内存语义
+&lt;/h3>&lt;p>看作是两个线程之间通过主内存发送消息。&lt;/p>
+&lt;h3 id="353-锁内存语义的实现">3.5.3 锁内存语义的实现
+&lt;/h3>&lt;p>ReentrantLock的实现依赖于Java同步框架AbstractQueuedSynchronizer（简称AQS）。AQS使用一个整型的volatile变量（命名为state）来维持同步状态。&lt;/p>
+&lt;p>ReentrantLock分为公平锁和非公平锁。&lt;/p>
+&lt;p>使用公平锁时，加锁方法lock调用轨迹如下：&lt;/p>
+&lt;ol>
+&lt;li>ReentrantLock:lock()&lt;/li>
+&lt;/ol>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">ReentrantLock&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">sync&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">new&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">NonfairSync&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c1">// 默认构造器为非公平锁&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="kd">public&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">ReentrantLock&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kt">boolean&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">fair&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">sync&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">fair&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">?&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">new&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">FairSync&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">new&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">NonfairSync&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c1">//true 为公平锁， false 为非公平锁&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="kd">public&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">void&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">lock&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">sync&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">lock&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c1">// 如果为公平锁就调用FairSync的lock()，反之就调用NonfairSync.lock()&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ol start="2">
+&lt;li>FairSync:lock() (ReentrantLock的内部类)&lt;/li>
+&lt;/ol>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">final&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">void&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">lock&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">acquire&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">1&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ol start="3">
+&lt;li>AbstractQueuedSynchronizer:acquire(int arg)&lt;/li>
+&lt;/ol>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">final&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">void&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">acquire&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kt">int&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">arg&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">!&lt;/span>&lt;span class="n">tryAcquire&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">arg&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">&amp;amp;&amp;amp;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">acquireQueued&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">addWaiter&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">Node&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">EXCLUSIVE&lt;/span>&lt;span class="p">),&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">arg&lt;/span>&lt;span class="p">))&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">selfInterrupt&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ol start="4">
+&lt;li>ReentrantLock:tryAcquire(int acquires)&lt;/li>
+&lt;/ol>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;span class="lnt">30
+&lt;/span>&lt;span class="lnt">31
+&lt;/span>&lt;span class="lnt">32
+&lt;/span>&lt;span class="lnt">33
+&lt;/span>&lt;span class="lnt">34
+&lt;/span>&lt;span class="lnt">35
+&lt;/span>&lt;span class="lnt">36
+&lt;/span>&lt;span class="lnt">37
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">static&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">final&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">class&lt;/span> &lt;span class="nc">FairSync&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">extends&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Sync&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">private&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">static&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">final&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">long&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">serialVersionUID&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">3000897897090466540L&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">final&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">void&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">lock&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">acquire&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">1&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="cm">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * Fair version of tryAcquire. Don&amp;#39;t grant access unless
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * recursive call or no waiters or is first.
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> */&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">protected&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">final&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">boolean&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">tryAcquire&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kt">int&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">acquires&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">final&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Thread&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">current&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Thread&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">currentThread&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="cm">/*
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> 在AQS中有如下的变量 state 以及 getSatate()方法：
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> private volatile int state;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> protected final int getState() {
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> return state;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> */&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kt">int&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">c&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">getState&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c1">// 获取锁的开始，首先读 volatile 变量 state&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">c&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">==&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">0&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">!&lt;/span>&lt;span class="n">hasQueuedPredecessors&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">&amp;amp;&amp;amp;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">compareAndSetState&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">0&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">acquires&lt;/span>&lt;span class="p">))&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">setExclusiveOwnerThread&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">current&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">return&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">true&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">else&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">current&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">==&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">getExclusiveOwnerThread&lt;/span>&lt;span class="p">())&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kt">int&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">nextc&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">c&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">acquires&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">nextc&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">0&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">throw&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">new&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Error&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;Maximum lock count exceeded&amp;#34;&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">setState&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">nextc&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">return&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">true&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">return&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">false&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>使用公平锁时，解锁方法unlock()调用轨迹：&lt;/p>
+&lt;ol>
+&lt;li>ReentrantLock:unlock()&lt;/li>
+&lt;/ol>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">void&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">unlock&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">sync&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">release&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">1&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ol start="2">
+&lt;li>AbstractQueuedSynchronizer:release(int arg)&lt;/li>
+&lt;/ol>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;span class="lnt">9
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">final&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">boolean&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">release&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kt">int&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">arg&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">tryRelease&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">arg&lt;/span>&lt;span class="p">))&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">Node&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">h&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">head&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">h&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">!=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">null&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">&amp;amp;&amp;amp;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">h&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">waitStatus&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">!=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">0&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">unparkSuccessor&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">h&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">return&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">true&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">return&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">false&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ol start="3">
+&lt;li>Sync:tryRelase(int releases)&lt;/li>
+&lt;/ol>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">protected&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">final&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">boolean&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">tryRelease&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kt">int&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">releases&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kt">int&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">c&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">getState&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">releases&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">Thread&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">currentThread&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">!=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">getExclusiveOwnerThread&lt;/span>&lt;span class="p">())&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">throw&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">new&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">IllegalMonitorStateException&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kt">boolean&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">free&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">false&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">c&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">==&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">0&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">free&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">true&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">setExclusiveOwnerThread&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kc">null&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="cm">/*
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> AQS中的setState方法：
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> protected final void setState(int newState) {
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> state = newState;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> */&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">setState&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">c&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c1">// 释放锁的最后，写 volatile变量state&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">return&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">free&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>公平锁在释放锁的最后写volatile变量state，在获取锁时首先读这个volatile变量。因此，释放锁的线程在写volatile变量之前可见的共享变量，在获取锁的线程读取同一个volatile变量后将立即变得对获取锁的线程可见。&lt;/p>
+&lt;p>非公平锁获取锁的方式和公平锁相同。非公平锁的加锁方法lock()调用轨迹如下：&lt;/p>
+&lt;ol>
+&lt;li>ReentrantLock:lock()&lt;/li>
+&lt;li>NonfairSync:lock()&lt;/li>
+&lt;/ol>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">final&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">void&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">lock&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">compareAndSetState&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">0&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">1&lt;/span>&lt;span class="p">))&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">setExclusiveOwnerThread&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">Thread&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">currentThread&lt;/span>&lt;span class="p">());&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">else&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">acquire&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">1&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ol start="3">
+&lt;li>AbstractQueuedSynchronizer:compareAndSetState(int expect, int update)&lt;/li>
+&lt;/ol>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">protected&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">final&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">boolean&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">compareAndSetState&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kt">int&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">expect&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">int&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">update&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c1">// See below for intrinsics setup to support this&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">return&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">unsafe&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">compareAndSwapInt&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="k">this&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">stateOffset&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">expect&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">update&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>该方法以原子操作的方式更新state变量。compareAndSetState()简称CAS方法。如果当前状态值等于预期值，则以原子的方式将同步状态设置为给定的更新值。此操作具有volatile读和写的内存语义。&lt;/p>
+&lt;p>sun.misc.Unsafe类的compareAndSwapInt()方法的源代码：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">final&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">native&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">boolean&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">compareAndSwapInt&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">Object&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">var1&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">long&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">var2&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">int&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">var4&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">int&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">var5&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>这是一个本地调用方法，会调用相应的C++代码，重要的是源代码中含有&lt;code>cmpxchg&lt;/code>，程序会根据当前处理器的类型来决定是否为cmpxchg指令添加lock前缀。如果是当处理器，就省略lock指令，如果是多处理器就加上lock前缀。&lt;/p>
+&lt;p>intel手册对lock前缀的说明：&lt;/p>
+&lt;ol>
+&lt;li>确保对内存的读-改-写操作的原子执行。Intel使用缓存锁定来保证指令执行的原子性。缓存锁定将大大降低lock前缀指令的执行开销。&lt;/li>
+&lt;li>禁止该指令，与之前和之后的读和写指令重排序。&lt;/li>
+&lt;li>把写缓冲区中的所有数据刷新到内存中。&lt;/li>
+&lt;/ol>
+&lt;p>公平锁和非公平锁的内存语义：&lt;/p>
+&lt;ul>
+&lt;li>公平锁和非公平锁释放时，最后都要写一个volatile变量state。&lt;/li>
+&lt;li>公平锁获取时，首先会去读volatile变量。&lt;/li>
+&lt;li>非公平锁获取时，首先会用CAS更新volatile变量，这个操作同时具有volatile读和volatile写的内存语义。&lt;/li>
+&lt;/ul>
+&lt;p>锁释放-获取的内存语义的实现至少有以下两种方式：&lt;/p>
+&lt;ul>
+&lt;li>利用volatile变量的写-读所具有的内存语义。&lt;/li>
+&lt;li>利用CAS所附带的volatile读和volatile写的内存语义。&lt;/li>
+&lt;/ul>
+&lt;h3 id="354-concurrent包的实现">3.5.4 concurrent包的实现
+&lt;/h3>&lt;p>一个通用化的实现模式：&lt;/p>
+&lt;ul>
+&lt;li>首先，声明共享变量volatile.&lt;/li>
+&lt;li>然后，使用CAS的原子条件更新来实现线程之间的同步。&lt;/li>
+&lt;li>同时，配合以vilatile的读/写和CAS所具有的volatile读和写的内存语义来实现线程之间的同步。&lt;/li>
+&lt;/ul>
+&lt;h2 id="36-final域的内存语义">3.6 final域的内存语义
+&lt;/h2>&lt;h3 id="361-final域的重排序规则">3.6.1 final域的重排序规则
+&lt;/h3>&lt;ol>
+&lt;li>在构造函数内对一个final域的写入，与随后把这个被构造对象的引用赋值给一个引用变量，这两个操作不能重排序。&lt;/li>
+&lt;li>初次读一个包含final域的对象的引用，与随后初次读这个final域，这两个操作之间不能重排序。&lt;/li>
+&lt;/ol>
+&lt;h3 id="362-写final域的重排序规则">3.6.2 写final域的重排序规则
+&lt;/h3>&lt;p>写final域的重排序规则禁止把final域的写重排序到构造函数之外，具体实现：&lt;/p>
+&lt;ol>
+&lt;li>JMM禁止编译器把final域的写重排序到构造函数之外。&lt;/li>
+&lt;li>编译器会在final域的写之后，构造函数return之前，&lt;strong>插入一个StoreStore屏障&lt;/strong>。这个屏障禁止处理器把final域的写重排序到构造函数之外。&lt;/li>
+&lt;/ol>
+&lt;p>写final域的重排序可以保证：在对象引用为任意线程可见之前，对象的final域已经被正确初始化过了，而普通域不具有这个保障。&lt;/p>
+&lt;h3 id="363-读final域的重排序规则">3.6.3 读final域的重排序规则
+&lt;/h3>&lt;p>在一个线程中，初次读对象引用与初次读该对象包含的final域，这两个操作之间不能重排序。实现：&lt;/p>
+&lt;ol>
+&lt;li>JMM禁止处理器重排序这两个操作。&lt;/li>
+&lt;li>编译器会在读final域操作的前面&lt;strong>插入一个LoadLoad屏障&lt;/strong>。&lt;/li>
+&lt;/ol>
+&lt;p>这两个操作之间存在间接依赖关系。&lt;/p>
+&lt;p>读final域的重排序规则可以确保：在读一个对象的final域之前，一定会先读包含这个final域的对象的引用。&lt;/p>
+&lt;h3 id="364-final域为引用类型">3.6.4 final域为引用类型
+&lt;/h3>&lt;p>对于引用类型，写final域的重排序规则对编译器和处理器增加了如下约束：在构造函数内对一个final引用的对象的成员域的写入，与随后在构造函数外把这个被构造对象的引用赋值给一个引用变量，这两个操作之间不能重排序。&lt;/p>
+&lt;h3 id="365-为什么final引用不能从构造函数内溢出">3.6.5 为什么final引用不能从构造函数内“溢出”
+&lt;/h3>&lt;p>在构造函数返回前，被构造对象的引用不能为其他线程所见，因为此时的final域可能还没有被初始化。在构造函数返回后，任意线程都将保证能看到final域正确初始化之后的值。&lt;/p>
+&lt;h3 id="366-final语义在处理器中的实现">3.6.6 final语义在处理器中的实现
+&lt;/h3>&lt;p>X86处理器，只会对Store-Load进行重排序。根据final域重排序规则，以及X86处理器不会对存在间接依赖关系的操作进行重排序，因此在X86处理器中，final域的读/写不会插入任何内存屏障！&lt;/p>
+&lt;h3 id="367-jsr-133为什么要增强final的语义">3.6.7 JSR-133为什么要增强final的语义
+&lt;/h3>&lt;p>通过为final域增加写和读重排序规则，可以为Java程序员提供初始化的安全保证：只要对象是正确构造的（被构造对象的引用在构造函数中没有“溢出”），那么不需要使用同步（指lock和volatile的使用）就可以保证任意线程都能看到这个final域在构造函数中被初始化之后的值。&lt;/p>
+&lt;h2 id="37-happens-before">3.7 happens-before
+&lt;/h2>&lt;h3 id="371-jmm的设计">3.7.1 JMM的设计
+&lt;/h3>&lt;p>JSR-133专家组在设计JMM时的核心目标是找到一个好的平衡点：一方面，要为程序员提供足够强的内存可见性保证；另一方面，对编译器和处理器的限制尽可能地放松。&lt;/p>
+&lt;p>JMM对不同性质的重排序，采取不同的策略：&lt;/p>
+&lt;ul>
+&lt;li>对于会改变程序执行结果的重排序，JMM要求编译器和处理器必须禁止这种重排序。&lt;/li>
+&lt;li>对于不会改变程序执行结果的重排序，JMM对编译器和处理器不做要求（JMM运行这种重排序）。&lt;/li>
+&lt;/ul>
+&lt;h3 id="372-happens-before的定义">3.7.2 happens-before的定义
+&lt;/h3>&lt;p>happens-before关系本质上和as-if-serial语义是一回事，都是为了在不改变程序执行结果的前提下，尽可能地提高程序执行的并行度。&lt;/p>
+&lt;h3 id="373-happens-before规则">3.7.3 happens-before规则
+&lt;/h3>&lt;ol>
+&lt;li>程序顺序规则&lt;/li>
+&lt;li>监视器锁规则&lt;/li>
+&lt;li>volatile变量规则&lt;/li>
+&lt;li>传递性&lt;/li>
+&lt;li>start()规则：如果线程A执行操作&lt;code>ThreadB.start()&lt;/code>（启动线程B），那么A线程的&lt;code>ThreadB.start()&lt;/code>操作happens-before于线程B中的任意操作。&lt;/li>
+&lt;li>join()规则：如果线程A执行操作&lt;code>ThreadB.join()&lt;/code>并成功返回，那么B线程中的任意操作happens-before于线程A从&lt;code>ThreadB.join()&lt;/code>操作成功返回。&lt;/li>
+&lt;/ol>
+&lt;h2 id="38-双重检查锁定与延迟初始化">3.8 双重检查锁定与延迟初始化
+&lt;/h2>&lt;h3 id="381-双重检查锁定的由来">3.8.1 双重检查锁定的由来
+&lt;/h3>&lt;p>希望通过双重检查锁定来降低同步的开销。&lt;/p>
+&lt;h3 id="382-问题的根源">3.8.2 问题的根源
+&lt;/h3>&lt;p>创建对象&lt;code>instance = new Instance();&lt;/code>可以分解为如下3行伪代码：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">memory = allocate(); // 1:分配对象的内存空间
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">ctorInstance(memory); // 2:初始化对象
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">instance = memory; // 3:设置instance指向刚分配的内存地址
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>2和3之间，可能被重排序，这会导致问题的发生。&lt;/p>
+&lt;p>两个办法实现线程安全的延迟初始化：&lt;/p>
+&lt;ol>
+&lt;li>不允许2和3重排序。&lt;/li>
+&lt;li>允许2和3重排序，但不允许其他线程“看到”这个重排序。&lt;/li>
+&lt;/ol>
+&lt;h3 id="383-基于volatile的解决方案">3.8.3 基于volatile的解决方案
+&lt;/h3>&lt;p>在双重检查锁定方法的基础上将instance声明为volatile型。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">private&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">volatile&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">static&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Instance&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">instance&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>2和3之间的重排序在多线程环境中会被禁止。&lt;/p>
+&lt;h3 id="384-基于类初始化的解决方案">3.8.4 基于类初始化的解决方案
+&lt;/h3>&lt;p>待读。&lt;/p>
+&lt;h2 id="39-java内存模型综述">3.9 Java内存模型综述
+&lt;/h2>&lt;h3 id="391-处理器的内存模型">3.9.1 处理器的内存模型
+&lt;/h3>&lt;p>由于常见的处理器内存模型比JMM要弱，Java编译器在生成字节码时，会在执行指令序列的适当位置插入内存屏障来限制处理器的重排序。JMM在不同的处理器中需要插入的内存屏障的数量和种类也不相同。&lt;/p>
+&lt;h3 id="392-各种内存模型之间的关系">3.9.2 各种内存模型之间的关系
+&lt;/h3>&lt;p>JMM是一个语言级的内存模型，处理器内存模型是硬件级的内存模型，顺序一致性内存模型是一个理论参考模型。&lt;/p>
+&lt;h3 id="393-jmm的内存可见性保证">3.9.3 JMM的内存可见性保证
+&lt;/h3>&lt;p>三类：&lt;/p>
+&lt;ul>
+&lt;li>单线程程序。&lt;/li>
+&lt;li>正确同步的多线程程序。&lt;/li>
+&lt;li>未同步/未正确同步的多线程程序。提供最小安全保障：线程执行时读取到的值，要么是之前某个线程写入的值，要么是默认值（0、null、false）。&lt;/li>
+&lt;/ul>
+&lt;p>最小安全保障与64位数据的非原子性写并不矛盾。最小安全性并不保证线程读取到的值，一定是某个线程写完后的值。最小安全性保证线程读取到的值不会是无中生有的冒出来，但并不保证线程读取到的值一定是正确的。&lt;/p>
+&lt;h3 id="394-jsr-133对旧内存模型的修补">3.9.4 JSR-133对旧内存模型的修补
+&lt;/h3>&lt;p>主要有两个：&lt;/p>
+&lt;ul>
+&lt;li>增强volatile的内存语义。&lt;/li>
+&lt;li>增强final的内存语义。&lt;/li>
+&lt;/ul>
+&lt;h1 id="第4章-java并发编程基础">第4章 Java并发编程基础
+&lt;/h1>&lt;h2 id="41-线程简介">4.1 线程简介
+&lt;/h2>&lt;h3 id="411-什么是线程">4.1.1 什么是线程
+&lt;/h3>&lt;p>现代操作系统调度的最小单元是线程，也叫轻量级进程，在一个进程里可以创建多个线程，这些线程都拥有各自的计数器、堆栈和局部变量等属性，并且能够访问共享的内存变量。&lt;/p>
+&lt;p>Java程序天生就是多线程程序，因为执行main()方法的是一个名称为main的线程。&lt;/p>
+&lt;h3 id="412-为什么要使用多线程">4.1.2 为什么要使用多线程
+&lt;/h3>&lt;ul>
+&lt;li>更多的处理器核心&lt;/li>
+&lt;li>更快的响应时间&lt;/li>
+&lt;li>更好的编程模型&lt;/li>
+&lt;/ul>
+&lt;h3 id="413-线程优先级">4.1.3 线程优先级
+&lt;/h3>&lt;p>在Java线程中，通过一个整型成员变量priority来控制优先级，优先级的范围从1～10，在线程构建的时候可以通过&lt;code>setPriority(int)&lt;/code>方法来修改优先级，默认优先级是5，优先级高的线程分配时间片的数量要多于优先级低的线程。&lt;/p>
+&lt;p>程序正确性不能依赖线程的优先级高低，有些操作系统会忽略对线程优先级的设定。&lt;/p>
+&lt;h3 id="414-线程的状态">4.1.4 线程的状态
+&lt;/h3>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-03-28-The-Art-of-Java-Concurrency-Programming/LICENSE.png"
+loading="lazy"
+alt="LICENSE"
+>&lt;/p>
+&lt;p>线程在执行Runnable的&lt;code>run()&lt;/code>方法之后将会进入终止状态。&lt;/p>
+&lt;h3 id="415-daemon线程">4.1.5 Daemon线程
+&lt;/h3>&lt;p>Daemon线程是一种支持型线程，因为它主要被用做程序中后台调度及支持性工作，也就是守护线程。当一个Java虚拟机中不存在非Daemon线程的时候，Java虚拟机将会退出。&lt;/p>
+&lt;p>调用&lt;code>Thread.setDaemon(true)&lt;/code>将线程设置为Daemon线程。&lt;/p>
+&lt;p>在Java虚拟机退出时Daemon线程中的finally块不一定会执行。&lt;/p>
+&lt;h2 id="42-启动和终止线程">4.2 启动和终止线程
+&lt;/h2>&lt;h3 id="421-构造线程">4.2.1 构造线程
+&lt;/h3>&lt;p>构造一个线程，会调用Thread.java中的构造器：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">Thread&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">Runnable&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">target&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">String&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">name&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">init&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kc">null&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">target&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">name&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">0&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>接着调用init方法：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">private&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">void&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">init&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">ThreadGroup&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">g&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Runnable&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">target&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">String&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">name&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kt">long&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">stackSize&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">init&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">g&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">target&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">name&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">stackSize&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">null&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">true&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>调用下面的init方法：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;span class="lnt">30
+&lt;/span>&lt;span class="lnt">31
+&lt;/span>&lt;span class="lnt">32
+&lt;/span>&lt;span class="lnt">33
+&lt;/span>&lt;span class="lnt">34
+&lt;/span>&lt;span class="lnt">35
+&lt;/span>&lt;span class="lnt">36
+&lt;/span>&lt;span class="lnt">37
+&lt;/span>&lt;span class="lnt">38
+&lt;/span>&lt;span class="lnt">39
+&lt;/span>&lt;span class="lnt">40
+&lt;/span>&lt;span class="lnt">41
+&lt;/span>&lt;span class="lnt">42
+&lt;/span>&lt;span class="lnt">43
+&lt;/span>&lt;span class="lnt">44
+&lt;/span>&lt;span class="lnt">45
+&lt;/span>&lt;span class="lnt">46
+&lt;/span>&lt;span class="lnt">47
+&lt;/span>&lt;span class="lnt">48
+&lt;/span>&lt;span class="lnt">49
+&lt;/span>&lt;span class="lnt">50
+&lt;/span>&lt;span class="lnt">51
+&lt;/span>&lt;span class="lnt">52
+&lt;/span>&lt;span class="lnt">53
+&lt;/span>&lt;span class="lnt">54
+&lt;/span>&lt;span class="lnt">55
+&lt;/span>&lt;span class="lnt">56
+&lt;/span>&lt;span class="lnt">57
+&lt;/span>&lt;span class="lnt">58
+&lt;/span>&lt;span class="lnt">59
+&lt;/span>&lt;span class="lnt">60
+&lt;/span>&lt;span class="lnt">61
+&lt;/span>&lt;span class="lnt">62
+&lt;/span>&lt;span class="lnt">63
+&lt;/span>&lt;span class="lnt">64
+&lt;/span>&lt;span class="lnt">65
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">private&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">void&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">init&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">ThreadGroup&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">g&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Runnable&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">target&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">String&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">name&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kt">long&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">stackSize&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">AccessControlContext&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">acc&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kt">boolean&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">inheritThreadLocals&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">name&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">==&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">null&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">throw&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">new&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">NullPointerException&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;name cannot be null&amp;#34;&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">name&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">name&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c1">// 当前线程就是该线程的父线程&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">Thread&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">parent&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">currentThread&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">SecurityManager&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">security&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">System&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">getSecurityManager&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">g&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">==&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">null&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="cm">/* Determine if it&amp;#39;s an applet or not */&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="cm">/* If there is a security manager, ask the security manager
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> what to do. */&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">security&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">!=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">null&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">g&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">security&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">getThreadGroup&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="cm">/* If the security doesn&amp;#39;t have a strong opinion of the matter
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> use the parent thread group. */&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">g&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">==&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">null&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">g&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">parent&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">getThreadGroup&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="cm">/* checkAccess regardless of whether or not threadgroup is
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> explicitly passed in. */&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">g&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">checkAccess&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="cm">/*
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * Do we have the required permissions?
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> */&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">security&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">!=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">null&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">isCCLOverridden&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">getClass&lt;/span>&lt;span class="p">()))&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">security&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">checkPermission&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">SUBCLASS_IMPLEMENTATION_PERMISSION&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">g&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">addUnstarted&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">group&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">g&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c1">// 将 daemon、priority属性设置为父线程的对应属性&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">daemon&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">parent&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">isDaemon&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">priority&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">parent&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">getPriority&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">security&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">==&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">null&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">||&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">isCCLOverridden&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">parent&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">getClass&lt;/span>&lt;span class="p">()))&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">contextClassLoader&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">parent&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">getContextClassLoader&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">else&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">contextClassLoader&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">parent&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">contextClassLoader&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">inheritedAccessControlContext&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">acc&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">!=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">null&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">?&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">acc&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">AccessController&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">getContext&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">target&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">target&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">setPriority&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">priority&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c1">// 将父线程的 inheritThreadLocal 复制过来&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">inheritThreadLocals&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">&amp;amp;&amp;amp;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">parent&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">inheritableThreadLocals&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">!=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">null&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">inheritableThreadLocals&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">ThreadLocal&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">createInheritedMap&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">parent&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">inheritableThreadLocals&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="cm">/* Stash the specified stack size in case the VM cares */&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">stackSize&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">stackSize&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="cm">/* Set thread ID */&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">tid&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">nextThreadID&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c1">// 分配一个线程ID&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>一个新构造的线程对象是由其parent线程来进行空间分配的，而child线程继承了parent是否为Daemon、优先级和加载资源的contextClassLoader以及可继承的ThreadLocal，同时还会分配一个唯一的ID来标识这个child线程。&lt;/p>
+&lt;h3 id="422-启动线程">4.2.2 启动线程
+&lt;/h3>&lt;p>线程strart()方法的含义：当前线程（即parent线程）同步告知Java虚拟机，只要线程规划器空闲，应立即启动调用start()方法的线程。&lt;/p>
+&lt;h3 id="423-理解中断">4.2.3 理解中断
+&lt;/h3>&lt;p>中断可以理解为线程的一个标识位属性，它表示一个运行中的线程是否被其他线程进行了中断操作。&lt;/p>
+&lt;p>线程通过检查自身是否被中断来进行响应，线程通过方法&lt;code>isInterrupted()&lt;/code>来进行判断是否被中断。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">boolean&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">isInterrupted&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">return&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">isInterrupted&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kc">false&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="kd">private&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">native&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">boolean&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">isInterrupted&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kt">boolean&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">ClearInterrupted&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>或者调用静态方法&lt;code>Thread.interrupted()&lt;/code>对当前线程的中断标识位进行复位。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">static&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">boolean&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">interrupted&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">return&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">currentThread&lt;/span>&lt;span class="p">().&lt;/span>&lt;span class="na">isInterrupted&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kc">true&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>如果该线程已经处于终结状态，即使该线程被中断过，在调用该线程对象的&lt;code>isInterrupted()&lt;/code>时依旧会返回false。&lt;/p>
+&lt;p>许多方法在抛出InterruptedException之前，Java虚拟机会先将该线程的中断标识位清除，然后抛出InterruptedException，此时调用isInterrupted()方法将会返回false。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="cm">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * @throws InterruptedException
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * if any thread has interrupted the current thread. The
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * &amp;lt;i&amp;gt;interrupted status&amp;lt;/i&amp;gt; of the current thread is
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * cleared when this exception is thrown.
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> */&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="kd">public&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">static&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">native&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">void&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">sleep&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kt">long&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">millis&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">throws&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">InterruptedException&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="424-过期的suspendresume和stop">4.2.4 过期的suspend()、resume()和stop()
+&lt;/h3>&lt;p>suspend()、resume()和stop()类似CD机播放音乐时的暂停、恢复和停止操作。&lt;/p>
+&lt;h3 id="425-安全地终止线程">4.2.5 安全地终止线程
+&lt;/h3>&lt;ul>
+&lt;li>中断操作&lt;/li>
+&lt;li>利用一个boolean变量来控制是否需要停止任务并终止该线程。&lt;/li>
+&lt;/ul>
+&lt;p>这两种方法可以使线程在终止时有机会去清理资源。&lt;/p>
+&lt;h2 id="43-线程间通信">4.3 线程间通信
+&lt;/h2>&lt;h3 id="431-volatile和synchronized关键字">4.3.1 volatile和synchronized关键字
+&lt;/h3>&lt;ul>
+&lt;li>Java支持多个线程同时访问一个对象或者对象的成员变量，由于每个线程可以拥有这个变量的拷贝，所以程序在执行过程中，一个线程看到的变量不一定是最新的。&lt;/li>
+&lt;li>关键字volatile可以用来修饰字段（成员变量）。&lt;/li>
+&lt;li>关键字synchronized可以修饰方法或者以同步块的形式来进行使用。&lt;/li>
+&lt;li>通过class信息，对于同步块的实现使用了monitorenter和monitorexit指令，而同步方法则是依靠方法修饰符上的ACC_SYNCHRONIZED来完成。&lt;/li>
+&lt;li>无论采用哪种方式，其本质是对一个对象的监视器进行获取，而这个获取过程是排他的，也就是同一时刻只能有一个线程获取到由synchronized所保护对象的监视器。&lt;/li>
+&lt;li>任意一个对象都拥有自己的监视器。&lt;/li>
+&lt;li>对象、监视器、同步队列和执行线程之间的关系图&lt;/li>
+&lt;/ul>
+&lt;h3 id="432-等待通知机制">4.3.2 等待/通知机制
+&lt;/h3>&lt;ul>
+&lt;li>等待/通知的相关方法是任意Java对象都具备的，被定义在超类java.lang.Object上。&lt;/li>
+&lt;li>等待/通知机制，是指一个线程A调用了对象O的wait()方法进入等待状态，而另一个线程B调用了对象O的notify()或者notifyAll()方法，线程A收到通知后从对象O的wait()方法返回，进而执行后续操作。&lt;/li>
+&lt;/ul>
+&lt;p>细节：&lt;/p>
+&lt;ol>
+&lt;li>使用wait()、notify()和notifyAll()时需要先对调用对象加锁。&lt;/li>
+&lt;li>调用wait()方法后，线程状态由RUNNING变为WAITING，并将当前线程放置到对象的等待队列。&lt;/li>
+&lt;li>notify()或notifyAll()方法调用后，等待线程依旧不会从wait()返回，需要调用notify()或notifyAll()的线程释放锁之后，等待线程才有机会从wait()返回。&lt;/li>
+&lt;li>notify()方法将等待队列中的一个等待线程从等待队列中移到同步队列中，而notifyAll()方法则是将等待队列中所有的线程全部移到同步队列，被移动的线程状态由WAITING变为BLOCKED。&lt;/li>
+&lt;li>从wait()方法返回的前提是获得了调用对象的锁。&lt;/li>
+&lt;/ol>
+&lt;h3 id="433-等待通知的经典范式">4.3.3 等待/通知的经典范式
+&lt;/h3>&lt;p>等待方遵循如下原则：&lt;/p>
+&lt;ol>
+&lt;li>获取对象的锁。&lt;/li>
+&lt;li>如果条件不满足，那么调用对象的wait()方法，被通知后仍要检查条件。&lt;/li>
+&lt;li>条件满足则执行对应的逻辑。&lt;/li>
+&lt;/ol>
+&lt;p>通知方遵循如下原则：&lt;/p>
+&lt;ol>
+&lt;li>获得对象的锁。&lt;/li>
+&lt;li>改变条件。&lt;/li>
+&lt;li>通知所有等待在对象上的线程。&lt;/li>
+&lt;/ol>
+&lt;h3 id="434-管道输入输出流">4.3.4 管道输入/输出流
+&lt;/h3>&lt;ul>
+&lt;li>管道输入/输出流主要用于线程之间的数据传输，而传输的媒介为内存。&lt;/li>
+&lt;li>4种具体实现：PipedOutputStream、PipedOutputStream、PipedReader和PipedWriter，前两种面向字节，后两种面向字符。&lt;/li>
+&lt;li>对于Piped类型的流，必须先要进行绑定，也就是调用connect()方法，如果没有将输入/输出流绑定起来，对于该流的访问将会抛出异常。&lt;/li>
+&lt;/ul>
+&lt;h3 id="435-threadjoin的使用">4.3.5 Thread.join()的使用
+&lt;/h3>&lt;ul>
+&lt;li>如果一个线程A执行了thread.join()语句，其含义是：当线程A等待thread线程终止之后才从thread.join()返回。&lt;/li>
+&lt;li>每个线程终止的前提是前驱线程终止，每个线程等待前驱线程终止后，才从join()方法返回，这里涉及了等待/通知机制。&lt;/li>
+&lt;li>当线程终止时，会调用线程自身的notifyAll()方法，会通知所有等待在该线程对象上的线程。&lt;/li>
+&lt;/ul>
+&lt;h3 id="436-threadlocal的使用">4.3.6 ThreadLocal的使用
+&lt;/h3>&lt;ul>
+&lt;li>ThreadLocal，即线程变量，是一个以ThreadLocal对象为键、任意对象为值的存储结构，这个结构被附带在线程上，也就是说一个线程可以根据一个ThreadLocal对象查询到绑定在这个线程上的一个值。&lt;/li>
+&lt;li>可以通过set(T)方法来设置一个值，在当前线程下再通过get()方法获取到原先设置的值。&lt;/li>
+&lt;/ul></description></item></channel></rss>

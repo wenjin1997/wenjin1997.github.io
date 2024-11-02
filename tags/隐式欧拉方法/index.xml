@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>隐式欧拉方法 on Jade's Blog</title><link>https://wenjin1997.github.io/tags/%E9%9A%90%E5%BC%8F%E6%AC%A7%E6%8B%89%E6%96%B9%E6%B3%95/</link><description>Recent content in 隐式欧拉方法 on Jade's Blog</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Thu, 11 Mar 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://wenjin1997.github.io/tags/%E9%9A%90%E5%BC%8F%E6%AC%A7%E6%8B%89%E6%96%B9%E6%B3%95/index.xml" rel="self" type="application/rss+xml"/><item><title>欧拉方法、隐式欧拉方法</title><link>https://wenjin1997.github.io/2021/03/11/euler-method/</link><pubDate>Thu, 11 Mar 2021 00:00:00 +0000</pubDate><guid>https://wenjin1997.github.io/2021/03/11/euler-method/</guid><description>&lt;img src="https://wenjin1997.github.io/img/2021-03-11-eluer-method/background.jpg" alt="Featured image of post 欧拉方法、隐式欧拉方法" />&lt;p>求解如下常微分方程：&lt;br>
+&lt;/p>
+$$
+\begin{aligned}
+\begin{cases}
+\frac{du}{dt}=-\frac{u}{t},1\leq t\leq 2, \\\
+u(1)=1
+\end{cases}
+\end{aligned}
+$$&lt;h2 id="精确解">精确解
+&lt;/h2>&lt;p>将原方程化为$tdu+udt=0$，则有$d(ut)=0$，解得$ut=C$($C$为常数)，代入初始条件得$C=1$，从而该方程的精确解为：
+&lt;/p>
+$$
+\begin{aligned}
+u=\frac{1}{t},(1\leq t \leq2).
+\end{aligned}
+$$&lt;h2 id="欧拉方法">欧拉方法
+&lt;/h2>&lt;p>代入欧拉格式得：
+&lt;/p>
+$$
+\begin{aligned}
+u_{i+1}=u_{i}+hf(t_i,u_i)=u_i+h(-\frac{u_i}{t_i})
+\end{aligned}
+$$&lt;h2 id="隐式欧拉方法">隐式欧拉方法
+&lt;/h2>&lt;p>由隐式欧拉格式得：
+&lt;/p>
+$$
+\begin{aligned}
+u_{i+1}=u_{i}+hf(t_{i+1},u_{i+1})=u_i+h(-\frac{u_{i+1}}{t_{i+1}})，
+\end{aligned}
+$$&lt;p>
+移项化简可得：
+&lt;/p>
+$$
+\begin{aligned}
+u_{i+1}=\frac{t_{i+1}u_i}{t_{i+1}+h}
+\end{aligned}
+$$&lt;h2 id="程序">程序
+&lt;/h2>&lt;p>根据上述推导，用python编写程序，代码如下：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;span class="lnt">30
+&lt;/span>&lt;span class="lnt">31
+&lt;/span>&lt;span class="lnt">32
+&lt;/span>&lt;span class="lnt">33
+&lt;/span>&lt;span class="lnt">34
+&lt;/span>&lt;span class="lnt">35
+&lt;/span>&lt;span class="lnt">36
+&lt;/span>&lt;span class="lnt">37
+&lt;/span>&lt;span class="lnt">38
+&lt;/span>&lt;span class="lnt">39
+&lt;/span>&lt;span class="lnt">40
+&lt;/span>&lt;span class="lnt">41
+&lt;/span>&lt;span class="lnt">42
+&lt;/span>&lt;span class="lnt">43
+&lt;/span>&lt;span class="lnt">44
+&lt;/span>&lt;span class="lnt">45
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-python" data-lang="python">&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># implict euler method&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="nn">numpy&lt;/span> &lt;span class="k">as&lt;/span> &lt;span class="nn">np&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kn">import&lt;/span> &lt;span class="nn">matplotlib.pyplot&lt;/span> &lt;span class="k">as&lt;/span> &lt;span class="nn">plt&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># the right term of the ODE&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">def&lt;/span> &lt;span class="nf">f&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">t&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">u&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">f&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="o">-&lt;/span>&lt;span class="n">u&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">t&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="n">f&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># the exact solution of ODE &lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">def&lt;/span> &lt;span class="nf">fexact&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">t&lt;/span>&lt;span class="p">):&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">fexact&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">1&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">t&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="n">fexact&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">N&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">100&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">t_n&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mf">2.0&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">dt&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="n">t_n&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="mf">1.0&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">/&lt;/span> &lt;span class="n">N&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">t&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">np&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">arange&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mf">1.0&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">t_n&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">dt&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">dt&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">u_euler&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">np&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">arange&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mf">1.0&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">t_n&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">dt&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">dt&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">u&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">np&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">arange&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mf">1.0&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">t_n&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">dt&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">dt&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">u_true&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">np&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">arange&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mf">1.0&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">t_n&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">dt&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">dt&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">i&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">while&lt;/span> &lt;span class="n">i&lt;/span> &lt;span class="o">&amp;lt;&lt;/span> &lt;span class="n">N&lt;/span>&lt;span class="p">:&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">t&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">t&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">dt&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">u_euler&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">u_euler&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">dt&lt;/span> &lt;span class="o">*&lt;/span> &lt;span class="n">f&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">t&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="p">],&lt;/span> &lt;span class="n">u_euler&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="p">])&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">u&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="n">u&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="o">*&lt;/span> &lt;span class="n">t&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">])&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">t&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="n">dt&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">u_true&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">fexact&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">t&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">])&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">i&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">i&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="mi">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">err_euler&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nb">max&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nb">abs&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">u_euler&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="n">u_true&lt;/span>&lt;span class="p">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">err_implict_euler&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nb">max&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nb">abs&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">u&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="n">u_true&lt;/span>&lt;span class="p">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;The error of euler method: &amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="n">err_euler&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nb">print&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;The error of implict euler method: &amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="n">err_implict_euler&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># begin drawing&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">plt&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">title&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;Result&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">plt&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">plot&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">t&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">u_euler&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">color&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s1">&amp;#39;green&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">label&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s1">&amp;#39;euler&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">plt&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">plot&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">t&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">u&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">color&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s1">&amp;#39;blue&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">label&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s1">&amp;#39;implict euler&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">plt&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">plot&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">t&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">u_true&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">color&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s1">&amp;#39;red&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">label&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s1">&amp;#39;exact&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">plt&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">legend&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="c1"># show the legend&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">plt&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">xlabel&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;t&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">plt&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">ylabel&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;u&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">plt&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">show&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="结果分析">结果分析
+&lt;/h2>&lt;p>当取$h=0.01$时，此时欧拉方法的误差为0.02631578947368396，隐式欧拉方法的误差为0.023809523809523836，结果如下图所示：&lt;/p>
+&lt;p>&lt;img src="https://i.loli.net/2021/03/11/pBG2osfcJ3tlvWZ.png"
+loading="lazy"
+alt="result.png"
+>&lt;/p>
+&lt;p>当取不同$h$，得到的误差如下表所示：&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align: center">$h$&lt;/th>
+&lt;th style="text-align: center">欧拉方法&lt;/th>
+&lt;th style="text-align: center">隐式欧拉方法&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align: center">$\frac{1}{2}$&lt;/td>
+&lt;td style="text-align: center">0.16666666666666663&lt;/td>
+&lt;td style="text-align: center">0.09999999999999998&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: center">$\frac{1}{4}$&lt;/td>
+&lt;td style="text-align: center">0.0714285714285714&lt;/td>
+&lt;td style="text-align: center">0.05555555555555558&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: center">$\frac{1}{8}$&lt;/td>
+&lt;td style="text-align: center">0.033333333333333215&lt;/td>
+&lt;td style="text-align: center">0.02941176470588236&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: center">$\frac{1}{16}$&lt;/td>
+&lt;td style="text-align: center">0.01612903225806467&lt;/td>
+&lt;td style="text-align: center">0.015151515151515138&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: center">$\frac{1}{32}$&lt;/td>
+&lt;td style="text-align: center">0.00793650793650813&lt;/td>
+&lt;td style="text-align: center">0.007692307692307665&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: center">$\frac{1}{64}$&lt;/td>
+&lt;td style="text-align: center">0.0039370078740155193&lt;/td>
+&lt;td style="text-align: center">0.003875968992248069&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table></description></item></channel></rss>

@@ -1,0 +1,580 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Github Action on Jade's Blog</title><link>https://wenjin1997.github.io/tags/github-action/</link><description>Recent content in Github Action on Jade's Blog</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sat, 19 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://wenjin1997.github.io/tags/github-action/index.xml" rel="self" type="application/rss+xml"/><item><title>如何用Hugo + Github Action部署个人博客</title><link>https://wenjin1997.github.io/2022/11/19/hugo-post/</link><pubDate>Sat, 19 Nov 2022 00:00:00 +0000</pubDate><guid>https://wenjin1997.github.io/2022/11/19/hugo-post/</guid><description>&lt;img src="https://wenjin1997.github.io/img/2022-11-19-hugo-post/background.jpg" alt="Featured image of post 如何用Hugo + Github Action部署个人博客" />&lt;p>最近又把自己的博客折腾了一遍，之前用的是vuepress搭建的，奈何实在看不惯字体太小，配置字体大小半天不成功，索性想着重新搭建一下。网上搜索到的主要有hexo和hugo，之前尝试过hexo，没有很满意，这次就试着用hugo搭建。&lt;/p>
+&lt;h2 id="安装hugo">安装Hugo
+&lt;/h2>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">brew install hugo
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>接着运行：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">hugo version
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>显示正常则说明安装成功。&lt;/p>
+&lt;h2 id="创建hugo网站">创建Hugo网站
+&lt;/h2>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">hugo new site hugo-blog
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>运行效果如下：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">jinjin@Mac-mini &lt;span class="nb">test&lt;/span> % hugo new site hugo-blog
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Congratulations! Your new Hugo site is created in /Users/jinjin/code/test/hugo-blog.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Just a few more steps and you&lt;span class="err">&amp;#39;&lt;/span>re ready to go:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">1. Download a theme into the same-named folder.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Choose a theme from https://themes.gohugo.io/ or
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> create your own with the &lt;span class="s2">&amp;#34;hugo new theme &amp;lt;THEMENAME&amp;gt;&amp;#34;&lt;/span> command.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">2. Perhaps you want to add some content. You can add single files
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> with &lt;span class="s2">&amp;#34;hugo new &amp;lt;SECTIONNAME&amp;gt;/&amp;lt;FILENAME&amp;gt;.&amp;lt;FORMAT&amp;gt;&amp;#34;&lt;/span>.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">3. Start the built-in live server via &lt;span class="s2">&amp;#34;hugo server&amp;#34;&lt;/span>.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Visit https://gohugo.io/ &lt;span class="k">for&lt;/span> quickstart guide and full documentation.
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="选择主题">选择主题
+&lt;/h2>&lt;p>在官方网站&lt;a class="link" href="https://themes.gohugo.io/" target="_blank" rel="noopener"
+>主题板块&lt;/a>选择一个喜欢的主题，我选择的是&lt;a class="link" href="https://themes.gohugo.io/themes/hugo-theme-cleanwhite/" target="_blank" rel="noopener"
+>Clean White&lt;/a>，接着可以按照主题给的教程进行安装。为了后续方便github管理部署以及修改主题，将原主题仓库&lt;code>fork&lt;/code>到自己的账户，用&lt;code>git submodule&lt;/code>方式进行仓库链接。&lt;/p>
+&lt;p>首先找到主题的github仓库，然后&lt;code>fork&lt;/code>下来，接着在本地使用&lt;code>git submodule&lt;/code>命令，这里仓库地址已经变成自己账户下主题仓库的地址了。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">git submodule add https://github.com/wenjin1997/hugo-theme-cleanwhite.git themes/hugo-theme-cleanwhite
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>在这个过程中，运行&lt;code>git submodule&lt;/code>与&lt;code>git clone&lt;/code>遇到了一些问题。&lt;/p>
+&lt;h3 id="解决-failed-to-connect-to-githubcom-port-443">解决 Failed to connect to github.com port 443
+&lt;/h3>&lt;p>参考&lt;a class="link" href="https://www.notion.so/github-18e3596e3b5f4c75b78c1c90ccc9594c#3bef0cc6434a4f6ea074149ebaa5aeca" target="_blank" rel="noopener"
+>&lt;strong>Failed to connect to github.com port 443: Operation timed out&lt;/strong>&lt;/a>解决该问题，访问&lt;a class="link" href="https://ping.chinaz.com/github.com" target="_blank" rel="noopener"
+>https://ping.chinaz.com/github.com&lt;/a>，找到一个可用的ip地址，例如为140.82.121.4。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">&lt;span class="nb">cd&lt;/span> ~
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">sudo vim /etc/hosts
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>在host文件中进行修改。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-text" data-lang="text">&lt;span class="line">&lt;span class="cl">##
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># Host Database
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">#
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># localhost is used to configure the loopback interface
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># when the system is booting. Do not change this entry.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">##
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">127.0.0.1 localhost
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">255.255.255.255 broadcasthost
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">::1 localhost
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">140.82.121.4 github.com
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="解决http2-stream-1-was-not-closed-cleanly-before-end-of-the-underlying-stream">解决HTTP/2 stream 1 was not closed cleanly before end of the underlying stream
+&lt;/h3>&lt;p>之后使用&lt;code>git clone&lt;/code>又出现如下错误：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">jinjin@Mac-mini themes % git clone https://github.com/zhaohuabing/hugo-theme-cleanwhite.git
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Cloning into &lt;span class="s1">&amp;#39;hugo-theme-cleanwhite&amp;#39;&lt;/span>...
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">fatal: unable to access &lt;span class="s1">&amp;#39;https://github.com/zhaohuabing/hugo-theme-cleanwhite.git/&amp;#39;&lt;/span>: HTTP/2 stream &lt;span class="m">1&lt;/span> was not closed cleanly before end of the underlying stream
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>参考&lt;a class="link" href="https://blog.csdn.net/zz00008888/article/details/123529805" target="_blank" rel="noopener"
+>解决 HTTP/2 stream 1 was not closed cleanly before end of the underlying stream&lt;/a>，需要对git进行全局配置。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">git config --global http.version HTTP/1.1
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="初始化主题配置及发布">初始化主题配置及发布
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">&lt;span class="nb">cd&lt;/span> themes
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">cp -r hugo-theme-cleanwhite/exampleSite/** ../
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>接着运行&lt;code>hugo server&lt;/code>在本地&lt;a class="link" href="http://localhost:1313/" target="_blank" rel="noopener"
+>http://localhost:1313/&lt;/a>就能看到博客的样子了。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">&lt;span class="nb">cd&lt;/span> ..
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">hugo server
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">jinjin@Mac-mini hugo-blog % hugo server
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Start building sites …
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">hugo v0.101.0+extended darwin/arm64 &lt;span class="nv">BuildDate&lt;/span>&lt;span class="o">=&lt;/span>unknown
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">|&lt;/span> EN
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">-------------------+-----
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Pages &lt;span class="p">|&lt;/span> &lt;span class="m">71&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Paginator pages &lt;span class="p">|&lt;/span> &lt;span class="m">8&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Non-page files &lt;span class="p">|&lt;/span> &lt;span class="m">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Static files &lt;span class="p">|&lt;/span> &lt;span class="m">70&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Processed images &lt;span class="p">|&lt;/span> &lt;span class="m">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Aliases &lt;span class="p">|&lt;/span> &lt;span class="m">17&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Sitemaps &lt;span class="p">|&lt;/span> &lt;span class="m">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Cleaned &lt;span class="p">|&lt;/span> &lt;span class="m">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Built in &lt;span class="m">82&lt;/span> ms
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Watching &lt;span class="k">for&lt;/span> changes in /Users/jinjin/code/hugo-blog/&lt;span class="o">{&lt;/span>archetypes,content,data,layouts,static,themes&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Watching &lt;span class="k">for&lt;/span> config changes in /Users/jinjin/code/hugo-blog/config.toml
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Environment: &lt;span class="s2">&amp;#34;development&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Serving pages from memory
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Running in Fast Render Mode. For full rebuilds on change: hugo server --disableFastRender
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Web Server is available at http://localhost:1313/ &lt;span class="o">(&lt;/span>&lt;span class="nb">bind&lt;/span> address 127.0.0.1&lt;span class="o">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Press Ctrl+C to stop
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">^C%
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="修改配置">修改配置
+&lt;/h3>&lt;p>可以边修改博客边在本地预览效果，这里有一个很重要的修改，就是在根目录下的&lt;code>congig.toml&lt;/code>文件中将&lt;code>baseurl&lt;/code>修改为自己的博客地址。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-toml" data-lang="toml">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">baseurl&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="s2">&amp;#34;https://wenjin1997.github.io&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="github-pages发布博客">GitHub Pages发布博客
+&lt;/h2>&lt;p>首先要在github上创建自己&lt;code>&amp;lt;账户名&amp;gt;.github.io&lt;/code>的仓库。&lt;/p>
+&lt;h3 id="手动发布">手动发布
+&lt;/h3>&lt;p>Hugo生成的静态页面会放在public文件夹下。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">hugo
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nb">cd&lt;/span> public
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>接着向远程推送我们的git仓库。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">git init
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">git remote add origin git@github.com:wenjin1997/wenjin1997.github.io
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">git add .
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">git commit -m &lt;span class="s2">&amp;#34;add test&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">git push origin master
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>如果在添加远程仓库时出现错误，参考&lt;a class="link" href="https://blog.csdn.net/top_code/article/details/50381432" target="_blank" rel="noopener"
+>Git 提示fatal: remote origin already exists 错误解决办法&lt;/a>解决方法，用下面的命令删除远程git仓库：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">git remote rm origin
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>接着再用&lt;code>git remote add origin git@github.com:wenjin1997/wenjin1997.github.io&lt;/code>重新添加远程仓库。&lt;/p>
+&lt;p>运行效果如下：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;span class="lnt">30
+&lt;/span>&lt;span class="lnt">31
+&lt;/span>&lt;span class="lnt">32
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">jinjin@Mac-mini hugo-blog % &lt;span class="nb">cd&lt;/span> public
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">jinjin@Mac-mini public % git init
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">hint: Using &lt;span class="s1">&amp;#39;master&amp;#39;&lt;/span> as the name &lt;span class="k">for&lt;/span> the initial branch. This default branch name
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">hint: is subject to change. To configure the initial branch name to use in all
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">hint: of your new repositories, which will suppress this warning, call:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">hint:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">hint: git config --global init.defaultBranch &amp;lt;name&amp;gt;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">hint:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">hint: Names commonly chosen instead of &lt;span class="s1">&amp;#39;master&amp;#39;&lt;/span> are &lt;span class="s1">&amp;#39;main&amp;#39;&lt;/span>, &lt;span class="s1">&amp;#39;trunk&amp;#39;&lt;/span> and
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">hint: &lt;span class="s1">&amp;#39;development&amp;#39;&lt;/span>. The just-created branch can be renamed via this command:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">hint:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">hint: git branch -m &amp;lt;name&amp;gt;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Initialized empty Git repository in /Users/jinjin/code/hugo-blog/public/.git/
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">jinjin@Mac-mini public % git remote add origin git@github.com:wenjin1997/wenjin1997.github.io
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">jinjin@Mac-mini public % git add .
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">jinjin@Mac-mini public % git commit -m &lt;span class="s2">&amp;#34;add test&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">[&lt;/span>master &lt;span class="o">(&lt;/span>root-commit&lt;span class="o">)&lt;/span> af5a609&lt;span class="o">]&lt;/span> add &lt;span class="nb">test&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="m">165&lt;/span> files changed, &lt;span class="m">60905&lt;/span> insertions&lt;span class="o">(&lt;/span>+&lt;span class="o">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> create mode &lt;span class="m">100644&lt;/span> 2017/11/03/hello-world/index.html
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> create mode &lt;span class="m">100644&lt;/span> 2017/11/04/istio-install_and_example/index.html
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> create mode &lt;span class="m">100644&lt;/span> 2017/11/07/istio-traffic-shifting/index.html
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> ...（省略）
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">jinjin@Mac-mini public % git push origin master
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Enumerating objects: 285, &lt;span class="k">done&lt;/span>.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Counting objects: 100% &lt;span class="o">(&lt;/span>285/285&lt;span class="o">)&lt;/span>, &lt;span class="k">done&lt;/span>.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Delta compression using up to &lt;span class="m">8&lt;/span> threads
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Compressing objects: 100% &lt;span class="o">(&lt;/span>213/213&lt;span class="o">)&lt;/span>, &lt;span class="k">done&lt;/span>.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Writing objects: 100% &lt;span class="o">(&lt;/span>285/285&lt;span class="o">)&lt;/span>, 3.32 MiB &lt;span class="p">|&lt;/span> 341.00 KiB/s, &lt;span class="k">done&lt;/span>.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Total &lt;span class="m">285&lt;/span> &lt;span class="o">(&lt;/span>delta 82&lt;span class="o">)&lt;/span>, reused &lt;span class="m">0&lt;/span> &lt;span class="o">(&lt;/span>delta 0&lt;span class="o">)&lt;/span>, pack-reused &lt;span class="m">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">remote: Resolving deltas: 100% &lt;span class="o">(&lt;/span>82/82&lt;span class="o">)&lt;/span>, &lt;span class="k">done&lt;/span>.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">To github.com:wenjin1997/wenjin1997.github.io
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> * &lt;span class="o">[&lt;/span>new branch&lt;span class="o">]&lt;/span> master -&amp;gt; master
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>访问自己的博客地址&lt;a class="link" href="https://wenjin1997.github.io" target="_blank" rel="noopener"
+>wenjin1997.github.io&lt;/a>，可以看到大功告成啦！&lt;/p>
+&lt;h3 id="自动发布">自动发布
+&lt;/h3>&lt;p>使用Github Action 配置自动发布博客，先要创建一个仓库，例如hugo-blog，这里放置博客的源码，包括自己的博客文章、图片等。在仓库创建&lt;code>.github/workflows/deploy.yml&lt;/code>文件，配置如下：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;span class="lnt">30
+&lt;/span>&lt;span class="lnt">31
+&lt;/span>&lt;span class="lnt">32
+&lt;/span>&lt;span class="lnt">33
+&lt;/span>&lt;span class="lnt">34
+&lt;/span>&lt;span class="lnt">35
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-yml" data-lang="yml">&lt;span class="line">&lt;span class="cl">&lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">deploy&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">on&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">push&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">workflow_dispatch&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">schedule&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c"># Runs everyday at 8:00 AM&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">cron&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;0 0 * * *&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">jobs&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">build&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">runs-on&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">ubuntu-latest&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">steps&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">Checkout&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">uses&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">actions/checkout@v2&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">with&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">submodules&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">true&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">fetch-depth&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="m">0&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">Setup Hugo&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">uses&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">peaceiris/actions-hugo@v2&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">with&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">hugo-version&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;latest&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">Build Web&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">run&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">hugo&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">Deploy Web&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">uses&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">peaceiris/actions-gh-pages@v3&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">with&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">PERSONAL_TOKEN&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">${{ secrets.PERSONAL_TOKEN }}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">EXTERNAL_REPOSITORY&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">wenjin1997/wenjin1997.github.io&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">PUBLISH_BRANCH&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">master&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">PUBLISH_DIR&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">./public&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">commit_message&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">${{ github.event.head_commit.message }}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>注意要修改&lt;code> EXTERNAL_REPOSITORY: wenjin1997/wenjin1997.github.io&lt;/code>。&lt;/p>
+&lt;p>&lt;code>Checkout&lt;/code>步骤中的&lt;code>with&lt;/code>中配置的&lt;code>submoudles&lt;/code>值为&lt;code>true&lt;/code>可以同步博客源仓库的子模块。&lt;/p>
+&lt;p>在GitHub账户下&lt;code>Setting - Developer settings - Personal access tokens - Tkens(classic)&lt;/code>创建一个Token。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-19-hugo-post/github-token.png"
+loading="lazy"
+alt="github-token"
+>&lt;/p>
+&lt;p>权限开启&lt;code>repo&lt;/code>和&lt;code>workflow&lt;/code>。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-19-hugo-post/repo-workflow.png"
+loading="lazy"
+alt="repo-workflow"
+>&lt;/p>
+&lt;p>配置后复制生成的Token（只会出现一次），在刚刚创建的源仓库&lt;code>hugo-blog&lt;/code>的&lt;code>Settings - Security - Secretes - Actions&lt;/code>中添加&lt;code>PERSON_TOKEN&lt;/code>为刚刚的Token。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-19-hugo-post/PERSONAL_TOKEN.png"
+loading="lazy"
+alt="PERSONAL_TOKEN"
+>&lt;/p>
+&lt;p>完成上述配置后，本地修改博客文章，向仓库&lt;code>hugo-blog&lt;/code>进行推送，可以触发GitHub Action，会自动生成博客页面并推送到GitHub Pages仓库，GitHub Pages仓库更新后，又会自动触发官方页面部署CI，实现博客发布。&lt;/p>
+&lt;h2 id="博客支持数学公式">博客支持数学公式
+&lt;/h2>&lt;p>参考&lt;a class="link" href="https://shaohanyun.top/posts/env/hugo_mathjax/" target="_blank" rel="noopener"
+>Hugo博客添加LaTeX语法支持&lt;/a>，在主题文件&lt;code>themes/hugo-theme-clean-white/layouts/partials&lt;/code>下创建&lt;code>mathjax.html&lt;/code>，内容为：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;span class="lnt">30
+&lt;/span>&lt;span class="lnt">31
+&lt;/span>&lt;span class="lnt">32
+&lt;/span>&lt;span class="lnt">33
+&lt;/span>&lt;span class="lnt">34
+&lt;/span>&lt;span class="lnt">35
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-html" data-lang="html">&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">script&lt;/span> &lt;span class="na">type&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;text/javascript&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="na">async&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="na">src&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">MathJax&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Hub&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Config&lt;/span>&lt;span class="p">({&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">tex2jax&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">inlineMath&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="p">[[&lt;/span>&lt;span class="s1">&amp;#39;$&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="s1">&amp;#39;$&amp;#39;&lt;/span>&lt;span class="p">],&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s1">&amp;#39;\\(&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="s1">&amp;#39;\\)&amp;#39;&lt;/span>&lt;span class="p">]],&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">displayMath&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="p">[[&lt;/span>&lt;span class="s1">&amp;#39;$$&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="s1">&amp;#39;$$&amp;#39;&lt;/span>&lt;span class="p">],&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s1">&amp;#39;\[\[&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="s1">&amp;#39;\]\]&amp;#39;&lt;/span>&lt;span class="p">]],&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">processEscapes&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="kc">true&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">processEnvironments&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="kc">true&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">skipTags&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s1">&amp;#39;script&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;noscript&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;style&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;textarea&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;pre&amp;#39;&lt;/span>&lt;span class="p">],&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">TeX&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="p">{&lt;/span> &lt;span class="nx">equationNumbers&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="p">{&lt;/span> &lt;span class="nx">autoNumber&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="s2">&amp;#34;AMS&amp;#34;&lt;/span> &lt;span class="p">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">extensions&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s2">&amp;#34;AMSmath.js&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;AMSsymbols.js&amp;#34;&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">});&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">MathJax&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Hub&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Queue&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kd">function&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// Fix &amp;lt;code&amp;gt; tags after MathJax finishes running. This is a
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="c1">// hack to overcome a shortcoming of Markdown. Discussion at
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="c1">// https://github.com/mojombo/jekyll/issues/199
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="kd">var&lt;/span> &lt;span class="nx">all&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">MathJax&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">Hub&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">getAllJax&lt;/span>&lt;span class="p">(),&lt;/span> &lt;span class="nx">i&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">for&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">i&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">0&lt;/span>&lt;span class="p">;&lt;/span> &lt;span class="nx">i&lt;/span> &lt;span class="o">&amp;lt;&lt;/span> &lt;span class="nx">all&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">length&lt;/span>&lt;span class="p">;&lt;/span> &lt;span class="nx">i&lt;/span> &lt;span class="o">+=&lt;/span> &lt;span class="mi">1&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">all&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="nx">i&lt;/span>&lt;span class="p">].&lt;/span>&lt;span class="nx">SourceElement&lt;/span>&lt;span class="p">().&lt;/span>&lt;span class="nx">parentNode&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">className&lt;/span> &lt;span class="o">+=&lt;/span> &lt;span class="s1">&amp;#39; has-jax&amp;#39;&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">});&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">script&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">style&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nt">code&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nc">has-jax&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">font&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="kc">inherit&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">font-size&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="mi">100&lt;/span>&lt;span class="kt">%&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">background&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="kc">inherit&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">border&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="kc">inherit&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">color&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="mh">#515151&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">style&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>在&lt;code>themes/hugo-theme-clean-white/layouts/partials/head.html&lt;/code>文件末尾添加下面一行代码：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-html" data-lang="html">&lt;span class="line">&lt;span class="cl">{{ partial &amp;#34;mathjax.html&amp;#34; . }}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>这样在每个页面都会自动插入代码，支持数学公式了。&lt;/p>
+&lt;p>Tips：上面使用的是MathJax，对于LaTeX公式中的换行符，要使用&lt;code>\\\&lt;/code>三个斜杠代替&lt;code>\\&lt;/code>，例如&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-latex" data-lang="latex">&lt;span class="line">&lt;span class="cl">&lt;span class="k">\begin&lt;/span>&lt;span class="nb">{&lt;/span>aligned&lt;span class="nb">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">\begin&lt;/span>&lt;span class="nb">{&lt;/span>cases&lt;span class="nb">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">\frac&lt;/span>&lt;span class="nb">{&lt;/span>du&lt;span class="nb">}{&lt;/span>dt&lt;span class="nb">}&lt;/span>=-&lt;span class="k">\frac&lt;/span>&lt;span class="nb">{&lt;/span>u&lt;span class="nb">}{&lt;/span>t&lt;span class="nb">}&lt;/span>,1&lt;span class="k">\leq&lt;/span> t&lt;span class="k">\leq&lt;/span> 2, &lt;span class="k">\\\&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> u(1)=1
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">\end&lt;/span>&lt;span class="nb">{&lt;/span>cases&lt;span class="nb">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">\end&lt;/span>&lt;span class="nb">{&lt;/span>aligned&lt;span class="nb">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>这样才能正常显示两行公式：&lt;/p>
+$$
+\begin{aligned}
+\begin{cases}
+\frac{du}{dt}=-\frac{u}{t},1\leq t\leq 2, \\\
+u(1)=1
+\end{cases}
+\end{aligned}
+$$&lt;h2 id="参考资料">参考资料
+&lt;/h2>&lt;ol>
+&lt;li>&lt;a class="link" href="https://themes.gohugo.io/" target="_blank" rel="noopener"
+>Hugo 官网&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://www.pseudoyu.com/zh/2022/05/29/deploy_your_blog_using_hugo_and_github_action/" target="_blank" rel="noopener"
+>Hugo + GitHub Action，搭建你的博客自动发布系统&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://toutiao.io/posts/npcjzh/preview" target="_blank" rel="noopener"
+>如何利用 GitHub Pages 和 Hugo 轻松搭建个人博客？&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://waynerv.com/posts/setup-blog-with-hugo-and-github-pages/" target="_blank" rel="noopener"
+>使用 Hugo 和 GitHub Pages 搭建静态博客&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://themes.gohugo.io/themes/hugo-theme-cleanwhite/" target="_blank" rel="noopener"
+>Hugo Themes: Clean White&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://github.com/zhaohuabing/hugo-theme-cleanwhite" target="_blank" rel="noopener"
+>zhaohuabing/hugo-theme-cleanwhite&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://www.notion.so/github-18e3596e3b5f4c75b78c1c90ccc9594c#3bef0cc6434a4f6ea074149ebaa5aeca" target="_blank" rel="noopener"
+>Failed to connect to github.com port 443: Operation timed out&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://blog.csdn.net/zz00008888/article/details/123529805" target="_blank" rel="noopener"
+>解决 HTTP/2 stream 1 was not closed cleanly before end of the underlying stream&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://blog.csdn.net/top_code/article/details/50381432" target="_blank" rel="noopener"
+>Git 提示fatal: remote origin already exists 错误解决办法&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://shaohanyun.top/posts/env/hugo_mathjax/" target="_blank" rel="noopener"
+>Hugo博客添加LaTeX语法支持&lt;/a>&lt;/li>
+&lt;/ol></description></item></channel></rss>

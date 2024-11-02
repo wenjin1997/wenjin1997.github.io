@@ -1,0 +1,1090 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>元编程 on Jade's Blog</title><link>https://wenjin1997.github.io/tags/%E5%85%83%E7%BC%96%E7%A8%8B/</link><description>Recent content in 元编程 on Jade's Blog</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Tue, 05 Jul 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://wenjin1997.github.io/tags/%E5%85%83%E7%BC%96%E7%A8%8B/index.xml" rel="self" type="application/rss+xml"/><item><title>Rust元编程</title><link>https://wenjin1997.github.io/2022/07/05/Rust-meta-programming/</link><pubDate>Tue, 05 Jul 2022 00:00:00 +0000</pubDate><guid>https://wenjin1997.github.io/2022/07/05/Rust-meta-programming/</guid><description>&lt;p>元编程技术大概分为：&lt;/p>
+&lt;ul>
+&lt;li>简单文本替换&lt;/li>
+&lt;li>类型模板&lt;/li>
+&lt;li>反射&lt;/li>
+&lt;li>语法扩展&lt;/li>
+&lt;li>代码自动生成&lt;/li>
+&lt;/ul>
+&lt;p>Rust语言通过反射和AST语法扩展两种手段来支持元编程。&lt;/p>
+&lt;h2 id="反射">反射
+&lt;/h2>&lt;p>反射机制一般是指程序自我访问、检测和修改其自身状态或行为的能力。Rust标准库提供了&lt;a class="link" href="https://rustwiki.org/zh-CN/std/any/trait.Any.html" target="_blank" rel="noopener"
+>std::any::Any&lt;/a>来支持运行时反射。可以先看下代码结构：&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-07-05-Rust-meta-programming/any-struct.png"
+loading="lazy"
+alt="any-struct"
+>&lt;/p>
+&lt;p>&lt;code>Any&lt;/code>定义：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-rust" data-lang="rust">&lt;span class="line">&lt;span class="cl">&lt;span class="cp">#[stable(feature = &lt;/span>&lt;span class="s">&amp;#34;rust1&amp;#34;&lt;/span>&lt;span class="cp">, since = &lt;/span>&lt;span class="s">&amp;#34;1.0.0&amp;#34;&lt;/span>&lt;span class="cp">)]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="cp">#[cfg_attr(not(test), rustc_diagnostic_item = &lt;/span>&lt;span class="s">&amp;#34;Any&amp;#34;&lt;/span>&lt;span class="cp">)]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">pub&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">trait&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Any&lt;/span>: &lt;span class="nb">&amp;#39;static&lt;/span> &lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="sd">/// Gets the `TypeId` of `self`.
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">///
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// # Examples
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">///
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// ```
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// use std::any::{Any, TypeId};
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">///
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// fn is_string(s: &amp;amp;dyn Any) -&amp;gt; bool {
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// TypeId::of::&amp;lt;String&amp;gt;() == s.type_id()
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// }
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">///
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// assert_eq!(is_string(&amp;amp;0), false);
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// assert_eq!(is_string(&amp;amp;&amp;#34;cookie monster&amp;#34;.to_string()), true);
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// ```
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="cp">#[stable(feature = &lt;/span>&lt;span class="s">&amp;#34;get_type_id&amp;#34;&lt;/span>&lt;span class="cp">, since = &lt;/span>&lt;span class="s">&amp;#34;1.34.0&amp;#34;&lt;/span>&lt;span class="cp">)]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">fn&lt;/span> &lt;span class="nf">type_id&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">&amp;amp;&lt;/span>&lt;span class="bp">self&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>-&amp;gt; &lt;span class="nc">TypeId&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="cp">#[stable(feature = &lt;/span>&lt;span class="s">&amp;#34;rust1&amp;#34;&lt;/span>&lt;span class="cp">, since = &lt;/span>&lt;span class="s">&amp;#34;1.0.0&amp;#34;&lt;/span>&lt;span class="cp">)]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">impl&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">T&lt;/span>: &lt;span class="nb">&amp;#39;static&lt;/span> &lt;span class="o">+&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">?&lt;/span>&lt;span class="nb">Sized&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Any&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">for&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">T&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">fn&lt;/span> &lt;span class="nf">type_id&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">&amp;amp;&lt;/span>&lt;span class="bp">self&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>-&amp;gt; &lt;span class="nc">TypeId&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">TypeId&lt;/span>::&lt;span class="n">of&lt;/span>::&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">T&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>该 trait 加上了&lt;code>'static&lt;/code> 生命周期限定，意味着该 trait 不能被非静态生命周期的类型实现。 &lt;code>impl&amp;lt;T: 'static + ?Sized&amp;gt; Any for T&lt;/code> 表示 Rust 中满足 &lt;code>'static&lt;/code> 生命周期的类型均实现了它。&lt;/li>
+&lt;li>&lt;code>type_id&lt;/code>方法返回 &lt;code>TypeId&lt;/code> 类型，代表 Rust 中某个类型的全局唯一标识，它是在编译时生成的。&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-rust" data-lang="rust">&lt;span class="line">&lt;span class="cl">&lt;span class="cp">#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug, Hash)]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="cp">#[stable(feature = &lt;/span>&lt;span class="s">&amp;#34;rust1&amp;#34;&lt;/span>&lt;span class="cp">, since = &lt;/span>&lt;span class="s">&amp;#34;1.0.0&amp;#34;&lt;/span>&lt;span class="cp">)]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">pub&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">struct&lt;/span> &lt;span class="nc">TypeId&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">t&lt;/span>: &lt;span class="kt">u64&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">impl&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">TypeId&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="sd">/// Returns the `TypeId` of the type this generic function has been
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// instantiated with.
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">///
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// # Examples
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">///
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// ```
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// use std::any::{Any, TypeId};
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">///
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// fn is_string&amp;lt;T: ?Sized + Any&amp;gt;(_s: &amp;amp;T) -&amp;gt; bool {
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// TypeId::of::&amp;lt;String&amp;gt;() == TypeId::of::&amp;lt;T&amp;gt;()
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// }
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">///
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// assert_eq!(is_string(&amp;amp;0), false);
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// assert_eq!(is_string(&amp;amp;&amp;#34;cookie monster&amp;#34;.to_string()), true);
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// ```
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="cp">#[must_use]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="cp">#[stable(feature = &lt;/span>&lt;span class="s">&amp;#34;rust1&amp;#34;&lt;/span>&lt;span class="cp">, since = &lt;/span>&lt;span class="s">&amp;#34;1.0.0&amp;#34;&lt;/span>&lt;span class="cp">)]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="cp">#[rustc_const_unstable(feature = &lt;/span>&lt;span class="s">&amp;#34;const_type_id&amp;#34;&lt;/span>&lt;span class="cp">, issue = &lt;/span>&lt;span class="s">&amp;#34;77125&amp;#34;&lt;/span>&lt;span class="cp">)]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">pub&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">const&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">fn&lt;/span> &lt;span class="nf">of&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">T&lt;/span>: &lt;span class="o">?&lt;/span>&lt;span class="nb">Sized&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nb">&amp;#39;static&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>-&amp;gt; &lt;span class="nc">TypeId&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">TypeId&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">t&lt;/span>: &lt;span class="nc">intrinsics&lt;/span>::&lt;span class="n">type_id&lt;/span>::&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">T&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>每个 &lt;code>TypeId&lt;/code> 都是一个“黑盒”，不能检查其内部内容，但是允许复制、比较、打印等操作。&lt;code>TypeId&lt;/code> 当前仅适用于归因于 &lt;code>'static&lt;/code> 的类型，但是可以在 future 中消除此限制。&lt;/li>
+&lt;/ul>
+&lt;h3 id="通过-is-函数判断类型">通过 is 函数判断类型
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;span class="lnt">30
+&lt;/span>&lt;span class="lnt">31
+&lt;/span>&lt;span class="lnt">32
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-rust" data-lang="rust">&lt;span class="line">&lt;span class="cl">&lt;span class="k">impl&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">dyn&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Any&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="sd">/// Returns `true` if the inner type is the same as `T`.
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">///
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// # Examples
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">///
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// ```
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// use std::any::Any;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">///
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// fn is_string(s: &amp;amp;dyn Any) {
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// if s.is::&amp;lt;String&amp;gt;() {
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// println!(&amp;#34;It&amp;#39;s a string!&amp;#34;);
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// } else {
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// println!(&amp;#34;Not a string...&amp;#34;);
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// }
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// }
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">///
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// is_string(&amp;amp;0);
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// is_string(&amp;amp;&amp;#34;cookie monster&amp;#34;.to_string());
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// ```
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="cp">#[stable(feature = &lt;/span>&lt;span class="s">&amp;#34;rust1&amp;#34;&lt;/span>&lt;span class="cp">, since = &lt;/span>&lt;span class="s">&amp;#34;1.0.0&amp;#34;&lt;/span>&lt;span class="cp">)]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="cp">#[inline]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">pub&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">fn&lt;/span> &lt;span class="nf">is&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">T&lt;/span>: &lt;span class="nc">Any&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">&amp;amp;&lt;/span>&lt;span class="bp">self&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>-&amp;gt; &lt;span class="kt">bool&lt;/span> &lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c1">// Get `TypeId` of the type this function is instantiated with.
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">t&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">TypeId&lt;/span>::&lt;span class="n">of&lt;/span>::&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">T&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c1">// Get `TypeId` of the type in the trait object (`self`).
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">concrete&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="bp">self&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">type_id&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c1">// Compare both `TypeId`s on equality.
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">t&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">==&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">concrete&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>因为 &lt;code>Any&lt;/code> 是一个 trait ，所以这里的 &lt;code>is&lt;/code>方法的 &lt;code>&amp;amp;self&lt;/code> 必然是一个 trait 对象。&lt;/li>
+&lt;li>&lt;code>TypeId::of&lt;/code> 函数用来获取类型 &lt;code>T&lt;/code> 的全局唯一标识符 &lt;code>t&lt;/code> 。&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-rust" data-lang="rust">&lt;span class="line">&lt;span class="cl">&lt;span class="sd">//! 代码清单 12-3: Any 中实现 is 方法源码示意
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">//! 《Rust编程之道》P436
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">use&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">std&lt;/span>::&lt;span class="n">any&lt;/span>::&lt;span class="p">{&lt;/span>&lt;span class="n">Any&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">TypeId&lt;/span>&lt;span class="p">};&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">enum&lt;/span> &lt;span class="nc">E&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">H&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">He&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Li&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">struct&lt;/span> &lt;span class="nc">S&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">x&lt;/span>: &lt;span class="kt">u8&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">y&lt;/span>: &lt;span class="kt">u8&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">z&lt;/span>: &lt;span class="kt">u16&lt;/span> &lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="cp">#[test]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">fn&lt;/span> &lt;span class="nf">main&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">v1&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mh">0xc0ffee_&lt;/span>&lt;span class="k">u32&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">v2&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">E&lt;/span>::&lt;span class="n">He&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">v3&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">S&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">x&lt;/span>: &lt;span class="mh">0xde&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">y&lt;/span>: &lt;span class="mh">0xad&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">z&lt;/span>: &lt;span class="mh">0xbeef&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">};&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">v4&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s">&amp;#34;rust&amp;#34;&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">mut&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">a&lt;/span>: &lt;span class="kp">&amp;amp;&lt;/span>&lt;span class="nc">dyn&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Any&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">a&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">&amp;amp;&lt;/span>&lt;span class="n">v1&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="fm">assert!&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">a&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">is&lt;/span>::&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="kt">u32&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="p">());&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="fm">println!&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;&lt;/span>&lt;span class="si">{:?}&lt;/span>&lt;span class="s">&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">TypeId&lt;/span>::&lt;span class="n">of&lt;/span>::&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="kt">u32&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="p">());&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">a&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">&amp;amp;&lt;/span>&lt;span class="n">v2&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="fm">assert!&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">a&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">is&lt;/span>::&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">E&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="p">());&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="fm">println!&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;&lt;/span>&lt;span class="si">{:?}&lt;/span>&lt;span class="s">&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">TypeId&lt;/span>::&lt;span class="n">of&lt;/span>::&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">E&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="p">());&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">a&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">&amp;amp;&lt;/span>&lt;span class="n">v3&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="fm">assert!&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">a&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">is&lt;/span>::&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">S&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="p">());&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="fm">println!&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;&lt;/span>&lt;span class="si">{:?}&lt;/span>&lt;span class="s">&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">TypeId&lt;/span>::&lt;span class="n">of&lt;/span>::&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">S&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="p">());&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">a&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">&amp;amp;&lt;/span>&lt;span class="n">v4&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="fm">assert!&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">a&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">is&lt;/span>::&lt;span class="o">&amp;lt;&amp;amp;&lt;/span>&lt;span class="kt">str&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="p">());&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="fm">println!&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;&lt;/span>&lt;span class="si">{:?}&lt;/span>&lt;span class="s">&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">TypeId&lt;/span>::&lt;span class="n">of&lt;/span>::&lt;span class="o">&amp;lt;&amp;amp;&lt;/span>&lt;span class="kt">str&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="p">());&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>输出结果：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">TypeId &lt;span class="o">{&lt;/span> t: &lt;span class="m">18349839772473174998&lt;/span> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">TypeId &lt;span class="o">{&lt;/span> t: &lt;span class="m">5500635625788377815&lt;/span> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">TypeId &lt;span class="o">{&lt;/span> t: &lt;span class="m">4485408004367722735&lt;/span> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">TypeId &lt;span class="o">{&lt;/span> t: &lt;span class="m">13307641874416792075&lt;/span> &lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>&lt;code>TypeId&lt;/code> 是一个结构体，其字段 &lt;code>t&lt;/code> 存储了一串数字，这就是全局唯一类型标识符，实际上是 u64 类型。代表唯一标识符的这串数字，在不同的编译环境中，产生的结果是不同的。所以在实际开发中，最好不要将 &lt;code>TypeId&lt;/code> 暴露到外部接口中被当作依赖。&lt;/li>
+&lt;/ul>
+&lt;h3 id="转换到具体类型">转换到具体类型
+&lt;/h3>&lt;p>Any 提供了 &lt;code>downcast_ref&lt;/code> 和 &lt;code>downcast_mut&lt;/code> 两个成对的泛型方法，用于将泛型T向下转换为具体的类型，返回值分别是 &lt;code>Option&amp;lt;&amp;amp;T&amp;gt;&lt;/code> 和 &lt;code>Option&amp;lt;&amp;amp;mut T&amp;gt;&lt;/code> 类型。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;span class="lnt">30
+&lt;/span>&lt;span class="lnt">31
+&lt;/span>&lt;span class="lnt">32
+&lt;/span>&lt;span class="lnt">33
+&lt;/span>&lt;span class="lnt">34
+&lt;/span>&lt;span class="lnt">35
+&lt;/span>&lt;span class="lnt">36
+&lt;/span>&lt;span class="lnt">37
+&lt;/span>&lt;span class="lnt">38
+&lt;/span>&lt;span class="lnt">39
+&lt;/span>&lt;span class="lnt">40
+&lt;/span>&lt;span class="lnt">41
+&lt;/span>&lt;span class="lnt">42
+&lt;/span>&lt;span class="lnt">43
+&lt;/span>&lt;span class="lnt">44
+&lt;/span>&lt;span class="lnt">45
+&lt;/span>&lt;span class="lnt">46
+&lt;/span>&lt;span class="lnt">47
+&lt;/span>&lt;span class="lnt">48
+&lt;/span>&lt;span class="lnt">49
+&lt;/span>&lt;span class="lnt">50
+&lt;/span>&lt;span class="lnt">51
+&lt;/span>&lt;span class="lnt">52
+&lt;/span>&lt;span class="lnt">53
+&lt;/span>&lt;span class="lnt">54
+&lt;/span>&lt;span class="lnt">55
+&lt;/span>&lt;span class="lnt">56
+&lt;/span>&lt;span class="lnt">57
+&lt;/span>&lt;span class="lnt">58
+&lt;/span>&lt;span class="lnt">59
+&lt;/span>&lt;span class="lnt">60
+&lt;/span>&lt;span class="lnt">61
+&lt;/span>&lt;span class="lnt">62
+&lt;/span>&lt;span class="lnt">63
+&lt;/span>&lt;span class="lnt">64
+&lt;/span>&lt;span class="lnt">65
+&lt;/span>&lt;span class="lnt">66
+&lt;/span>&lt;span class="lnt">67
+&lt;/span>&lt;span class="lnt">68
+&lt;/span>&lt;span class="lnt">69
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-rust" data-lang="rust">&lt;span class="line">&lt;span class="cl">&lt;span class="k">impl&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">dyn&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Any&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="sd">/// Returns some reference to the inner value if it is of type `T`, or
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// `None` if it isn&amp;#39;t.
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">///
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// # Examples
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">///
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// ```
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// use std::any::Any;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">///
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// fn print_if_string(s: &amp;amp;dyn Any) {
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// if let Some(string) = s.downcast_ref::&amp;lt;String&amp;gt;() {
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// println!(&amp;#34;It&amp;#39;s a string({}): &amp;#39;{}&amp;#39;&amp;#34;, string.len(), string);
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// } else {
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// println!(&amp;#34;Not a string...&amp;#34;);
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// }
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// }
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">///
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// print_if_string(&amp;amp;0);
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// print_if_string(&amp;amp;&amp;#34;cookie monster&amp;#34;.to_string());
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// ```
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="cp">#[stable(feature = &lt;/span>&lt;span class="s">&amp;#34;rust1&amp;#34;&lt;/span>&lt;span class="cp">, since = &lt;/span>&lt;span class="s">&amp;#34;1.0.0&amp;#34;&lt;/span>&lt;span class="cp">)]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="cp">#[inline]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">pub&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">fn&lt;/span> &lt;span class="nf">downcast_ref&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">T&lt;/span>: &lt;span class="nc">Any&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">&amp;amp;&lt;/span>&lt;span class="bp">self&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>-&amp;gt; &lt;span class="nb">Option&lt;/span>&lt;span class="o">&amp;lt;&amp;amp;&lt;/span>&lt;span class="n">T&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="bp">self&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">is&lt;/span>::&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">T&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c1">// SAFETY: just checked whether we are pointing to the correct type, and we can rely on
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c1">// that check for memory safety because we have implemented Any for all types; no other
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c1">// impls can exist as they would conflict with our impl.
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">unsafe&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nb">Some&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="bp">self&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">downcast_ref_unchecked&lt;/span>&lt;span class="p">())&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">else&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nb">None&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="sd">/// Returns some mutable reference to the inner value if it is of type `T`, or
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// `None` if it isn&amp;#39;t.
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">///
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// # Examples
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">///
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// ```
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// use std::any::Any;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">///
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// fn modify_if_u32(s: &amp;amp;mut dyn Any) {
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// if let Some(num) = s.downcast_mut::&amp;lt;u32&amp;gt;() {
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// *num = 42;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// }
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// }
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">///
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// let mut x = 10u32;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// let mut s = &amp;#34;starlord&amp;#34;.to_string();
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">///
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// modify_if_u32(&amp;amp;mut x);
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// modify_if_u32(&amp;amp;mut s);
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">///
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// assert_eq!(x, 42);
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// assert_eq!(&amp;amp;s, &amp;#34;starlord&amp;#34;);
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="sd">/// ```
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="cp">#[stable(feature = &lt;/span>&lt;span class="s">&amp;#34;rust1&amp;#34;&lt;/span>&lt;span class="cp">, since = &lt;/span>&lt;span class="s">&amp;#34;1.0.0&amp;#34;&lt;/span>&lt;span class="cp">)]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="cp">#[inline]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">pub&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">fn&lt;/span> &lt;span class="nf">downcast_mut&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">T&lt;/span>: &lt;span class="nc">Any&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">&amp;amp;&lt;/span>&lt;span class="k">mut&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="bp">self&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>-&amp;gt; &lt;span class="nb">Option&lt;/span>&lt;span class="o">&amp;lt;&amp;amp;&lt;/span>&lt;span class="k">mut&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">T&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="bp">self&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">is&lt;/span>::&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">T&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c1">// SAFETY: just checked whether we are pointing to the correct type, and we can rely on
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c1">// that check for memory safety because we have implemented Any for all types; no other
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c1">// impls can exist as they would conflict with our impl.
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">unsafe&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nb">Some&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="bp">self&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">downcast_mut_unchecked&lt;/span>&lt;span class="p">())&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">else&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nb">None&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="非静态生命周期类型">非静态生命周期类型
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-rust" data-lang="rust">&lt;span class="line">&lt;span class="cl">&lt;span class="sd">//! 代码清单 12-9: 非静态生命周期类型没有实现 Any
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">&lt;/span>&lt;span class="k">use&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">std&lt;/span>::&lt;span class="n">any&lt;/span>::&lt;span class="n">Any&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">struct&lt;/span> &lt;span class="nc">Unstatic&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="na">&amp;#39;a&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">x&lt;/span>: &lt;span class="kp">&amp;amp;&lt;/span>&lt;span class="na">&amp;#39;a&lt;/span> &lt;span class="kt">i32&lt;/span> &lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="cp">#[test]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">fn&lt;/span> &lt;span class="nf">main&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">a&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">42&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">v&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Unstatic&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">x&lt;/span>: &lt;span class="kp">&amp;amp;&lt;/span>&lt;span class="nc">a&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">};&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">mut&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">any&lt;/span>: &lt;span class="kp">&amp;amp;&lt;/span>&lt;span class="nc">dyn&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Any&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c1">// any = &amp;amp;v; // 编译错误
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>带引用字段的结构体 &lt;code>Unstatic&amp;lt;'a&amp;gt;&lt;/code> ，其生命周期不是静态的，编译会报错。&lt;/li>
+&lt;/ul>
+&lt;p>修改：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-rust" data-lang="rust">&lt;span class="line">&lt;span class="cl">&lt;span class="cp">#![allow(unused)]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">use&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">std&lt;/span>::&lt;span class="n">any&lt;/span>::&lt;span class="n">Any&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">struct&lt;/span> &lt;span class="nc">UnStatic&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="na">&amp;#39;a&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">x&lt;/span>: &lt;span class="kp">&amp;amp;&lt;/span>&lt;span class="na">&amp;#39;a&lt;/span> &lt;span class="kt">i32&lt;/span> &lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">static&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="no">ANSWER&lt;/span>: &lt;span class="kt">i32&lt;/span> &lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">42&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">fn&lt;/span> &lt;span class="nf">main&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">v&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">UnStatic&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">x&lt;/span>: &lt;span class="kp">&amp;amp;&lt;/span>&lt;span class="nc">ANSWER&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">};&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">mut&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">a&lt;/span>: &lt;span class="kp">&amp;amp;&lt;/span>&lt;span class="nc">dyn&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Any&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">a&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">&amp;amp;&lt;/span>&lt;span class="n">v&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="fm">assert!&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">a&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">is&lt;/span>::&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">UnStatic&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="p">());&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="any-的应用">Any 的应用
+&lt;/h3>&lt;ul>
+&lt;li>&lt;a class="link" href="https://github.com/osohq/oso/blob/main/languages/rust/oso/src/host/class.rs" target="_blank" rel="noopener"
+>oso库应用&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://github.com/bevyengine/bevy/blob/main/crates/bevy_reflect/src/lib.rs" target="_blank" rel="noopener"
+>bevy_reflect库应用&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h3 id="remark">Remark
+&lt;/h3>&lt;p>在2018 Edition 中，以下语句不会报错：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-rust" data-lang="rust">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">mut&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">a&lt;/span>: &lt;span class="kp">&amp;amp;&lt;/span>&lt;span class="nc">Any&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c1">// 2018 Edition Ok
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">mut&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">a&lt;/span>: &lt;span class="kp">&amp;amp;&lt;/span>&lt;span class="nc">dyn&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Any&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c1">// 2018 Edition Ok
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>但是在2021 Edition中，必须加上 &lt;code>dyn&lt;/code> 。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-rust" data-lang="rust">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">mut&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">a&lt;/span>: &lt;span class="kp">&amp;amp;&lt;/span>&lt;span class="nc">Any&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c1">// 2021 Edition Error: trait objects must include the `dyn` keyword
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">mut&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">a&lt;/span>: &lt;span class="kp">&amp;amp;&lt;/span>&lt;span class="nc">dyn&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Any&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c1">// 2021 Edition Ok
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="宏系统">宏系统
+&lt;/h2>&lt;p>Rust编译过程：&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-07-05-Rust-meta-programming/compile-process.png"
+loading="lazy"
+alt="compile-process"
+>&lt;/p>
+&lt;h3 id="声明宏">声明宏
+&lt;/h3>&lt;p>宏展开命令： cargo rustc – -Z unstable-options –pretty=expanded&lt;/p>
+&lt;p>示例1:&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-rust" data-lang="rust">&lt;span class="line">&lt;span class="cl">&lt;span class="cp">#![allow(unused)]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="n">macro_rules&lt;/span>&lt;span class="o">!&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">unless&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="cp">$arg&lt;/span>:&lt;span class="nc">expr&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="cp">$branch&lt;/span>:&lt;span class="nc">expr&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">!&lt;/span>&lt;span class="cp">$arg&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="cp">$branch&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">};);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">fn&lt;/span> &lt;span class="nf">cmp&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">a&lt;/span>: &lt;span class="kt">i32&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">b&lt;/span>: &lt;span class="kt">i32&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="fm">unless!&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">a&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">b&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="fm">println!&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;&lt;/span>&lt;span class="si">{}&lt;/span>&lt;span class="s"> &amp;lt; &lt;/span>&lt;span class="si">{}&lt;/span>&lt;span class="s">&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">a&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">b&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">});&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">fn&lt;/span> &lt;span class="nf">main&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">a&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">b&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">2&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">cmp&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">a&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">b&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>支持token类型：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">item — an item, like a &lt;span class="k">function&lt;/span>, struct, module, etc.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">block — a block &lt;span class="o">(&lt;/span>i.e. a block of statements and/or an expression, surrounded by braces&lt;span class="o">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">stmt — a statement
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">pat — a pattern
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">expr — an expression
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">ty — a &lt;span class="nb">type&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">ident — an identifier 标识符
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">path — a path &lt;span class="o">(&lt;/span>e.g., foo, ::std::mem::replace, transmute::&amp;lt;_, int&amp;gt;, …&lt;span class="o">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">meta — a meta item&lt;span class="p">;&lt;/span> the things that go inside &lt;span class="c1">#[...] and #![...] attributes&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">tt — a single token tree
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">vis — a possibly empty Visibility qualifier
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">lifetime — 指代声明周期参数
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>hashmap 1.0&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-rust" data-lang="rust">&lt;span class="line">&lt;span class="cl">&lt;span class="n">macro_rules&lt;/span>&lt;span class="o">!&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">hashmap&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="cp">$($key&lt;/span>:&lt;span class="nc">expr&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="cp">$value&lt;/span>:&lt;span class="nc">expr&lt;/span>&lt;span class="p">),&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">mut&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">_map&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>::&lt;span class="n">std&lt;/span>::&lt;span class="n">collections&lt;/span>::&lt;span class="n">HashMap&lt;/span>::&lt;span class="n">new&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="cp">$(&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">_map&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">insert&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="cp">$key&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="cp">$value&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">_map&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">};&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="cp">#[test]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">fn&lt;/span> &lt;span class="nf">main&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">map&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="fm">hashmap!&lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="s">&amp;#34;a&amp;#34;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="s">&amp;#34;b&amp;#34;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">2&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c1">// &amp;#34;c&amp;#34; =&amp;gt; 3, // 会报错，不支持结尾有逗号
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">};&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="fm">assert_eq!&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">map&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="s">&amp;#34;a&amp;#34;&lt;/span>&lt;span class="p">],&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>hashmap 2.0：可以匹配结尾有逗号&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-rust" data-lang="rust">&lt;span class="line">&lt;span class="cl">&lt;span class="n">macro_rules&lt;/span>&lt;span class="o">!&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">hashmap&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="cp">$($key&lt;/span>:&lt;span class="nc">expr&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="cp">$value&lt;/span>:&lt;span class="nc">expr&lt;/span>&lt;span class="p">,)&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&amp;gt;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="fm">hashmap!&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="cp">$($key&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="cp">$value&lt;/span>&lt;span class="p">),&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">};&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="cp">$($key&lt;/span>:&lt;span class="nc">expr&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="cp">$value&lt;/span>:&lt;span class="nc">expr&lt;/span>&lt;span class="p">),&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">mut&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">_map&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>::&lt;span class="n">std&lt;/span>::&lt;span class="n">collections&lt;/span>::&lt;span class="n">HashMap&lt;/span>::&lt;span class="n">new&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="cp">$(&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">_map&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">insert&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="cp">$key&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="cp">$value&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">_map&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">};&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="cp">#[test]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">fn&lt;/span> &lt;span class="nf">main&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">map&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="fm">hashmap!&lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="s">&amp;#34;a&amp;#34;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="s">&amp;#34;b&amp;#34;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">2&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="s">&amp;#34;c&amp;#34;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">3&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">};&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="fm">assert_eq!&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">map&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="s">&amp;#34;a&amp;#34;&lt;/span>&lt;span class="p">],&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>hashmap 3.0&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-rust" data-lang="rust">&lt;span class="line">&lt;span class="cl">&lt;span class="n">macro_rules&lt;/span>&lt;span class="o">!&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">hashmap&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="cp">$($key&lt;/span>:&lt;span class="nc">expr&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="cp">$value&lt;/span>:&lt;span class="nc">expr&lt;/span>&lt;span class="p">),&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="cp">$(,&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">mut&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">_map&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>::&lt;span class="n">std&lt;/span>::&lt;span class="n">collections&lt;/span>::&lt;span class="n">HashMap&lt;/span>::&lt;span class="n">new&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="cp">$(&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">_map&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">insert&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="cp">$key&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="cp">$value&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">_map&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">};&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="cp">#[test]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">fn&lt;/span> &lt;span class="nf">main&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">map&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="fm">hashmap!&lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="s">&amp;#34;a&amp;#34;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="s">&amp;#34;b&amp;#34;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">2&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="s">&amp;#34;c&amp;#34;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">3&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">};&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="fm">assert_eq!&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">map&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="s">&amp;#34;a&amp;#34;&lt;/span>&lt;span class="p">],&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>hashmap 4.0 ： 节省存储空间&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-rust" data-lang="rust">&lt;span class="line">&lt;span class="cl">&lt;span class="n">macro_rules&lt;/span>&lt;span class="o">!&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">unit&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="cp">$($x&lt;/span>:&lt;span class="nc">tt&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(());&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="n">macro_rules&lt;/span>&lt;span class="o">!&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">count&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="cp">$($key&lt;/span>:&lt;span class="nc">expr&lt;/span>&lt;span class="p">),&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="p">[()]&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>::&lt;span class="n">len&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">&amp;amp;&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="cp">$(&lt;/span>&lt;span class="fm">unit!&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="cp">$key&lt;/span>&lt;span class="p">)),&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="p">]));&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="n">macro_rules&lt;/span>&lt;span class="o">!&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">hashmap&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="cp">$($key&lt;/span>:&lt;span class="nc">expr&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="cp">$value&lt;/span>:&lt;span class="nc">expr&lt;/span>&lt;span class="p">),&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="cp">$(,&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">_cap&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="fm">count!&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="cp">$($key&lt;/span>&lt;span class="p">),&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">mut&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">_map&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>::&lt;span class="n">std&lt;/span>::&lt;span class="n">collections&lt;/span>::&lt;span class="n">HashMap&lt;/span>::&lt;span class="n">with_capacity&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">_cap&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="cp">$(&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">_map&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">insert&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="cp">$key&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="cp">$value&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">_map&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">};&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="cp">#[test]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">fn&lt;/span> &lt;span class="nf">main&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">map&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="fm">hashmap!&lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="s">&amp;#34;a&amp;#34;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="s">&amp;#34;b&amp;#34;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">2&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="s">&amp;#34;c&amp;#34;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">3&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">};&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="fm">assert_eq!&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">map&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="s">&amp;#34;a&amp;#34;&lt;/span>&lt;span class="p">],&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>hashmap 5.0：将声明宏放在一起&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-rust" data-lang="rust">&lt;span class="line">&lt;span class="cl">&lt;span class="n">macro_rules&lt;/span>&lt;span class="o">!&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">hashmap&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">@&lt;/span>&lt;span class="n">unit&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="cp">$($x&lt;/span>:&lt;span class="nc">tt&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(());&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">@&lt;/span>&lt;span class="n">count&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="cp">$($rest&lt;/span>:&lt;span class="nc">expr&lt;/span>&lt;span class="p">),&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="p">[()]&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>::&lt;span class="n">len&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">&amp;amp;&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="cp">$(&lt;/span>&lt;span class="fm">hashmap!&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">@&lt;/span>&lt;span class="n">unit&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="cp">$rest&lt;/span>&lt;span class="p">)),&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="p">]));&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="cp">$($key&lt;/span>:&lt;span class="nc">expr&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="cp">$value&lt;/span>:&lt;span class="nc">expr&lt;/span>&lt;span class="p">),&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="cp">$(,&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">_cap&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="fm">hashmap!&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">@&lt;/span>&lt;span class="n">count&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="cp">$($key&lt;/span>&lt;span class="p">),&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">mut&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">_map&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>::&lt;span class="n">std&lt;/span>::&lt;span class="n">collections&lt;/span>::&lt;span class="n">HashMap&lt;/span>::&lt;span class="n">with_capacity&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">_cap&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="cp">$(&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">_map&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">insert&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="cp">$key&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="cp">$value&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">_map&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">};&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="cp">#[test]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">fn&lt;/span> &lt;span class="nf">main&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">map&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="fm">hashmap!&lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="s">&amp;#34;a&amp;#34;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="s">&amp;#34;b&amp;#34;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">2&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="s">&amp;#34;c&amp;#34;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">3&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">};&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="fm">assert_eq!&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">map&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="s">&amp;#34;a&amp;#34;&lt;/span>&lt;span class="p">],&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>示例：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-rust" data-lang="rust">&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">macro_rules&lt;/span>&lt;span class="o">!&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">sum&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="cp">$e&lt;/span>:&lt;span class="nc">expr&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">({&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">a&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">2&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="cp">$e&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">a&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">})&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">fn&lt;/span> &lt;span class="nf">main&lt;/span>&lt;span class="p">(){&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c1">// error[E0425]: cannot find value `a` in this scope
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">four&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="fm">sum!&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">a&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>注意这里会报错，宏里面的 &lt;code>a&lt;/code> 变量是局部的。&lt;/li>
+&lt;/ul>
+&lt;h3 id="过程宏">过程宏
+&lt;/h3>&lt;p>过程宏三件套：&lt;/p>
+&lt;ul>
+&lt;li>&lt;a class="link" href="https://github.com/dtolnay/syn" target="_blank" rel="noopener"
+>syn&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://github.com/dtolnay/quote" target="_blank" rel="noopener"
+>quote&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://github.com/alexcrichton/proc-macro2" target="_blank" rel="noopener"
+>proc-macro2&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;p>介绍：&lt;/p>
+&lt;ul>
+&lt;li>Syn is a parsing library for parsing a stream of Rust tokens into a syntax tree of Rust source code. 将 token 流转换成语法树。&lt;/li>
+&lt;li>quote: This crate provides the &lt;a class="link" href="https://docs.rs/quote/1.0/quote/macro.quote.html" target="_blank" rel="noopener"
+>&lt;code>quote!&lt;/code>&lt;/a> macro for turning Rust syntax tree data structures into tokens of source code. 将语法树转换成 token 源码。&lt;/li>
+&lt;li>proc-macro2 比 proc-macro 更加的灵活。TokenStream API接口。&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;span class="lnt">30
+&lt;/span>&lt;span class="lnt">31
+&lt;/span>&lt;span class="lnt">32
+&lt;/span>&lt;span class="lnt">33
+&lt;/span>&lt;span class="lnt">34
+&lt;/span>&lt;span class="lnt">35
+&lt;/span>&lt;span class="lnt">36
+&lt;/span>&lt;span class="lnt">37
+&lt;/span>&lt;span class="lnt">38
+&lt;/span>&lt;span class="lnt">39
+&lt;/span>&lt;span class="lnt">40
+&lt;/span>&lt;span class="lnt">41
+&lt;/span>&lt;span class="lnt">42
+&lt;/span>&lt;span class="lnt">43
+&lt;/span>&lt;span class="lnt">44
+&lt;/span>&lt;span class="lnt">45
+&lt;/span>&lt;span class="lnt">46
+&lt;/span>&lt;span class="lnt">47
+&lt;/span>&lt;span class="lnt">48
+&lt;/span>&lt;span class="lnt">49
+&lt;/span>&lt;span class="lnt">50
+&lt;/span>&lt;span class="lnt">51
+&lt;/span>&lt;span class="lnt">52
+&lt;/span>&lt;span class="lnt">53
+&lt;/span>&lt;span class="lnt">54
+&lt;/span>&lt;span class="lnt">55
+&lt;/span>&lt;span class="lnt">56
+&lt;/span>&lt;span class="lnt">57
+&lt;/span>&lt;span class="lnt">58
+&lt;/span>&lt;span class="lnt">59
+&lt;/span>&lt;span class="lnt">60
+&lt;/span>&lt;span class="lnt">61
+&lt;/span>&lt;span class="lnt">62
+&lt;/span>&lt;span class="lnt">63
+&lt;/span>&lt;span class="lnt">64
+&lt;/span>&lt;span class="lnt">65
+&lt;/span>&lt;span class="lnt">66
+&lt;/span>&lt;span class="lnt">67
+&lt;/span>&lt;span class="lnt">68
+&lt;/span>&lt;span class="lnt">69
+&lt;/span>&lt;span class="lnt">70
+&lt;/span>&lt;span class="lnt">71
+&lt;/span>&lt;span class="lnt">72
+&lt;/span>&lt;span class="lnt">73
+&lt;/span>&lt;span class="lnt">74
+&lt;/span>&lt;span class="lnt">75
+&lt;/span>&lt;span class="lnt">76
+&lt;/span>&lt;span class="lnt">77
+&lt;/span>&lt;span class="lnt">78
+&lt;/span>&lt;span class="lnt">79
+&lt;/span>&lt;span class="lnt">80
+&lt;/span>&lt;span class="lnt">81
+&lt;/span>&lt;span class="lnt">82
+&lt;/span>&lt;span class="lnt">83
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-rust" data-lang="rust">&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c1">// find_by_or!{ Person -&amp;gt; people::[name:String || company_name:String] }
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">use&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">super&lt;/span>::&lt;span class="o">*&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">pub&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">struct&lt;/span> &lt;span class="nc">DbOpByOrBy&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">pub&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">model&lt;/span>: &lt;span class="nc">Type&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">pub&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">table&lt;/span>: &lt;span class="nc">Ident&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">pub&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">bracket_token&lt;/span>: &lt;span class="nc">token&lt;/span>::&lt;span class="n">Bracket&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">pub&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">content&lt;/span>: &lt;span class="nc">FieldContentOr&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">pub&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">struct&lt;/span> &lt;span class="nc">FieldContentOr&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">pub&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">name1&lt;/span>: &lt;span class="nc">Ident&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">pub&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">ty1&lt;/span>: &lt;span class="nc">Type&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">pub&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">name2&lt;/span>: &lt;span class="nc">Ident&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">pub&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">ty2&lt;/span>: &lt;span class="nc">Type&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">impl&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Parse&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">for&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">DbOpByOrBy&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">fn&lt;/span> &lt;span class="nf">parse&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">input&lt;/span>: &lt;span class="nc">ParseStream&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>-&amp;gt; &lt;span class="nb">Result&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="bp">Self&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">content&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">model&lt;/span>: &lt;span class="nc">Type&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">input&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">parse&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="o">?&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">input&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">parse&lt;/span>::&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="fm">Token!&lt;/span>&lt;span class="p">[&lt;/span>-&amp;gt;&lt;span class="p">]&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="o">?&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">table&lt;/span>: &lt;span class="nc">Ident&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">input&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">parse&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="o">?&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">input&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">parse&lt;/span>::&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="fm">Token!&lt;/span>&lt;span class="p">[&lt;/span>::&lt;span class="p">]&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="o">?&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">bracket_token&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="fm">bracketed!&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">content&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">in&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">input&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">content&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">content&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">parse&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="o">?&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nb">Ok&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">DbOpByOrBy&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">model&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">table&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">bracket_token&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">content&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">})&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">impl&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Parse&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">for&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">FieldContentOr&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">fn&lt;/span> &lt;span class="nf">parse&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">input&lt;/span>: &lt;span class="nc">ParseStream&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>-&amp;gt; &lt;span class="nb">Result&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="bp">Self&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">name1&lt;/span>: &lt;span class="nc">Ident&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">input&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">parse&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="o">?&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">input&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">parse&lt;/span>::&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="fm">Token!&lt;/span>&lt;span class="p">[&lt;/span>:&lt;span class="p">]&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="o">?&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">ty1&lt;/span>: &lt;span class="nc">Type&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">input&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">parse&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="o">?&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">input&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">parse&lt;/span>::&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="fm">Token!&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="o">||&lt;/span>&lt;span class="p">]&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="o">?&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">name2&lt;/span>: &lt;span class="nc">Ident&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">input&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">parse&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="o">?&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">input&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">parse&lt;/span>::&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="fm">Token!&lt;/span>&lt;span class="p">[&lt;/span>:&lt;span class="p">]&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="o">?&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">ty2&lt;/span>: &lt;span class="nc">Type&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">input&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">parse&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="o">?&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nb">Ok&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">FieldContentOr&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">name1&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">ty1&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">name2&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">ty2&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">})&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c1">// in lib.rs
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c1">// find_by_or!{ Person -&amp;gt; people::[name:String || company_name:String] }
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="cp">#[proc_macro]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">pub&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">fn&lt;/span> &lt;span class="nf">find_by_or&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">input&lt;/span>: &lt;span class="nc">TokenStream&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>-&amp;gt; &lt;span class="nc">TokenStream&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">DbOpByOrBy&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">model&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">table&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">bracket_token&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">content&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="fm">parse_macro_input!&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">input&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">as&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">DbOpByOrBy&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">name1&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">name2&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">content&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">name1&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">content&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">name2&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">ty1&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">ty2&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">content&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">ty1&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">content&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">ty2&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">fn_name&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="fm">format!&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;find_by_&lt;/span>&lt;span class="si">{}&lt;/span>&lt;span class="s">_or_&lt;/span>&lt;span class="si">{}&lt;/span>&lt;span class="s">&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">name1&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">name2&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">fn_name&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Ident&lt;/span>::&lt;span class="n">new&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">&amp;amp;&lt;/span>&lt;span class="n">fn_name&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">proc_macro2&lt;/span>::&lt;span class="n">Span&lt;/span>::&lt;span class="n">call_site&lt;/span>&lt;span class="p">());&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">let&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">expanded&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="fm">quote!&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">impl&lt;/span>&lt;span class="w"> &lt;/span>#&lt;span class="n">model&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">pub&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">fn&lt;/span> #&lt;span class="n">fn_name&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">conn&lt;/span>: &lt;span class="kp">&amp;amp;&lt;/span>&lt;span class="nc">PgConnection&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>#&lt;span class="n">name1&lt;/span>: #&lt;span class="n">ty1&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>#&lt;span class="n">name2&lt;/span>: #&lt;span class="n">ty2&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>-&amp;gt; &lt;span class="nc">QueryResult&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>#&lt;span class="n">model&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>#&lt;span class="n">table&lt;/span>::&lt;span class="n">table&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">filter&lt;/span>&lt;span class="p">(&lt;/span>#&lt;span class="n">table&lt;/span>::&lt;span class="n">dsl&lt;/span>::#&lt;span class="n">name1&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">eq&lt;/span>&lt;span class="p">(&lt;/span>#&lt;span class="n">name1&lt;/span>&lt;span class="p">))&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">or_filter&lt;/span>&lt;span class="p">(&lt;/span>#&lt;span class="n">table&lt;/span>::&lt;span class="n">dsl&lt;/span>::#&lt;span class="n">name2&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">eq&lt;/span>&lt;span class="p">(&lt;/span>#&lt;span class="n">name2&lt;/span>&lt;span class="p">))&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">get_result&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">conn&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">};&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">TokenStream&lt;/span>::&lt;span class="n">from&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">expanded&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="参考资料">参考资料
+&lt;/h2>&lt;ul>
+&lt;li>《Rust编程之道》&lt;/li>
+&lt;/ul></description></item></channel></rss>

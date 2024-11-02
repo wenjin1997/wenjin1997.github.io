@@ -1,0 +1,154 @@
+<!doctype html><html lang=en-us dir=ltr><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><meta name=description content="用数值的方法求解热传导方程，使用最简显格式进行推导。"><title>数值求解热传导方程</title>
+<link rel=canonical href=https://wenjin1997.github.io/2021/05/24/heat-equation/><link rel=stylesheet href=/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css><meta property='og:title' content="数值求解热传导方程"><meta property='og:description' content="用数值的方法求解热传导方程，使用最简显格式进行推导。"><meta property='og:url' content='https://wenjin1997.github.io/2021/05/24/heat-equation/'><meta property='og:site_name' content="Jade's Blog"><meta property='og:type' content='article'><meta property='article:section' content='Post'><meta property='article:tag' content='热传导方程'><meta property='article:tag' content='最简显格式'><meta property='article:tag' content='数值分析'><meta property='article:tag' content='微分方程数值解'><meta property='article:tag' content='数学'><meta property='article:published_time' content='2021-05-24T00:00:00+00:00'><meta property='article:modified_time' content='2021-05-24T00:00:00+00:00'><meta name=twitter:title content="数值求解热传导方程"><meta name=twitter:description content="用数值的方法求解热传导方程，使用最简显格式进行推导。"><link rel="shortcut icon" href=/img/favicon.ico></head><body class=article-page><script>(function(){const e="StackColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"auto")})()</script><script>(function(){const t="StackColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky"><button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label>
+<span class=hamburger-box><span class=hamburger-inner></span></span></button><header><figure class=site-avatar><a href=/><img src=/img/ghost_hu15175528053352950562.jpg width=300 height=300 class=site-logo loading=lazy alt=Avatar></a></figure><div class=site-meta><h1 class=site-name><a href=/>Jade's Blog</a></h1><h2 class=site-description>Keep Learning and Thinking!</h2></div></header><ol class=menu-social><li><a href=https://github.com/wenjin1997 target=_blank title=GitHub rel=me><svg class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></a></li><li><a href=https://twitter.com/ChinnellHeish target=_blank title=Twitter rel=me><svg class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737S11.977 6.323 12 8v1c-3.245.083-6.135-1.395-8-4 0 0-4.182 7.433 4 11-1.872 1.247-3.739 2.088-6 2 3.308 1.803 6.913 2.423 10.034 1.517 3.58-1.04 6.522-3.723 7.651-7.742a13.84 13.84.0 00.497-3.753C20.18 7.773 21.692 5.25 22 4.009z"/></svg></a></li></ol><ol class=menu id=main-menu><li><a href=/><svg class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg>
+<span>Home</span></a></li><li><a href=/archives/><svg class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><rect x="3" y="4" width="18" height="4" rx="2"/><path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+<span>Archives</span></a></li><li><a href=/search/><svg class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg>
+<span>Search</span></a></li><li><a href=/links/><svg class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M10 14a3.5 3.5.0 005 0l4-4a3.5 3.5.0 00-5-5l-.5.5"/><path d="M14 10a3.5 3.5.0 00-5 0l-4 4a3.5 3.5.0 005 5l.5-.5"/></svg>
+<span>Links</span></a></li><li class=menu-bottom-section><ol class=menu><li id=dark-mode-toggle><svg class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<svg class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<span></span></li></ol></li></ol></aside><main class="main full-width"><article class=main-article><header class=article-header><div class=article-details><header class=article-category><a href=/categories/math/>Math</a></header><div class=article-title-wrapper><h2 class=article-title><a href=/2021/05/24/heat-equation/>数值求解热传导方程</a></h2><h3 class=article-subtitle>用数值的方法求解热传导方程，使用最简显格式进行推导。</h3></div><footer class=article-time><div><svg class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg>
+<time class=article-time--published>May 24, 2021</time></div><div><svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<time class=article-time--reading></time></div></footer></div></header><section class=article-content><h1 id=最简显格式>最简显格式</h1><p>对于如下热传导方程：</p>$$
+\begin{cases}
+\frac{\partial u}{\partial t} =\frac{\partial ^2 u}{\partial t} \quad 0<t<0.03,0<x<1 \\\ u(x,0)=\sin(4\pi x) \quad 0 \le x \le 1 \\\ u(0,t)=0 \quad 0 \le t \le 0.03 \\\ u(1,t)=0 \quad 0 \le t \le 0.03 \end{cases} $$<p>该方程的精确解为$u(t,x)=e^{-(4\pi)^2t}\sin (4 \pi x),0\le t \le 0.03, 0 \le x \le 1.$</p><p>首先对时间及空间进行划分，将时间划分为$m-1$份，将空间划分为$n-1$份，则$\tau=\frac{0.03}{m-1},h=\frac{1}{n-1}$。
+根据最简显格式可以得到：</p>$$
+u_j^{i+1}=\frac{\tau}{h^2}(u_{j+1}^{i}-2u_j^i+u_{j-1}^i)+u_j^{i},
+$$<p>其中$i=0,1,\cdots,m-1$，$j=0,1,\cdots,n-1$。</p><h1 id=编程实现>编程实现</h1><p>根据理论推导，用python编写程序如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span><span class=lnt>60
+</span><span class=lnt>61
+</span><span class=lnt>62
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># -*- coding: utf-8 -*-</span>
+</span></span><span class=line><span class=cl><span class=s2>&#34;&#34;&#34;
+</span></span></span><span class=line><span class=cl><span class=s2>Created on Sun May 23 11:16:13 2021
+</span></span></span><span class=line><span class=cl><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>@author: XieWenjin
+</span></span></span><span class=line><span class=cl><span class=s2>&#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>math</span>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>numpy</span> <span class=k>as</span> <span class=nn>np</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>matplotlib</span> <span class=kn>import</span> <span class=n>pyplot</span> <span class=k>as</span> <span class=n>plt</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>mpl_toolkits.mplot3d</span> <span class=kn>import</span> <span class=n>Axes3D</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>t</span> <span class=o>=</span> <span class=mf>0.03</span>     <span class=c1># 时间范围</span>
+</span></span><span class=line><span class=cl><span class=n>x</span> <span class=o>=</span> <span class=mf>1.0</span>      <span class=c1># 空间范围</span>
+</span></span><span class=line><span class=cl><span class=n>m</span> <span class=o>=</span> <span class=nb>input</span><span class=p>(</span><span class=s2>&#34;请输入m：&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>m</span> <span class=o>=</span> <span class=nb>int</span><span class=p>(</span><span class=n>m</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>n</span> <span class=o>=</span> <span class=nb>input</span><span class=p>(</span><span class=s2>&#34;请输入n：&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>n</span> <span class=o>=</span> <span class=nb>int</span><span class=p>(</span><span class=n>n</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=c1># m = 320        # 时间方向分为320个格子</span>
+</span></span><span class=line><span class=cl><span class=c1># n = 64        # 空间方向的格子数</span>
+</span></span><span class=line><span class=cl><span class=n>dt</span> <span class=o>=</span> <span class=n>t</span> <span class=o>/</span> <span class=p>(</span><span class=n>m</span> <span class=o>-</span> <span class=mi>1</span><span class=p>)</span>  <span class=c1># 时间步长</span>
+</span></span><span class=line><span class=cl><span class=n>dx</span> <span class=o>=</span> <span class=n>x</span> <span class=o>/</span> <span class=p>(</span><span class=n>n</span> <span class=o>-</span> <span class=mi>1</span><span class=p>)</span>  <span class=c1># 空间步长</span>
+</span></span><span class=line><span class=cl> 
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>generate_u</span><span class=p>(</span><span class=n>m</span><span class=p>,</span><span class=n>n</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=n>u</span> <span class=o>=</span> <span class=n>np</span><span class=o>.</span><span class=n>zeros</span><span class=p>([</span><span class=n>m</span><span class=p>,</span><span class=n>n</span><span class=p>])</span>
+</span></span><span class=line><span class=cl>    <span class=c1># 边界条件</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=n>j</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=n>n</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=n>u</span><span class=p>[</span><span class=mi>0</span><span class=p>,</span><span class=n>j</span><span class=p>]</span> <span class=o>=</span> <span class=n>math</span><span class=o>.</span><span class=n>sin</span><span class=p>(</span><span class=mi>4</span> <span class=o>*</span> <span class=n>math</span><span class=o>.</span><span class=n>pi</span> <span class=o>*</span> <span class=n>j</span> <span class=o>*</span> <span class=n>dx</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=n>i</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=n>m</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=n>u</span><span class=p>[</span><span class=n>i</span><span class=p>,</span><span class=mi>0</span><span class=p>]</span> <span class=o>=</span> <span class=mi>0</span>
+</span></span><span class=line><span class=cl>        <span class=n>u</span><span class=p>[</span><span class=n>i</span><span class=p>,</span><span class=o>-</span><span class=mi>1</span><span class=p>]</span> <span class=o>=</span> <span class=mi>0</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># 差分法</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=n>i</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=n>m</span> <span class=o>-</span> <span class=mi>1</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=n>j</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=mi>1</span><span class=p>,</span><span class=n>n</span> <span class=o>-</span> <span class=mi>1</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>            <span class=n>u</span><span class=p>[</span><span class=n>i</span><span class=o>+</span><span class=mi>1</span><span class=p>,</span> <span class=n>j</span><span class=p>]</span> <span class=o>=</span> <span class=n>dt</span> <span class=o>*</span> <span class=p>(</span><span class=n>u</span><span class=p>[</span><span class=n>i</span><span class=p>,</span> <span class=n>j</span> <span class=o>+</span> <span class=mi>1</span><span class=p>]</span> <span class=o>+</span> <span class=n>u</span><span class=p>[</span><span class=n>i</span><span class=p>,</span> <span class=n>j</span> <span class=o>-</span> <span class=mi>1</span><span class=p>]</span> <span class=o>-</span> <span class=mi>2</span> <span class=o>*</span> <span class=n>u</span><span class=p>[</span><span class=n>i</span><span class=p>,</span> <span class=n>j</span><span class=p>])</span> <span class=o>/</span> <span class=n>dx</span> <span class=o>**</span> <span class=mi>2</span> <span class=o>+</span> <span class=n>u</span><span class=p>[</span><span class=n>i</span><span class=p>,</span> <span class=n>j</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>u</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>drawing</span><span class=p>(</span><span class=n>X</span><span class=p>,</span><span class=n>Y</span><span class=p>,</span><span class=n>Z</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=n>fig</span> <span class=o>=</span> <span class=n>plt</span><span class=o>.</span><span class=n>figure</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=n>ax</span> <span class=o>=</span> <span class=n>Axes3D</span><span class=p>(</span><span class=n>fig</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=n>ax</span><span class=o>.</span><span class=n>plot_surface</span><span class=p>(</span><span class=n>X</span><span class=p>,</span> <span class=n>Y</span><span class=p>,</span> <span class=n>Z</span><span class=p>,</span> <span class=n>rstride</span><span class=o>=</span><span class=mi>1</span><span class=p>,</span> <span class=n>cstride</span><span class=o>=</span><span class=mi>1</span><span class=p>,</span> <span class=n>cmap</span><span class=o>=</span><span class=s1>&#39;rainbow&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=n>plt</span><span class=o>.</span><span class=n>show</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>error</span><span class=p>(</span><span class=n>u</span><span class=p>,</span><span class=n>u_exact</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=n>err</span> <span class=o>=</span> <span class=nb>abs</span><span class=p>(</span><span class=n>u</span> <span class=o>-</span> <span class=n>u_exact</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=nb>max</span><span class=p>(</span><span class=nb>map</span><span class=p>(</span><span class=nb>max</span><span class=p>,</span> <span class=n>err</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>X</span> <span class=o>=</span> <span class=n>np</span><span class=o>.</span><span class=n>arange</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=n>t</span> <span class=o>+</span> <span class=n>dt</span><span class=p>,</span> <span class=n>dt</span><span class=p>)</span> <span class=c1># remark:t+dt,not t</span>
+</span></span><span class=line><span class=cl><span class=n>Y</span> <span class=o>=</span> <span class=n>np</span><span class=o>.</span><span class=n>arange</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=n>x</span> <span class=o>+</span> <span class=n>dx</span><span class=p>,</span> <span class=n>dx</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>X</span><span class=p>,</span> <span class=n>Y</span> <span class=o>=</span> <span class=n>np</span><span class=o>.</span><span class=n>meshgrid</span><span class=p>(</span><span class=n>X</span><span class=p>,</span> <span class=n>Y</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>u_exact</span> <span class=o>=</span> <span class=n>np</span><span class=o>.</span><span class=n>exp</span><span class=p>(</span><span class=o>-</span> <span class=p>(</span><span class=mi>4</span><span class=o>*</span><span class=n>np</span><span class=o>.</span><span class=n>pi</span><span class=p>)</span><span class=o>**</span><span class=mi>2</span><span class=o>*</span><span class=n>X</span><span class=p>)</span><span class=o>*</span><span class=n>np</span><span class=o>.</span><span class=n>sin</span><span class=p>(</span><span class=mi>4</span><span class=o>*</span><span class=n>np</span><span class=o>.</span><span class=n>pi</span><span class=o>*</span><span class=n>Y</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>u</span> <span class=o>=</span> <span class=n>generate_u</span><span class=p>(</span><span class=n>m</span><span class=p>,</span><span class=n>n</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>u</span> <span class=o>=</span> <span class=n>np</span><span class=o>.</span><span class=n>transpose</span><span class=p>(</span><span class=n>u</span><span class=p>)</span> <span class=c1># 注意这里是转置，而不是np.reshape(u,(n,m))</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># print(m,n)</span>
+</span></span><span class=line><span class=cl><span class=nb>print</span><span class=p>(</span><span class=n>error</span><span class=p>(</span><span class=n>u</span><span class=p>,</span><span class=n>u_exact</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>drawing</span><span class=p>(</span><span class=n>X</span><span class=p>,</span><span class=n>Y</span><span class=p>,</span><span class=n>u</span><span class=p>)</span> <span class=c1># 数值解</span>
+</span></span><span class=line><span class=cl><span class=c1># drawing(X,Y,u_exact) # 精确解</span>
+</span></span><span class=line><span class=cl><span class=c1># drawing(X,Y,abs(u-u_exact)) # 数值解与精确解之差的绝对值</span>
+</span></span></code></pre></td></tr></table></div></div><h1 id=结果分析>结果分析</h1><p>当取$m=320,n=64$时，得到数值解$[u]$如下图所示：</p><p><img src=https://i.loli.net/2021/05/24/cMGvKnF4tpaeXAZ.png loading=lazy alt=result_u.png></p><p>精确解$u$如下图所示：</p><p><img src=https://i.loli.net/2021/05/24/eRQjX5DIwOpZyu2.png loading=lazy alt=u_exact.png></p><p>精确解与数值解之差的绝对值$||u-[u]||$如下图所示：</p><p><img src=https://i.loli.net/2021/05/24/8jHizxdguJyIaNS.png loading=lazy alt=abs_error.png></p><p>当取不同的$\tau,h$时，计算得到的误差如下表所示。</p><div class=table-wrapper><table><thead><tr><th style=text-align:center>$\tau$</th><th style=text-align:center>$h$</th><th style=text-align:center>误差$e$</th><th style=text-align:center>$e_i/e_{i+1}$</th></tr></thead><tbody><tr><td style=text-align:center>$\frac{1}{10}$</td><td style=text-align:center>$\frac{1}{10}$</td><td style=text-align:center>0.0428079643162558</td><td style=text-align:center></td></tr><tr><td style=text-align:center>$\frac{1}{40}$</td><td style=text-align:center>$\frac{1}{20}$</td><td style=text-align:center>0.00951825176096948</td><td style=text-align:center>4.4975</td></tr><tr><td style=text-align:center>$\frac{1}{160}$</td><td style=text-align:center>$\frac{1}{40}$</td><td style=text-align:center>0.00244056613219328</td><td style=text-align:center>3.9000</td></tr><tr><td style=text-align:center>$\frac{1}{640}$</td><td style=text-align:center>$\frac{1}{80}$</td><td style=text-align:center>0.000606385251482932</td><td style=text-align:center>4.0248</td></tr><tr><td style=text-align:center>$\frac{1}{2560}$</td><td style=text-align:center>$\frac{1}{160}$</td><td style=text-align:center>0.000151362159712509</td><td style=text-align:center>4.0062</td></tr></tbody></table></div><p>我们知道最简显格式的误差为$||[u]^k-u^k||=O(\tau + h^2)$，设$e_i=C \times (\tau_i + h_i^2)$，
+取$\tau_{i+1}=\frac{1}{4} \tau_i$,$h_{i+1}=\frac{1}{2}h_i$，可以得到$\frac{e_i}{e_{i+1}}
+=4$，与上表结果相符，从而也验证了最简显格式的误差阶数为$O(\tau + h^2)$.</p></section><footer class=article-footer><section class=article-tags><a href=/tags/%E7%83%AD%E4%BC%A0%E5%AF%BC%E6%96%B9%E7%A8%8B/>热传导方程</a>
+<a href=/tags/%E6%9C%80%E7%AE%80%E6%98%BE%E6%A0%BC%E5%BC%8F/>最简显格式</a>
+<a href=/tags/%E6%95%B0%E5%80%BC%E5%88%86%E6%9E%90/>数值分析</a>
+<a href=/tags/%E5%BE%AE%E5%88%86%E6%96%B9%E7%A8%8B%E6%95%B0%E5%80%BC%E8%A7%A3/>微分方程数值解</a>
+<a href=/tags/%E6%95%B0%E5%AD%A6/>数学</a></section><section class=article-copyright><svg class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9a3.5 4 0 100 6"/></svg>
+<span>Licensed under CC BY-NC-SA 4.0</span></section></footer><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css integrity=sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV crossorigin=anonymous><script src=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js integrity=sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8 crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous defer></script><script>window.addEventListener("DOMContentLoaded",()=>{renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1},{left:"\\(",right:"\\)",display:!1},{left:"\\[",right:"\\]",display:!0}],ignoredClasses:["gist"]})})</script></article><aside class=related-content--wrapper><h2 class=section-title></h2><div class=related-content><div class="flex article-list--tile"><article class=has-image><a href=/2021/03/11/euler-method/><div class=article-image><img src=/img/2021-03-11-eluer-method/background.jpg loading=lazy data-key data-hash=/img/2021-03-11-eluer-method/background.jpg></div><div class=article-details><h2 class=article-title>欧拉方法、隐式欧拉方法</h2></div></a></article></div></div></aside><footer class=site-footer><section class=copyright>&copy;
+2020 -
+2024 Jade's Blog</section><section class=powerby><br></section></footer><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo=" crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU=" crossorigin=anonymous defer></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css crossorigin=anonymous><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css crossorigin=anonymous></main></div><script src=https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z+KMkF24hUW8WePSA9HM=" crossorigin=anonymous></script><script type=text/javascript src=/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js defer></script><script>(function(){const e=document.createElement("link");e.href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap",e.type="text/css",e.rel="stylesheet",document.head.appendChild(e)})()</script></body></html>

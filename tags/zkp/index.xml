@@ -1,0 +1,1295 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>ZKP on Jade's Blog</title><link>https://wenjin1997.github.io/tags/zkp/</link><description>Recent content in ZKP on Jade's Blog</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Wed, 30 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://wenjin1997.github.io/tags/zkp/index.xml" rel="self" type="application/rss+xml"/><item><title>Zero Knowledge Proofs: An illustrated primer, Part 2</title><link>https://wenjin1997.github.io/2022/11/30/Zero-Knowledge-Proofs-An-illustrated-primer-Part2/</link><pubDate>Wed, 30 Nov 2022 00:00:00 +0000</pubDate><guid>https://wenjin1997.github.io/2022/11/30/Zero-Knowledge-Proofs-An-illustrated-primer-Part2/</guid><description>&lt;img src="https://wenjin1997.github.io/img/2022-11-30-Zero-Knowledge-Proofs-An-illustrated-primer-Part2/background.jpg" alt="Featured image of post Zero Knowledge Proofs: An illustrated primer, Part 2" />&lt;p>原文链接：&lt;a class="link" href="https://blog.cryptographyengineering.com/2017/01/21/zero-knowledge-proofs-an-illustrated-primer-part-2/" target="_blank" rel="noopener"
+>Zero Knowledge Proofs: An illustrated primer, Part 2&lt;/a>。这篇博客通过Schnorr协议详细讲解了零知识证明中的完备性、可靠性以及零知识，对于弄懂提取器、模拟器以及零知识等概念很有帮助。之前对于模拟器的作用有些懵懵懂懂，现在看完后有一种透彻的感觉😃。&lt;/p>
+&lt;p>📝 总结一下：&lt;/p>
+&lt;p>任何零知识证明必须满足三个重要的性质：&lt;/p>
+&lt;ol>
+&lt;li>完备性。任何诚实的Prover最终都能够使Verifier信服。&lt;/li>
+&lt;li>可靠性。如果能说服Verifier，那么一定有命题是真的。逆否命题就是，如果命题不为真，那么就不能说服Verifier。&lt;/li>
+&lt;li>零知识。Verifier除了知道命题为真外不能获得其他任何信息。&lt;/li>
+&lt;/ol>
+&lt;p>如何在证明可靠性和零知识性质的同时又不会泄漏知识呢？秘诀就是模拟器，模拟器中拥有在实际中不可能有的超能力，比如说时间机器。这样就很巧妙的解决了这个问题！&lt;/p>
+&lt;p>证明可靠性，使用模拟器！可靠性说的是如果能说服Verifier，那么一定有命题为真。博客中主要讨论的&amp;quot;statement&amp;quot;是个人知识而不是&amp;quot;facts&amp;quot;，也就是“我知道某个知识，或者说秘密吧”。具体来讲，可靠性就变成了，如果能说服Verifier，那么Prover一定是知道知识的。为了证明这一点，搬出提取器的概念，提取器充当Verifier的角色，对于任何可能的Prover，如果都存在一个提取器能够提取到知识，那么就说明Prover肯定是有知识的。这不就证明了可靠性嘛！&lt;/p>
+&lt;p>那问题是提取器怎么提取知识呢？让我们上模拟器中的超能力——时光机器！提取器能够回溯，达到骗Prover在两次运行中使用相同的随机数$k$，然后计算出Prover原来拥有的密钥$a$。&lt;/p>
+&lt;p>证明零知识，使用模拟器！要证明现实中的Verifier除了知道Prover知道知识这一点外不能获取到其他任何信息，我们构造一个压根就不知道密钥$a$的Prover，它和诚实的Verifier交互，让Verifier相信Prover是知道密钥$a$的。同时在统计意义上，模拟器中交互的输出分布和真实Prover和Verifier交互的输出分布是一样的。那么由于模拟器中根本没有知识，也就证明了零知识。&lt;/p>
+&lt;p>那么如何在模拟器中让Prover说服Verifier呢？上超能力——时光机器！Prover先发一个初始值$g^{k_1}$骗取到Verifier的随机数$c$，回溯Verifier，让它发送随机数$z$，进行一些计算得到初始值，当Verifier发起随机挑战$c$时，Prover输出$z$就能让Verifier相信Prover知道密钥$a$，实际上Prover不知道密钥$a$。&lt;/p>
+&lt;p>上面的过程都是交互的，转换成非交互零知识证明的一个方式是用可靠的哈希函数来发起随机挑战。&lt;/p>
+&lt;p>好的！下面开始边读博客文章边做笔记。👇&lt;/p>
+&lt;p>&lt;em>This post is the second in a two-part series on zero-knowledge proofs. &lt;a class="link" href="https://blog.cryptographyengineering.com/2014/11/zero-knowledge-proofs-illustrated-primer.html" target="_blank" rel="noopener"
+>Click here&lt;/a> to read Part 1.&lt;/em>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-30-Zero-Knowledge-Proofs-An-illustrated-primer-Part2/Untitled.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>In this post I’m going to continue the short, (relatively) non-technical overview of zero knowledge proofs that I started a couple of years ago. Yes, that was a very long time! If you didn’t catch the first post, now would be an &lt;a class="link" href="https://blog.cryptographyengineering.com/2014/11/zero-knowledge-proofs-illustrated-primer.html" target="_blank" rel="noopener"
+>excellent time to go read it&lt;/a>.&lt;/p>
+&lt;p>Before we go much further, a bit of a warning. While this series is still intended as a high-level overview, at a certain point it’s necessary to dig a bit deeper into some specific algorithms. So you should expect this post to get a bit wonkier than the last.&lt;/p>
+&lt;h3 id="a-quick-recap-and-a-bit-more-on-zero-knowledgeness">&lt;strong>A quick recap, and a bit more on Zero Knowledge(ness)&lt;/strong>
+&lt;/h3>&lt;p>First, a brief refresher.&lt;/p>
+&lt;p>In the last post we defined a zero knowledge proof as an interaction between two computer programs (or Turing machines) — respectively called a Prover and a Verifier — where the Prover works to convince the Verifier that some mathematical statement is true. We also covered a specific example: a clever protocol by &lt;a class="link" href="http://users.softlab.ece.ntua.gr/~dvitin/zk/GMW91.pdf" target="_blank" rel="noopener"
+>Goldreich, Micali and Wigderson&lt;/a> that allows us to prove, in zero knowledge, that a graph possesses a &lt;a class="link" href="http://en.wikipedia.org/wiki/Graph_coloring" target="_blank" rel="noopener"
+>three-coloring&lt;/a>.&lt;/p>
+&lt;p>In the course of that discussion, we described three critical properties that any zero knowledge proof must satisfy:&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>Completeness&lt;/strong>: If the Prover is honest, then she will eventually convince the Verifier.&lt;/li>
+&lt;li>&lt;strong>Soundness:&lt;/strong> The Prover can only convince the Verifier if the statement is true.&lt;/li>
+&lt;li>&lt;strong>Zero-knowledge(ness):&lt;/strong> &lt;em>The Verifier learns no information beyond the fact that the statement is true.&lt;/em>&lt;/li>
+&lt;/ul>
+&lt;p>The real challenge turns out to be finding a way to formally define the last property. How do you state that a Verifier learns &lt;em>nothing&lt;/em> beyond the truth of a statement?&lt;/p>
+&lt;p>In case you didn’t read the &lt;a class="link" href="https://blog.cryptographyengineering.com/2014/11/27/zero-knowledge-proofs-illustrated-primer/" target="_blank" rel="noopener"
+>previous post&lt;/a> — the answer to this question came from Goldwasser, Micali and Rackoff, and it’s very cool. What they argued is that a protocol can be proven &lt;em>zero knowledge&lt;/em> if for every possible Verifier, you can demonstrate the existence of an algorithm called a ‘Simulator’, and show that this algorithm has some very special properties.&lt;/p>
+&lt;p>From a purely mechanical perspective, the Simulator is like a special kind of Prover. However, unlike a real Prover — which starts with some special knowledge that allows it to prove the truth of a statement — the Simulator &lt;em>gets no special knowledge at all.&lt;/em>* Nonetheless, the Simulator (or Simulators) must be able to ‘fool’ every Verifier into believing that the statement is true, while producing a transcript that’s statistically identical top (or indistinguishable from) the output of a real Prover.&lt;/p>
+&lt;p>上面关于模拟器的叙述比较重要。可以将模拟器看作是特殊的一种Prover。模拟器必须可以骗过任何的Verifier相信命题是真的，而且模拟器产生的结果和与一个真实的Prover交互得到的结果在统计上是不可区分的。&lt;/p>
+&lt;p>The logic here flows pretty cleanly: since Simulator has no ‘knowledge’ to extract in the first place, then clearly a Verifier &lt;em>can’t&lt;/em> obtain any meaningful amount of information after interacting with it. Moreover, if the transcript of the interaction is distributed identically to a real protocol run with a normal Prover, then the Verifier &lt;em>can’t&lt;/em> do better against the real prover than it can do against the Simulator. (If the Verifier &lt;em>could&lt;/em> do better, then that would imply that the distributions were not statistically identical.) Ergo, the Verifier can’t extract useful information from the real protocol run.&lt;/p>
+&lt;p>This is incredibly wonky, and worse, it seems contradictory! We’re asking that a protocol be both &lt;em>sound&lt;/em> — meaning that a bogus（虚假的） Prover can’t trick some Verifier into accepting a statement unless it has special knowledge allowing it to prove the statement — but we’re also asking for the existence of an algorithm (the simulator) that can literally cheat. Clearly both properties can’t hold at the same time.&lt;/p>
+&lt;p>The solution to this problem is that both properties &lt;em>don’t&lt;/em> hold at the same time.&lt;/p>
+&lt;p>To build our simulator, we’re allowed to do things to the Verifier that would never happen in the real world. The example that I gave in the previous post was to use a ‘time machine’ — that is, our ‘Simulator’ can rewind the Verifier program’s execution in order to ‘fool’ it. Thus, in a world where we can wind the Verifier back in time, it’s easy to show that a Simulator exists. In the real world, of course it doesn’t. This ‘trick’ gets us around the contradiction.&lt;/p>
+&lt;p>看似模拟器没有知识也能骗过Verifier和Prover除非有知识才能通过Verifier的测验是矛盾的，但其实这两个不是同时成立的。模拟器有一些真实世界没有的超能力，比如说时间机器，这样模拟器是可以骗过Verifier的。&lt;/p>
+&lt;p>As a last reminder, to illustrate all of these ideas, we covered one of the first general zero knowledge proofs, devised by &lt;a class="link" href="http://people.csail.mit.edu/silvio/Selected%20Scientific%20Papers/Zero%20Knowledge/Proofs_That_Yield_Nothing_But_Their_Validity_or_All_Languages_in_NP_Have_Zero-Knowledge_Proof_Systems.pdf" target="_blank" rel="noopener"
+>Goldreich, Micali and Wigderson&lt;/a> (GMW). That protocol allowed us to prove, in zero knowledge, that a graph supports a &lt;a class="link" href="http://en.wikipedia.org/wiki/Graph_coloring" target="_blank" rel="noopener"
+>three-coloring&lt;/a>. Of course, proving three colorings isn’t terribly interesting. The real significance of the GMW result is theoretical. Since graph three coloring is known to be in the complexity class &lt;a class="link" href="http://en.wikipedia.org/wiki/NP-complete" target="_blank" rel="noopener"
+>NP-complete&lt;/a>, the GMW protocol can be used to prove &lt;em>any statement&lt;/em> in the class &lt;a class="link" href="http://en.wikipedia.org/wiki/NP_%28complexity%29" target="_blank" rel="noopener"
+>NP&lt;/a>. And that’s quite powerful.&lt;/p>
+&lt;p>Let me elaborate slightly on what that means:&lt;/p>
+&lt;ol>
+&lt;li>If there exists &lt;em>any&lt;/em> &lt;a class="link" href="http://en.wikipedia.org/wiki/Decision_problem" target="_blank" rel="noopener"
+>decision problem&lt;/a> (that is, a problem with a yes/no answer) whose witness (solution) can be verified in polynomial time, then:&lt;/li>
+&lt;li>We can prove that said solution exists by &lt;em>(1)&lt;/em> &lt;a class="link" href="https://www.cs.cmu.edu/~ckingsf/bioinfo-lectures/sat.pdf" target="_blank" rel="noopener"
+>translating the problem into an instance of the graph three-coloring problem&lt;/a>, and &lt;em>(2)&lt;/em> running the GMW protocol.*&lt;/li>
+&lt;/ol>
+&lt;p>This amazing result gives us interactive zero knowledge proofs for &lt;em>every statement in NP.&lt;/em> The only problem is that it’s almost totally unusable.&lt;/p>
+&lt;p>我们知道GMW中的图三色问题是NPC问题，而NP问题可以归约成图三色问题，然后可以用GMW协议来进行零知识证明。唯一的问题是这是不实用的。&lt;/p>
+&lt;h3 id="from-theory-into-practice">&lt;strong>From theory into practice&lt;/strong>
+&lt;/h3>&lt;p>If you’re of a practical mindset, you’re probably shaking your head at all this talk of ZK proofs. That’s because actually &lt;em>using this approach&lt;/em> would be an insanely expensive and stupid thing to do. Most likely you’d first represent your input problem as a &lt;a class="link" href="http://en.wikipedia.org/wiki/Boolean_circuit" target="_blank" rel="noopener"
+>boolean circuit&lt;/a> where the circuit is &lt;a class="link" href="http://en.wikipedia.org/wiki/Circuit_satisfiability_problem" target="_blank" rel="noopener"
+>satisfied&lt;/a> if and only if you know the correct input. Then you’d have to translate your circuit into a graph, resulting in some further blowup. Finally you’d need to run the GMW protocol, which is damned expensive all by itself.&lt;/p>
+&lt;p>So in practice nobody does this. It’s really considered a ‘feasibility’（可行性） result. Once you show that something is possible, the next step is to make it efficient.&lt;/p>
+&lt;p>But we do use zero knowledge proofs, almost every day. In this post I’m going to spend some time talking about the more &lt;em>practical&lt;/em> ZK proofs that we actually use. To do that I just need give just a tiny bit of extra background.&lt;/p>
+&lt;h3 id="proofs-vs-proofs-of-knowledge">&lt;strong>Proofs vs. Proofs of Knowledge&lt;/strong>
+&lt;/h3>&lt;p>Before we go on, there’s one more concept we need to cover. Specifically, we need to discuss &lt;em>what precisely we’re proving&lt;/em> when we conduct（执行） a zero knowledge proof*.*Let me explain. At a high level, there are two kinds of statement you might want to prove in zero knowledge. Roughly speaking, these break up as follows.&lt;/p>
+&lt;blockquote>
+&lt;p>&lt;strong>Statements about “facts”.&lt;/strong> For example, I might wish to prove that “a specific graph has a three coloring” or “some number N is in the set of composite numbers“. Each of these is a statement about some intrinsic property of the universe.&lt;/p>
+&lt;/blockquote>
+&lt;blockquote>
+&lt;p>&lt;strong>Statements about my personal knowledge.&lt;/strong> Alternatively, I might wish to prove that I know some piece information. Examples of this kind of statement include: “I know a three coloring for this graph”, or “I know the factorization of N”. These go beyond merely proving that a fact is true, and actually rely on what the Prover knows.&lt;/p>
+&lt;/blockquote>
+&lt;p>陈述的命题有两种，一种是事实，一种是个人的知识。在这篇博客中，主要关注在第二种命题。&lt;/p>
+&lt;p>It’s important to recognize that there’s a big difference between these two kinds of statements! For example, it may be possible to prove that a number &lt;em>N&lt;/em> is composite &lt;em>even if you don’t know the full factorization.&lt;/em> So merely proving the first statement is &lt;em>not&lt;/em> equivalent to proving the second one.&lt;/p>
+&lt;p>The second class of proof is known as a “proof of knowledge”. It turns out to be extremely useful for proving a variety of statements that we use in real life. In this post, we’ll mostly be focusing on this kind of proof.&lt;/p>
+&lt;h3 id="the-schnorr-identification-protocol">&lt;strong>The Schnorr identification protocol&lt;/strong>
+&lt;/h3>&lt;p>Now that we’ve covered some of the required background, it’s helpful to move on to a specific and very useful proof of knowledge that was invented by Claus-Peter Schnorr in the 1980s. At first glance, the Schnorr protocol may seem a bit odd, but in fact it’s the basis of many of our modern signature schemes today.&lt;/p>
+&lt;p>Schnorr wasn’t really concerned with digital signatures, however. His concern was with &lt;em>identification.&lt;/em> Specifically, let’s imagine that Alice has published her public key to the world, and later on wants to prove that she knows the secret key corresponding to that public key. This is the exact problem that we encounter in real-world protocols such as public-key SSH, so it turns out to be well-motivated.&lt;/p>
+&lt;p>Schnorr began with the assumption that the public key would be of a very specific format. Specifically, let &lt;em>p&lt;/em> be some prime number, and let &lt;em>g&lt;/em> be a &lt;a class="link" href="http://en.wikipedia.org/wiki/Generating_set_of_a_group" target="_blank" rel="noopener"
+>generator&lt;/a> of a &lt;a class="link" href="http://en.wikipedia.org/wiki/Cyclic_group" target="_blank" rel="noopener"
+>cyclic group&lt;/a>（循环群） of prime-order &lt;em>q&lt;/em>. To generate a keypair, Alice would first pick a random integer &lt;em>a&lt;/em> between 1 and &lt;em>q&lt;/em>, and then compute the keypair as:&lt;/p>
+&lt;blockquote>
+&lt;p>$PK_A=g^a\mod p,SK_A = a$&lt;/p>
+&lt;/blockquote>
+&lt;p>(If you’ve been around the block a time or two, you’ll probably notice that this is the same type of key used for &lt;a class="link" href="http://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange" target="_blank" rel="noopener"
+>Diffie-Hellman&lt;/a> and the &lt;a class="link" href="http://en.wikipedia.org/wiki/Digital_Signature_Algorithm" target="_blank" rel="noopener"
+>DSA signing&lt;/a> algorithm. That’s not a coincidence, and it makes this protocol very useful.)&lt;/p>
+&lt;p>Alice keeps her secret key to herself, but she’s free to publish her public key to the world. Later on, when she wants to prove &lt;em>knowledge&lt;/em> of her secret key, she conducts the following simple interactive protocol with Bob:&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-30-Zero-Knowledge-Proofs-An-illustrated-primer-Part2/Untitled%201.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>There’s a lot going on in here, so let’s take a minute to unpack things.&lt;/p>
+&lt;p>First off, we should ask ourselves if the protocol is &lt;em>complete.&lt;/em> This is usually the easiest property to verify: if Alice performs the protocol honestly, should Bob be satisfied at the end of it? In this case, completeness is pretty easy to see just by doing a bit of substitution:&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-30-Zero-Knowledge-Proofs-An-illustrated-primer-Part2/Untitled%202.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>注意，由于选取的$k \in { 1, \dots, q }$，因此$k\mod q = k$。&lt;/p>
+&lt;p>这里证明了完备性：诚实的Alice是能够说服Bob的。&lt;/p>
+&lt;h3 id="proving-soundness">&lt;strong>Proving soundness&lt;/strong>
+&lt;/h3>&lt;p>The harder property is &lt;em>soundness.&lt;/em> Mainly because we don’t yet have a good definition of what it means for a proof of knowledge to be &lt;em>sound.&lt;/em> Remember that what we want to show is the following:&lt;/p>
+&lt;blockquote>
+&lt;p>If Alice successfully convinces Bob, then she must know the secret key a.&lt;/p>
+&lt;/blockquote>
+&lt;p>可靠性：如果Alice能够成功让Bob信服，那么她一定知道密钥$a$。也就是说如果Alice不是诚实的，她不知道密钥$a$的话，那么她肯定不能说服Bob。&lt;/p>
+&lt;p>It’s easy to look at the equations above and try to convince yourself that Alice’s only way to cheat the protocol is to know &lt;em>a&lt;/em>. But that’s hardly a proof.&lt;/p>
+&lt;p>When it comes to demonstrating the soundness of a proof of knowledge, we have a really nice formal approach. Just as with the Simulator we discussed above, we need to demonstrate the existence of a special algorithm. This algorithm is called a &lt;em>&lt;strong>knowledge extractor&lt;/strong>&lt;/em>, and it does exactly what it claims to. A knowledge extractor (or just ‘Extractor’ for short) is a special type of Verifier that interacts with a Prover, and — if the Prover succeeds in completing the proof — the Extractor should be able to extract the Prover’s original secret.&lt;/p>
+&lt;p>想要证明可靠性，借助于知识提取器来证明。一个知识提取器是一个特殊的Verifier，它和Prover进行交互，如果Prover能成功通过证明，那么提取器可以提取到Prover原来的密码。&lt;/p>
+&lt;p>And this answers our question above. To prove &lt;em>soundness&lt;/em> for a proof of knowledge, we must show that an Extractor exists for every possible Prover.&lt;/p>
+&lt;p>为了证明可靠性，我们现在必须证明对于每一个可能的Prover，都存在这样一个提取器。结合上面提到的可靠性陈述，如果Alice能够成功让Bob信服，那么她一定知道密钥$a$。也就是说，如果对于每一个可能让Bob信服的Alice，如果存在一个知识提取器来与Alice交互，能提取到密钥$a$，不就说明了Alice肯定知道密钥$a$嘛！因此证明了可靠性。&lt;/p>
+&lt;p>证明逻辑是：对每一个可能的Prover存在一个提取器 ⇒ 如果Alice能让Bob信服，Alice一定知道原来的秘密（可靠性）&lt;/p>
+&lt;p>Of course this again seems totally contradictory to the purpose of a zero knowledge protocol — where we’re &lt;em>not&lt;/em> supposed to be able to learn secrets from a Prover. Fortunately we’ve already resolved this conundrum once for the case of the Simulator. Here again, we take the same approach. The Extractor is &lt;em>not&lt;/em> required to exist during a normal run of the protocol. We simply show that it exists if we’re allowed to take special liberties with the Prover — in this case, we’ll use ‘rewinding’ to wind back the Prover’s execution and allow us to extract secrets.&lt;/p>
+&lt;p>当然这看起来又和零知识证明协议的目的冲突了，但是我们依然可以用模拟器的方法来解决这个问题。我们只需要让Prover拥有超能力，然后这样的提取器是存在的。这个超能力可以是时间机器，肯定现实世界不存在时间机器，因此不会和泄漏知识这个目的相冲突。&lt;/p>
+&lt;p>The extractor for the Schnorr protocol is extremely clever — and it’s also pretty simple. Let’s illustrate it in terms of a protocol diagram. Alice (the Prover) is on the left, and the Extractor is on the right:&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-30-Zero-Knowledge-Proofs-An-illustrated-primer-Part2/Untitled%203.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>The key observation here is that by rewinding Alice’s execution, the Extractor can ‘trick’ Alice into making two different proof transcripts using the same &lt;em>k&lt;/em>. This shouldn’t normally happen in a real protocol run, where Alice specifically picks a new &lt;em>k&lt;/em> for each execution of the protocol.&lt;/p>
+&lt;p>关键的一点是通过让Alice重新执行到第2步，提取器可以骗Alice给两个不同的证明但是用同一个$k$。在实际的协议运行中，这是通常不应该发生的，Alice会在协议每次执行的时候特别选择一个新的$k$。&lt;/p>
+&lt;p>If the Extractor can trick Alice into doing this, then he can solve the following simple equation to recover Alice’s secret:&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-30-Zero-Knowledge-Proofs-An-illustrated-primer-Part2/Untitled%204.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>如果提取器能够骗Alice这样做的话，提取器是可以提取到Alice拥有的密钥$a$。&lt;/p>
+&lt;p>推导的详细过程：&lt;/p>
+$$
+\begin{array}{l}
+\frac{s_1 - s_2}{c_1 - c_2} \mod q &amp; \\\
+\quad = \frac{((ac_1+k) \mod q)-((ac_2 + k) \mod q)}{c_1 - c_2} \mod q \\\
+\quad = \frac{(ac_1+k)-(ac_2 + k) }{c_1 - c_2} \mod q \\\
+\quad = \frac{ac_1 - ac_2 }{c_1 - c_2} \mod q \\\
+\quad = a \mod q
+\end{array}
+$$&lt;p>It’s worth taking a moment right now to note that this &lt;em>also&lt;/em> implies a serious vulnerability（漏洞） in bad implementations of the Schnorr protocol. If you ever &lt;em>accidentally&lt;/em> use the same &lt;em>k&lt;/em> for two different runs of the protocol, an attacker may be able to recover your secret key! This can happen if you use a bad random number generator.&lt;/p>
+&lt;p>需要注意Schnorr protocol在实际中可能出现的漏洞，那就是在不同运行中使用相同的$k$，因此要选择好的随机生成器。&lt;/p>
+&lt;p>Indeed, those with a bit more experience will notice that this is similar to a *&lt;a class="link" href="https://www.schneier.com/blog/archives/2011/01/sony_ps3_securi.html" target="_blank" rel="noopener"
+>real* attack on systems (with bad random number generators)&lt;/a> that implement ECDSA or DSA signatures! This is also not a coincidence. The (EC)DSA signature family is based on Schnorr. Ironically（讽刺地）, the developers of DSA managed to retain this vulnerability of the Schorr family of protocols while &lt;em>at the same time&lt;/em> ditching the security proof that makes Schnorr so nice.&lt;/p>
+&lt;h3 id="proving-zero-knowledgeness-against-an-honest-verifier">&lt;strong>Proving zero-knowledge(ness) against an honest Verifier&lt;/strong>
+&lt;/h3>&lt;p>Having demonstrated（证明） that Schnorr signatures are complete and sound, it remains only to prove that they’re ‘&lt;em>zero knowledge’&lt;/em>. Remember that to do this, normally we require a Simulator that can interact with any possible Verifier and produce a ‘simulated’ transcript of the proof, even if the Simulator doesn’t know the secret it’s proving it knows.&lt;/p>
+&lt;p>为了证明“零知识”，一般要求有一个可以和所有可能的Verifier的模拟器，输出证明的结果，而模拟器甚至不知道它要证明的知识。&lt;/p>
+&lt;p>The standard Schnorr protocol does not have such a Simulator, for reasons we’ll get into in a second. Instead, to make the proof work we need to make a special assumption. Specifically, the Verifier needs to be ‘honest’. That is, we need to make the special assumption that it will run its part of the protocol correctly — namely, that it will pick its challenge “&lt;em>c&lt;/em>” using only its random number generator, &lt;em>and will not choose this value based on any input we provide it&lt;/em>. As long as it does this, we can construct a Simulator.&lt;/p>
+&lt;p>标准的Schnorr协议是没有这样的模拟器的。这里要做一个假设，Verifier需要是“诚实的”。我们需要假设在Verifier选择挑战“c”时，只用到一个随机数生成器，而不会选择那些基于任何我们提供的输入生成的值。&lt;/p>
+&lt;p>Here’s how the Simulator works.&lt;/p>
+&lt;p>Let’s say we are trying to prove knowledge of a secret $a$ for some public key $g^a \mod p$ &lt;em>—&lt;/em> but we don’t actually know the value*.* Our Simulator assumes that the Verifier will choose some value $c$ as its challenge, and moreover, it knows that the honest Verifier will choose the value $c$ only based on its random number generator — and not based on any inputs the Prover has provided.&lt;/p>
+&lt;ol>
+&lt;li>First, output some initial  $g^{k_1}$ as the Prover’s first message*,* and find out what challenge $c$  the Verifier chooses.&lt;/li>
+&lt;li>&lt;em>Rewind the Verifier&lt;/em>, and pick a random integer $z$ in the range ${ 0, \cdots, q-1 }$&lt;em>.&lt;/em>&lt;/li>
+&lt;li>Compute $g^{k_2} = g^z * g^{a(-c)}$ **and output $g^{k_2}$ as the Prover’s new initial message.&lt;/li>
+&lt;li>When the Verifier challenges on $c$ again, output $z$.&lt;/li>
+&lt;/ol>
+&lt;p>Notice that the transcript $g^k,c,z$ will verify correctly as a perfectly valid, well-distributed proof of knowledge of the value $a$. The Verifier will accept this output as a valid proof of knowledge of $a$, even though the Simulator does not know $a$ in the first place!&lt;/p>
+&lt;p>详细的过程如下：&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-30-Zero-Knowledge-Proofs-An-illustrated-primer-Part2/Untitled%205.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>What this proves is that &lt;em>if we can rewind a Verifier&lt;/em>, then (just as in the first post in this series) we can always trick the Verifier into believing we have knowledge of a value, even when we don’t. And since the statistical distribution of our protocol is identical to the real protocol, this means that our protocol must be zero knowledge — against an honest Verifier.&lt;/p>
+&lt;p>在模拟器世界里，我们可以回溯Verifier，让诚实的Verifier相信我们是知道密钥$a$的，但其实我们根本不知道$a$时多少。由于在统计分布上我们的协议和真实的协议是一样的，那么对于诚实的Verifier，我们的协议一定是零知识的。&lt;/p>
+&lt;h3 id="from-interactive-tonon-interactive">&lt;strong>From interactive to &lt;em>non-interactive&lt;/em>&lt;/strong>
+&lt;/h3>&lt;p>So far we’ve shown how to use the Schnorr protocol to &lt;em>interactively prove knowledge&lt;/em> of a secret key $a$ that corresponds to a public key $g^a$. This is an incredibly useful protocol, but it only works if our Verifier is online and willing to interact with us.&lt;/p>
+&lt;p>An obvious question is whether we can make this protocol work without interaction. Specifically, can I make a proof that I can send you without you even being online. Such a proof is called a &lt;a class="link" href="https://en.wikipedia.org/wiki/Non-interactive_zero-knowledge_proof" target="_blank" rel="noopener"
+>non-interactive zero knowledge proof&lt;/a> (NIZK). Turning Schnorr into a non-interactive proof seems initially quite difficult — since the protocol fundamentally relies on the Verifier picking a random challenge. Fortunately there is a clever trick we can use.&lt;/p>
+&lt;p>This technique was developed by Fiat and Shamir in the 1980s. What they observed was that &lt;em>if you have a decent hash function lying around,&lt;/em> you can convert an interactive protocol into a non-interactive one by simply using the hash function to pick the challenge.&lt;/p>
+&lt;p>怎么将交互式零知识证明转换成非交互式零知识证明呢？转换的难点在于Verifier需要选择一个随机的挑战，一个解决方法是使用可靠的哈希函数来选择这个挑战。&lt;/p>
+&lt;p>Specifically, the revised protocol for proving knowledge of $a$ with respect to a public key $g^k$ looks like this:&lt;/p>
+&lt;ol>
+&lt;li>The Prover picks  $g^k$ (just as in the interactive protocol).&lt;/li>
+&lt;li>Now, the prover computes the challenge as $c = H(g^k||M)$ where $H()$ is a hash function, and $M$ is an (optional) and arbitary message string.&lt;/li>
+&lt;li>Compute $ac+k \mod q$ (just as in the interactive protocol).&lt;/li>
+&lt;/ol>
+&lt;p>The upshot here is that the hash function is picking the challenge $c$ without any interaction with the Verifier. In principle, if the hash function is “strong enough” (meaning, it’s a &lt;a class="link" href="https://blog.cryptographyengineering.com/2011/09/29/what-is-random-oracle-model-and-why-3/" target="_blank" rel="noopener"
+>random oracle&lt;/a>) then the result is a completely non-interactive proof of knowledge of the value $a$ that the Prover can send to the Verifier. The proof of this is relatively straightforward.&lt;/p>
+&lt;p>The particularly neat thing about this protocol is that it isn’t just a proof of knowledge, it’s also a &lt;em>signature scheme.&lt;/em> That is, if you put a message into the (optional) value $M$, you obtain a signature on $M$, which can only be produced by someone who knows the secret key $a$. The resulting protocol is called the Schnorr signature scheme, and it’s the basis of real-world protocols like &lt;a class="link" href="https://en.wikipedia.org/wiki/EdDSA" target="_blank" rel="noopener"
+>EdDSA&lt;/a>.&lt;/p>
+&lt;p>这个协议不仅仅是知识的证明，也是一种签名方案。&lt;/p>
+&lt;h3 id="phew">&lt;strong>Phew.&lt;/strong>
+&lt;/h3>&lt;p>Yes, this has been a long post and there’s probably a lot more to be said. Hopefully there will be more time for that in a third post — which should only take me another three years.&lt;/p>
+&lt;p>&lt;em>Notes:&lt;/em>&lt;/p>
+&lt;ul>
+&lt;li>In this definition, it’s necessary that the statement be literally true.&lt;/li>
+&lt;/ul></description></item><item><title>安比实验室零知识证明介绍系列文章</title><link>https://wenjin1997.github.io/2022/11/30/sec-bit-zkp-summary/</link><pubDate>Wed, 30 Nov 2022 00:00:00 +0000</pubDate><guid>https://wenjin1997.github.io/2022/11/30/sec-bit-zkp-summary/</guid><description>&lt;img src="https://wenjin1997.github.io/img/2022-11-30-sec-bit-zkp-summary/toni-osmundson-ZQtk_VAvO7Y-unsplash.jpeg" alt="Featured image of post 安比实验室零知识证明介绍系列文章" />&lt;p>本篇博客记录了安比实验室知识证明介绍系列文章的笔记。几篇文章如下：&lt;/p>
+&lt;ul>
+&lt;li>&lt;a class="link" href="https://secbit.io/blog/2019/07/31/zero-knowledge-and-proof/" target="_blank" rel="noopener"
+>初识「零知识」与「证明」&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://secbit.io/blog/2019/08/06/understand-zero-knowledge-proof-by-simulator/" target="_blank" rel="noopener"
+>从「模拟」理解零知识证明：平行宇宙与时光倒流&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://secbit.io/blog/2019/08/28/extractor-and-proof-of-knowledge/" target="_blank" rel="noopener"
+>读心术：从零知识证明中提取「知识」&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://secbit.io/blog/2019/11/01/from-interactive-zkp-to-non-interactive-zkp/" target="_blank" rel="noopener"
+>亚瑟王的「随机」挑战：从交互到非交互式零知识证明&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h2 id="初识零知识与证明">初识「零知识」与「证明」
+&lt;/h2>&lt;p>原文链接：&lt;a class="link" href="https://www.notion.so/08ecfbfe0c254900b8da3a81ab8001b8#5df9c0fd1da0455099a234b83f0af128" target="_blank" rel="noopener"
+>初识「零知识」与「证明」&lt;/a>。&lt;/p>
+&lt;p>文章先介绍了“证明”的历史。&lt;/p>
+&lt;ul>
+&lt;li>古希腊：「证明」 == 「洞见」&lt;/li>
+&lt;li>二十世纪初：「证明」 == 「符号推理」&lt;/li>
+&lt;li>六十年代：「证明」 == 「程序」&lt;/li>
+&lt;li>八十年代：「证明」 == 「交互」，拓宽了「证明」的概念。通过构造两个图灵机进行「交互」而不是「推理」，来证明一个命题在概率上是否成立。&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>零知识证明有什么用处？&lt;/strong>&lt;/p>
+&lt;blockquote>
+&lt;p>零知识证明技术可以解决数据的信任问题，计算的信任问题！&lt;/p>
+&lt;/blockquote>
+&lt;blockquote>
+&lt;p>零知识证明技术可以「模拟」出一个第三方，来保证某一个论断是可信的。&lt;/p>
+&lt;/blockquote>
+&lt;p>换句话说，当我们收到一个加了密的数据， 然后还有一个零知识证明。这个零知识证明是说 「关于数据的 X 断言成立」，那么这等价于有一个天使在我们耳边悄声说，「关于数据的X 断言成立」！&lt;/p>
+&lt;p>对于这个 X 断言，可以非常灵活，它可以是一个 NP复杂度的算法。大白话讲只要我们能写一段程序（一个多项式时间的算法）来判断一个数据是否满足 X 断言，那么这个断言就可以用零知识证明的方式来表达。通俗点讲，只要数据判定是客观的，那么零知识证明就适用。&lt;/p>
+&lt;p>零知识证明的用处：&lt;/p>
+&lt;ul>
+&lt;li>数据的隐私保护&lt;/li>
+&lt;li>计算压缩与区块链扩容&lt;/li>
+&lt;li>端到端的通讯加密&lt;/li>
+&lt;li>身份认证&lt;/li>
+&lt;li>去中心化存储&lt;/li>
+&lt;li>信用记录&lt;/li>
+&lt;li>构造完全公平的现实数字化商品的交易协议&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>知识和信息的区别：&lt;/strong>&lt;/p>
+&lt;ol>
+&lt;li>「知识」是与「计算难度」相关，而「信息」则不是&lt;/li>
+&lt;li>「知识」是与公共所知的东西有关，而「信息」主要与部分公开的东西有关&lt;/li>
+&lt;/ol>
+&lt;p>&lt;strong>可验证计算与电路可满足性问题：&lt;/strong>&lt;/p>
+&lt;p>另外电路可满足问题和地图三染色问题一样，是NP-Complete问题。NP-Complete 是一类问题，他的求解过程是多项式时间内难以完成的，即「求解困难」，但是验证解的过程是多项式时间可以完成的，即「验证简单」。&lt;/p>
+&lt;blockquote>
+&lt;p>所谓的电路可满足性就是指，存在满足电路的一个解。如果这个解的输出值等于一个确定值，那么这个解就能「表示」电路的计算过程。&lt;/p>
+&lt;/blockquote>
+&lt;blockquote>
+&lt;p>「零知识的电路可满足性证明协议」提供了一种最直接的保护隐私/敏感数据的技术&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="从模拟理解零知识证明平行宇宙与时光倒流">从「模拟」理解零知识证明：平行宇宙与时光倒流
+&lt;/h2>&lt;p>原文链接：&lt;a class="link" href="https://secbit.io/blog/2019/08/06/understand-zero-knowledge-proof-by-simulator/" target="_blank" rel="noopener"
+>从「模拟」理解零知识证明：平行宇宙与时光倒流&lt;/a>。&lt;/p>
+&lt;p>&lt;strong>安全的定义与不可区分性&lt;/strong>&lt;/p>
+&lt;p>这一部分是密码学中的知识。&lt;/p>
+&lt;p>一切安全都有前提的。只有经过数学证明之后，大家才能够确信这个 算法/方案 的安全性基于一些非常明确的「安全假设」。&lt;/p>
+&lt;blockquote>
+&lt;p>完美安全：假设你是一个攻击者，你通过密文获取不到任何有价值的信息，破解的唯一手段就是靠瞎蒙。&lt;/p>
+&lt;/blockquote>
+&lt;p>📝 在Dan Boneh and Victor Shoup 的 《A Graduate Course in Applied Cryptography》书中定义为：&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-30-sec-bit-zkp-summary/perfect%20security.png"
+loading="lazy"
+>&lt;/p>
+&lt;p>通过密文获取不到信息，这就意味着你没有获得任何额外的计算能力，能够帮助让你以更短的时间来计算出明文。&lt;/p>
+&lt;blockquote>
+&lt;p>语义安全：假设你是一个攻击者，你通过密文在多项式时间内计算不出来任何有价值的信息。&lt;/p>
+&lt;/blockquote>
+&lt;p>📒书中定义为：
+&lt;img src="https://wenjin1997.github.io/img/2022-11-30-sec-bit-zkp-summary/semantic%20security.png"
+loading="lazy"
+>&lt;/p>
+&lt;p>不可区分的概念：
+我们又引入一个概念——「不可区分性」，来重新表述加密算法的安全性：假设你是一个攻击者，而我有一个加密算法：&lt;/p>
+&lt;ol>
+&lt;li>你随机产生两段等长的明文，&lt;code>m1&lt;/code>=「白日依山尽，黄河入海流」，&lt;code>m2&lt;/code>=「烫烫烫烫烫，烫烫烫烫烫」&lt;/li>
+&lt;li>你把这两段明文，&lt;code>m1&lt;/code> 与 &lt;code>m2&lt;/code> 交给我&lt;/li>
+&lt;li>我随机挑选一个明文，不告诉你是哪一个，然后进行加密，产生一个密文 &lt;code>c&lt;/code>&lt;/li>
+&lt;li>我把密文 &lt;code>c&lt;/code> 出示给你看，让你猜这个&lt;code>c&lt;/code> 究竟是由唐诗加密产生，还是乱码加密产生&lt;/li>
+&lt;li>如果你用一台计算机来破解&lt;code>c&lt;/code>，在多项式时间内破解不出来，也就是说你没办法区分&lt;code>c&lt;/code>的来源，那么就说明加密算法是语义安全的&lt;/li>
+&lt;/ol>
+&lt;p>&lt;strong>区分两个世界&lt;/strong>&lt;/p>
+&lt;p>证明的零知识过程，等价于构造（寻找）一个「模拟」算法，这个算法能够让模拟器来模拟出一个「没有知识」的理想世界。如果这个算法存在，而且两个世界不可区分，那么就证明完毕。&lt;/p>
+&lt;p>所谓的不可区分性针对的是理想世界中的个体认知而言。而「可区分性」是对位于世界外部的神而言。&lt;/p>
+&lt;p>首先「零知识」是为了保护 Alice 的利益，因为 Alice 不想在交互过程中透露更多的信息给 Bob，不想让 Bob 知道她所拥有的秘密 w，甚至不想让 Bob 从交互的过程中分析出哪怕一丁点的信息。那么怎么保证这一点呢？「模拟器」这时候登场了，它能模拟出一个和现实世界外表一模一样的「理想世界」，然后「模拟器」在这个世界中可以轻松地骗过任何一个对手，让对方无法分辨自己是在现实世界中，还是理想世界中。因为「模拟器」手里没有那个秘密 w，「理想世界」是零知识的。又因为两个世界的不可区分性，所以我们可以得出结论：Alice 的交互协议是「零知识」的。&lt;/p>
+&lt;p>&lt;strong>地图三染色问题的零知识证明&lt;/strong>&lt;/p>
+&lt;p>文章中用图片形象的说明了零知识证明的过程。不过这是针对诚实的Bob，如果是不诚实的Bob呢？如果在模拟器第一次实施时间倒流之后，Bob又选择了不同的边，那么模拟器可以把颜色打乱之后，再次运行时间倒流，在多次时间倒流之后，Bob 极大的概率总会一次选择模拟器进行染色的那条边，然后这时候模拟器才走到第三步，打开纸片。&lt;/p>
+&lt;p>&lt;strong>阿里巴巴、洞穴与芝麻开门&lt;/strong>&lt;/p>
+&lt;p>文章中再次阐述了阿里巴巴与大盗的故事，这个故事来源于论文&lt;a class="link" href="http://pages.cs.wisc.edu/~mkowalcz/628.pdf" target="_blank" rel="noopener"
+>How to explain zero-knowledge protocols to your children&lt;/a>，我的论文的笔记见&lt;a class="link" href="https://wenjin1997.github.io/2022/11/28/How-to-explain-zero-knowledge-protocols-to-your-children/" target="_blank" rel="noopener"
+>这里&lt;/a>。The Jealous Reporter用的剪辑手段就是模拟器中的超能力，由于两家电视台放出的影片人们无法区分，而假的那个根本不知道洞穴的秘密，这也就证明了这个过程是零知识的。&lt;/p>
+&lt;p>&lt;strong>模拟器与图灵机&lt;/strong>&lt;/p>
+&lt;p>模拟器不能随便开挂。模拟器其实只是一个图灵机，而前面提到的时间倒流是图灵机可以实现的功能。&lt;/p>
+&lt;p>文章中下面这段话很重要👇&lt;/p>
+&lt;p>证明零知识的过程，就是要寻找一个算法，或者更通俗点说，写出一段代码，它运行在外部计算机系统中，但是实现了虚拟机的功能。而且在虚拟机中，需要有一个不带有「知识」作为输入的 Zlice，可以骗过放入虚拟机运行的 Bob。&lt;/p>
+&lt;h2 id="读心术从零知识证明中提取知识">读心术：从零知识证明中提取「知识」
+&lt;/h2>&lt;p>这篇文章实际是在说明零知识证明中的可靠性。&lt;/p>
+&lt;p>&lt;strong>「零知识」vs. 「可靠性」&lt;/strong>
+「零知识证明」并不是通过给出一个&lt;strong>不允许发生的事件列表&lt;/strong>来定义，而是直接给出了一个最极致的「模拟条件」。&lt;/p>
+&lt;p>所谓「模拟条件」是指，通过「模拟」方法来实现一个「理想世界」，使之与「现实世界」不可区分；而由于在理想世界中不存在知识，所以可以推导出结论：现实世界满足「零知识」。&lt;/p>
+&lt;p>我们继续分析下一个交互系统（安全协议）的三个性质：「完备性」、「可靠性」与「零知识」。&lt;/p>
+&lt;blockquote>
+&lt;p>可靠性（Soundness）：Alice 在没有知识的情况下不能通过 Bob 的验证。&lt;/p>
+&lt;/blockquote>
+&lt;blockquote>
+&lt;p>完备性（Completeness）：Alice 在有知识的情况下可以通过 Bob 的验证。&lt;/p>
+&lt;/blockquote>
+&lt;blockquote>
+&lt;p>零知识（Zero-knowledge）：Alice 在交互的过程中不会泄露关于知识的任何信息。&lt;/p>
+&lt;/blockquote>
+&lt;p>我们可以看出来「可靠性」和「完备性」有一种「对称性」。可靠性保证了恶意的 Alice 一定失败，而完备性保证了诚实的 Alice 一定成功。&lt;/p>
+&lt;p>&lt;strong>简洁的Schnorr协议&lt;/strong>&lt;/p>
+&lt;p>📝 这一小节的内容补充了关于群的知识。&lt;/p>
+&lt;p>Alice 拥有一个秘密数字，&lt;code>a&lt;/code>，我们可以把这个数字想象成「私钥」，然后把它「映射」到椭圆曲线群上的一个点 &lt;code>a*G&lt;/code>，简写为 &lt;code>aG&lt;/code>。这个点我们把它当做「公钥」。&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>sk = a&lt;/code>&lt;/li>
+&lt;li>&lt;code>PK = aG&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;p>请注意「映射」这个词，我们这里先简要介绍「同态」这个概念。椭圆曲线群有限域之间存在着一种同态映射关系。有限域，我们用 &lt;code>Zq&lt;/code>这个符号表示，其中素数 &lt;code>q&lt;/code>是指有限域的大小，它是指从 &lt;code>0, 1, 2, …, q-1&lt;/code> 这样一个整数集合。而在一条椭圆曲线上，我们通过一个基点，&lt;code>G&lt;/code>，可以产生一个「循环群」，标记为 &lt;code>0G, G, 2G, …, (q-1)G&lt;/code>，正好是数量为 &lt;code>q&lt;/code>个 曲线点的集合。任意两个曲线点正好可以进行一种「特殊的二元运算」，&lt;code>G + G = 2G&lt;/code>，&lt;code>2G + 3G = 5G&lt;/code>，看起来这个二元运算好像和「加法」类似，满足交换律和结合律。于是我们就用 &lt;code>+&lt;/code>这个符号来表示。之所以把这个群称为循环群，因为把群的最后一个元素 &lt;code>(q-1)G&lt;/code>，再加上一个 &lt;code>G&lt;/code>就回卷到群的第一个元素 &lt;code>0G&lt;/code>。&lt;/p>
+&lt;p>给任意一个有限域上的整数 &lt;code>r&lt;/code>，我们就可以在循环群中找到一个对应的点 &lt;code>rG&lt;/code>，或者用一个标量乘法来表示 &lt;code>r*G&lt;/code>。但是反过来计算是很「困难」的，这是一个「密码学难题」—— 被称为离散对数难题[2]。&lt;/p>
+&lt;p>也就是说，如果任意给一个椭圆曲线循环群上的点 &lt;code>R&lt;/code>，那么到底是有限域中的哪一个整数对应 &lt;code>R&lt;/code>，这个计算是很难的，如果有限域足够大，比如说 256bit 这么大，我们姑且可以认为这个反向计算是不可能做到的。&lt;/p>
+&lt;p>Schnorr 协议充分利用了有限域和循环群之间单向映射，实现了最简单的零知识证明安全协议：Alice 向 Bob 证明她拥有 &lt;code>PK&lt;/code> 对应的私钥 &lt;code>sk&lt;/code>。&lt;/p>
+&lt;p>&lt;code>z&lt;/code> 的计算和验证过程很有趣，有几个关键技巧：&lt;/p>
+&lt;ol>
+&lt;li>首先 Bob 必须给出一个「随机」挑战数，然后 Bob 在椭圆曲线上同态地检查 &lt;code>z&lt;/code> 。如果我们把挑战数 &lt;code>c&lt;/code> 看成是一个未知数，那么 &lt;code>r+a*c=z&lt;/code> 可以看成是一个一元一次方程，其中 &lt;code>r&lt;/code> 与 &lt;code>a&lt;/code> 是方程系数。请注意在 &lt;code>c&lt;/code> 未知的前提下，如果 &lt;code>r + a*x = r' + a'*x&lt;/code> 要成立，那么根据 Schwatz-Zippel 定理[3]，极大概率上 &lt;code>r=r'&lt;/code>，&lt;code>a=a'&lt;/code> 都成立。也就是说， Alice 在 &lt;code>c&lt;/code> 未知的前提下，想找到另一对不同的 &lt;code>r'&lt;/code>,&lt;code>a'&lt;/code> 来计算 &lt;code>z&lt;/code> 骗过 Bob 是几乎不可能的。这个随机挑战数 &lt;code>c&lt;/code> 实现了&lt;code>r&lt;/code> 和 &lt;code>a&lt;/code> 的限制。虽然 Bob 随机选了一个数，但是由于 Alice 事先不知道，所以 Alice 不得不使用私钥 &lt;code>a&lt;/code> 来计算 &lt;code>z&lt;/code>。这里的关键： &lt;code>c&lt;/code> 必须是个随机数。&lt;/li>
+&lt;li>Bob 验证是在椭圆曲线群上完成。Bob 不知道&lt;code>r&lt;/code>，但是他知道 &lt;code>r&lt;/code> 映射到曲线上的点&lt;code>R&lt;/code>；Bob 也不知道 &lt;code>a&lt;/code>，但是他知道 &lt;code>a&lt;/code> 映射到曲线群上的点 &lt;code>PK&lt;/code>，即 &lt;code>a*G&lt;/code>。通过同态映射与Schwatz-Zippel 定理，Bob 可以校验 &lt;code>z&lt;/code> 的计算过程是否正确，从而知道 Alice 确实是通过 &lt;code>r&lt;/code> 和 &lt;code>a&lt;/code> 计算得出的 &lt;code>z&lt;/code>，但是又不暴露 &lt;code>r&lt;/code> 与 &lt;code>a&lt;/code> 的值。&lt;/li>
+&lt;li>还有，在协议第一步中产生的随机数 &lt;code>r&lt;/code> 保证了 &lt;code>a&lt;/code> 的保密性。因为任何一个秘密当和一个符合「一致性分布」的随机数相加之后的和仍然符合「一致性分布」。&lt;/li>
+&lt;/ol>
+&lt;p>📝 &lt;code>c&lt;/code>必须是随机数。&lt;/p>
+&lt;p>&lt;strong>再遇模拟器&lt;/strong>&lt;/p>
+&lt;p>其实，「可靠性」和「零知识」这两个性质在另一个维度上也是存在着一种对称性。**可靠性保证了恶意的 Alice 一定失败，零知识保证了恶意的 Bob 一定不会成功。**有趣地是，这种对称性将体现在模拟出来的「理想世界」中。&lt;/p></description></item><item><title>Cryptographic and Physical Zero-Knowledge Proof Systems for Solutions of Sudoku Puzzles</title><link>https://wenjin1997.github.io/2022/11/29/Cryptographic-and-Physical-Zero-Knowledge-Proof-Systems-for-Solutions-of-Sudoku-Puzzles/</link><pubDate>Tue, 29 Nov 2022 00:00:00 +0000</pubDate><guid>https://wenjin1997.github.io/2022/11/29/Cryptographic-and-Physical-Zero-Knowledge-Proof-Systems-for-Solutions-of-Sudoku-Puzzles/</guid><description>&lt;img src="https://wenjin1997.github.io/img/2022-11-29-Cryptographic-and-Physical-Zero-Knowledge-Proof-Systems-for-Solutions-of-Sudoku-Puzzles/background.jpg" alt="Featured image of post Cryptographic and Physical Zero-Knowledge Proof Systems for Solutions of Sudoku Puzzles" />&lt;p>论文见&lt;a class="link" href="https://link.springer.com/content/pdf/10.1007/s00224-008-9119-9.pdf" target="_blank" rel="noopener"
+>Cryptographic and Physical Zero-Knowledge Proof Systems for Solutions of Sudoku Puzzles&lt;/a>。本篇论文详细的介绍了关于数独问题的密码学和物理上的零知识证明协议。可以了解到零知识证明协议的完整过程，一般步骤有哪些。&lt;/p>
+&lt;h2 id="1-introduction">1 Introduction
+&lt;/h2>&lt;p>如何在不透露解的情况下让别人相信你知道一个数独的解。关注两件事，证明者如何说明：&lt;/p>
+&lt;ol>
+&lt;li>给定一个数独问题，存在一个解&lt;/li>
+&lt;li>他知道这个解，但是不用给出关于解的任何其他信息&lt;/li>
+&lt;/ol>
+&lt;p>数独问题在计算复杂度上属于NP问题，事实上，是NP-完全问题。NP问题意味着很容易验证一个解是否正确。&lt;/p>
+&lt;h2 id="2-definitions">2 Definitions
+&lt;/h2>&lt;p>一般化的数独问题，数独问题的大小是 $n = k^2$，总共 $n \times n$个格子，每个小块是 $k \times k$大小的，那么数的范围是 ${ 1, &amp;hellip;, n}$。比如常见的 $k = 3$，$9 \times 9$ 大小的数独。一个具体数独问题例子和解都是 $O(n^2 \log n)$ 位的。&lt;/p>
+&lt;h3 id="cryptographic-functionalities">Cryptographic Functionalities
+&lt;/h3>&lt;p>协议中有两方，一个是prover，一个是verifier。一旦prover和verifier固定下来，他们交互发的消息可以看作是一个只包含prover和verifier随机数的函数。下面讨论这个协议的一些性质：&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>completeness.&lt;/p>
+&lt;p>一个诚实的verifier会accepect一个正确的证明。也就是一个prover有一个合法的解会遵循这个协议。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>soundness error.&lt;/p>
+&lt;blockquote>
+&lt;p>The &lt;strong>soundness error&lt;/strong> (or soundness) of the protocol is the (upper bound on the) probability that a verifier accepts an incorrect proof, i.e. a proof to a fallacious statement; in our case this corresponds to the event that a prover who does not a solution to a given Sudoku puzzle, claims that it knows to solve it, and the verifier accepts this claim.&lt;/p>
+&lt;/blockquote>
+&lt;p>对于错误的证明，会有多少的概率通过verifier的验证。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>zero-knowledge.&lt;/p>
+&lt;blockquote>
+&lt;p>The goal in designing the protocols is to prevent the verifier from gaining any new knowledge from a correct (interactive) proof. I.e., the protocol should be zero- knowledge in the following sense: whatever a verifier could learn by interacting with the correct prover, the verifier could learn itself.&lt;/p>
+&lt;/blockquote>
+&lt;p>什么是零知识呢？无论verifier通过与prover交互学到了什么，那么verifier也能通过和自己交互学到这些知识，才是真的没有泄露任何别的知识。实际操作中有一个有效的模拟器。这个模拟器会生成verifier和prover之间的对话，同时只知道puzzle，而不知道数独的解。要求模拟器中verifier与prover对话之间的分布和真实的情况下两者之间的分布是一样的，这样就无法区分模拟器和真实的情况。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>proofs-of-knowledge.&lt;/p>
+&lt;blockquote>
+&lt;p>Our protocols should also be &lt;em>&lt;strong>proofs-of-knowledge&lt;/strong>&lt;/em>: if the prover (or anyone imper-
+sonating him) can succeed in making the verifier accept, then there is another ma-
+chine, called the &lt;em>extractor&lt;/em>, that can communicate with the prover and actually come
+up with the solution itself. This must involve running the prover several times using
+the same randomness (which is not possible under normal circumstances), so as not
+to contradict the zero-knowledge properties.&lt;/p>
+&lt;/blockquote>
+&lt;p>证明prover确实有知识，存在这样一个提取器，它能够通过和prover交互得到知识，当然，它不能发送通常的随机数，它可以多次使用相同的随机数。&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;p>论文中证明中用到的唯一的密码学工具是 commitment protocol。一个承诺协议，发送方向接收方承诺一个值，接收方不会学到任何关于这个值有用的信息。这样的一个协议包含两个阶段：&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>&lt;strong>commit phase&lt;/strong> 承诺阶段。&lt;/p>
+&lt;p>发送方绑定一些值 $v$，接收方不能决定任何关于 $v$ 有用的信息。特别地，对于任意的$b$和$b’$，接受方无法区分$v=b$和$v=b’$。这个性质称为 &lt;strong>&lt;strong>&lt;strong>&lt;strong>&lt;strong>&lt;strong>&lt;strong>hiding&lt;/strong>&lt;/strong>&lt;/strong>&lt;/strong>&lt;/strong>&lt;/strong>&lt;/strong>。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>decommit or reval phase&lt;/p>
+&lt;p>接收方获得$v$后，确保它是原来的值，也就是说，一旦commit阶段结束，接收方会在reval阶段接收一个唯一的值。这个性质称为 &lt;strong>binding&lt;/strong>。&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;p>bit commitment可以高效执行。&lt;/p>
+&lt;h3 id="physical-protocols">Physical Protocols
+&lt;/h3>&lt;p>在文章中使用 tamper-evident sealed envelopes，也就是防拆封信封。在数独的例子中，每个盖住的卡片当作是这样的 tamper-evident sealed envelopes，将卡片翻开就相当于拆开信封。&lt;/p>
+&lt;h2 id="3-cryptographic-protocols">3. Cryptographic Protocols
+&lt;/h2>&lt;p>verifer要保证两件事情：&lt;/p>
+&lt;ol>
+&lt;li>存在一个解&lt;/li>
+&lt;li>the prover 知道这个解&lt;/li>
+&lt;/ol>
+&lt;p>零知识协议证明的结构：&lt;/p>
+&lt;blockquote>
+&lt;ol>
+&lt;li>The prover commits to several values. These values are functions of the instance,
+the solution and some randomization known only to the prover. 证明方承诺一些值。&lt;/li>
+&lt;li>The verifier requests that the prover open some of the committed values—this is
+called the &lt;em>challenge&lt;/em>. The verifier chooses the challenge at random from a collec-
+tion of possible challenges. 验证方发起挑战。&lt;/li>
+&lt;li>The prover opens the requested values. 证明方打开要求的值。&lt;/li>
+&lt;li>The verifier checks the consistency of the opened values with the given instance,
+and accepts or rejects accordingly. 验证方验证给定实例打开值的一致性，然后相应地接受或者拒绝。&lt;/li>
+&lt;/ol>
+&lt;/blockquote>
+&lt;p>要求在步骤3中打开的值的分布是一个关于数独问题和步骤2中发送的挑战的有效函数。那么结合承诺协议的不可区分性质，说明了有效模拟器的存在性。&lt;/p>
+&lt;p>模拟器的操作如下：在步骤2中随机选择一个验证方可能发起的挑战，计算步骤1中会满足挑战的值。模拟器模拟将这些值发送给验证方，然后运行验证方的算法，用刚刚得到的值和数独问题作为输入。模拟器会获得在步骤2中发送的挑战。如果这个挑战是它之前猜的值，模拟器就会打开之前发送的承诺，那么验证方自然会接受，模拟器可以继续执行这个协议，否则的话，模拟器会重置并重新开始。这里有点绕，原文如下：&lt;/p>
+&lt;blockquote>
+&lt;p>The simulator operates in the following way: it picks at random a challenge that the verifier might send in Step 2 (i.e. it guesses what the verifier’s challenge will be), and computes commitments for Step 1 that will satisfy this challenge. The simulator simulates sending these commitments to the verifier, then it runs the verifier’s algo- rithm with the puzzle as its input, a fresh set of random bits and these commitments being the first message it receives. It then obtains the challenge the verifier sends in Step 2. If this challenge is indeed the value it guessed, then the simulator can open the commitments it sent and the verifier should accept; the simulator can continue simulating the protocol and output the transcript of the simulated protocol execution. Otherwise, the simulator resets the simulation and starts it all over again.&lt;/p>
+&lt;/blockquote>
+&lt;p>如果可能的挑战的数量是多项式的，那么每次模拟器猜测验证方的挑战，就是用“reasonably high”概率是正确的。这个过程保证了协议是零知识的，因为模拟器的输出和验证方从证明方交互得到的输出是不能区分的，但是模拟器这一过程的计算是没有和证明方交互的，那肯定不能得到任何关于解的知识。&lt;/p>
+&lt;h3 id="31-a-protocol-based-on-coloring">3.1 A Protocol Based on Coloring
+&lt;/h3>&lt;p>对于3-Colorability Protocol，证明者重新排列颜色，然后提交每个顶点重新排列之后的颜色。验证方随机选择一条边，检查边的两端颜色是否是不同的。&lt;/p>
+&lt;p>对于数独问题，这个协议是如下这样的：&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-29-Cryptographic-and-Physical-Zero-Knowledge-Proof-Systems-for-Solutions-of-Sudoku-Puzzles/Untitled.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>Prover步骤1是随机选择一个排列$\sigma$，从${1,\dots,n}$映射到${1,\dots,n}$，这样避免泄漏原来的解。&lt;/p>
+&lt;h3 id="32-an-efficient-cryptographic-protocol-with-constant-soundness-error">3.2 An Efficient Cryptographic Protocol with Constant Soundness Error
+&lt;/h3>&lt;p>下面这种协议有常数的soundness error。这个协议的想法是将每个单元复制三份，创建关于解的行、列以及子网格的视角。复制后的每个单元随机排列，prover的工作是说明以下性质：&lt;/p>
+&lt;ol>
+&lt;li>对应行、列、子网格含有所有可能的数字，如${ 1,2,&amp;hellip;,n }$。&lt;/li>
+&lt;li>一个单元的三个版本的值都是相同的。&lt;/li>
+&lt;li>这些复制后的单元中包含预先确定的值。&lt;/li>
+&lt;/ol>
+&lt;p>如果上述三个条件都满足的话，说明存在这样一个解并且prover是知道它的。具体的协议如下：&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-29-Cryptographic-and-Physical-Zero-Knowledge-Proof-Systems-for-Solutions-of-Sudoku-Puzzles/Untitled%201.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>上面过程不是很好理解，例如$n=4$的情况，$3 \times n^2 = 2 \times 4^2 = 3 \times 16$，数独谜题里填的数字范围是 ${ 1,2,3,4 }$。这样有解的三个副本，分别是行、列、subgrids。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-29-Cryptographic-and-Physical-Zero-Knowledge-Proof-Systems-for-Solutions-of-Sudoku-Puzzles/Untitled%202.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>Prover：&lt;/p>
+&lt;ol>
+&lt;li>提交$3 \times n^2$ 个值 $v_1,v_2,…,v_{3 \times 4^2}$。$v_{i_1}、v_{i_2}、v_{i_3}$ 是原来数独解中的值，有相同的值，$(i_1,i_2,i_3)$ 是一个三元组，是随机的下标，例如图中的$(3,16,9)$、$(80,1,17)$。&lt;/li>
+&lt;li>提交范围${ 1,2, \dots , 3 \times n^2 }$中 $n^2$个三元组$(i_1,i_2,i_3)$，例如${ (3,16,9),(80,1,17)\dots,(i_1,i_2,i_3), \dots }$。&lt;/li>
+&lt;li>提交步骤2中个每个三元组的名字，如$(3,16,9)$的名字就是$(rows,columns,subgrids)$，$(80,1,17)$对应的是$(subgrids,rows,columns)$。&lt;/li>
+&lt;li>提交步骤1中$3n$组位置，对应行、列和子网格，并且在每组中不会存在相交的两个单元格。例如图中蓝色箭头部分。&lt;/li>
+&lt;/ol>
+&lt;p>Verifier：选择以下三个中的一个进行挑战：&lt;/p>
+&lt;p>(a) 打开步骤1中$3 \times n^2$个值，以及步骤4中$3n$组的位置。验证每组中是否含有$n$个不同的值，任意两组之间不相交。&lt;/p>
+&lt;p>(b)打开步骤1中$3n^2$个值以及步骤2。验证提交的三元组对应下标的值都是相同的。&lt;/p>
+&lt;p>(c)打开步骤2、3、4中提交的值以及步骤1中已经填好的数独，如图中紫色数字。验证(i)打开的值和之前设定的值是一致的，(ii)步骤4中的每个集合和之前的位置是一致的，(iii)每个三元组的名字对应是正确的。&lt;/p>
+&lt;h3 id="overhead-of-our-protocols">Overhead of our Protocols
+&lt;/h3>&lt;p>上面两个协议都可以通过重复执行来降低soundness error。&lt;/p>
+&lt;h2 id="4-physical-protocols">4 Physical Protocols
+&lt;/h2>&lt;p>物理上的协议，使用 Tamper Evidence作为物理的密码学基础，就是密封的信封。&lt;/p>
+&lt;p>密码学协议和物理的协议的还有一个不同是：&lt;/p>
+&lt;blockquote>
+&lt;p>The protocol does not prevent cheating by adversaries that accept the risk of being labelled as cheaters (in this respect it is similar to the model of covert adversaries).&lt;/p>
+&lt;/blockquote>
+&lt;p>两个函数需要用到：shuffle 和 triplicate。&lt;/p>
+&lt;p>实现密封效果有三种方式：&lt;/p>
+&lt;ol>
+&lt;li>密封的信封&lt;/li>
+&lt;li>刮刮卡&lt;/li>
+&lt;li>验证方和证明方在同一个房间，用标准的不透明卡片，密封就是把数字盖着，揭开数字就是翻转卡片，将数字朝上。&lt;/li>
+&lt;/ol>
+&lt;p>协议3&lt;/p>
+&lt;blockquote>
+&lt;p>&lt;strong>Protocol 3&lt;/strong> &lt;em>A physical protocol with&lt;/em> 1/9 &lt;em>soundness error&lt;/em>&lt;/p>
+&lt;ul>
+&lt;li>&lt;em>The prover places three scratch-off cards on each cell&lt;/em>. &lt;em>On filled-in cells&lt;/em>, &lt;em>he places
+three cards with the correct value&lt;/em>, &lt;em>which are already open&lt;/em> (&lt;em>scratched&lt;/em>).&lt;/li>
+&lt;li>&lt;em>For each row/column/subgrid&lt;/em>, &lt;em>the verifier chooses&lt;/em> (&lt;em>at random&lt;/em>) &lt;em>one of the three
+cards of each cell in the corresponding row/column/subgrid&lt;/em>.&lt;/li>
+&lt;li>&lt;em>The prover makes packets of the verifier’s requested cards&lt;/em> (&lt;em>i&lt;/em>.&lt;em>e&lt;/em>. &lt;em>for every row/
+column/subgrid&lt;/em>, &lt;em>he assembles the requested cards&lt;/em>). &lt;em>He then shuffles each of the&lt;/em> 3n
+&lt;em>packets separately&lt;/em> (&lt;em>using the shuffle functionality&lt;/em>), &lt;em>and hands the shuffled packets
+to the verifier&lt;/em>.&lt;/li>
+&lt;li>&lt;em>The verifier scratches off all the cards in each packet and verifies that each packet
+contains all of the numbers&lt;/em>.&lt;/li>
+&lt;/ul>
+&lt;/blockquote>
+&lt;p>这个协议需要执行的洗牌次数比较多，对于$9 \times 9$的情况，需要进行$3 \times n = 3 \times 9 = 27$次洗牌，在实际操作中这个次数过多。&lt;/p>
+&lt;h3 id="411-reducing-the-number-of-shuffles">4.1.1 Reducing the Number of Shuffles
+&lt;/h3>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-29-Cryptographic-and-Physical-Zero-Knowledge-Proof-Systems-for-Solutions-of-Sudoku-Puzzles/Untitled%203.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>上面的意思是在验证阶段，prover给每个袋子标记一个值，从$0$到$c-1$，如果标记的是$0$表示这个口袋不被选中。那么对于每一个标记的号$i$，如果有$t$个袋子是这个标记，就把这$t$个袋子混合在一起进行洗牌操作，最后验证里面每个数字是否出现$t$次。这样就大大减少了shuffles函数的调用次数。&lt;/p>
+&lt;h2 id="42-a-physical-zero-knowledge-protocol-with-no-soundness-error">4.2 A Physical Zero-Knowledge Protocol with no Soundness Error
+&lt;/h2>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-29-Cryptographic-and-Physical-Zero-Knowledge-Proof-Systems-for-Solutions-of-Sudoku-Puzzles/Untitled%204.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>这种协议prover是没有办法作弊的。&lt;/p>
+&lt;h2 id="43-a-protocol-using-scissors-and-a-sheet-of-paper">4.3 A Protocol Using Scissors and a Sheet of Paper
+&lt;/h2>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-29-Cryptographic-and-Physical-Zero-Knowledge-Proof-Systems-for-Solutions-of-Sudoku-Puzzles/Untitled%205.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p></description></item><item><title>How to explain zero-knowledge protocols to your children</title><link>https://wenjin1997.github.io/2022/11/28/How-to-explain-zero-knowledge-protocols-to-your-children/</link><pubDate>Mon, 28 Nov 2022 00:00:00 +0000</pubDate><guid>https://wenjin1997.github.io/2022/11/28/How-to-explain-zero-knowledge-protocols-to-your-children/</guid><description>&lt;img src="https://wenjin1997.github.io/img/2022-11-28-How-to-explain-zero-knowledge-protocols-to-your-children/background.jpg" alt="Featured image of post How to explain zero-knowledge protocols to your children" />&lt;p>在文章 &lt;strong>&lt;a class="link" href="http://pages.cs.wisc.edu/~mkowalcz/628.pdf" target="_blank" rel="noopener"
+>How to explain zero-knowledge protocols to your children&lt;/a>&lt;/strong> 中通过阿里巴巴与神秘的洞穴的故事介绍了什么是零知识证明。中文翻译文章见&lt;a class="link" href="https://blog.dreamerryao.wiki/archives/%E8%AF%91howtoexplainzero-knowledgeprotocolstoyourchildren" target="_blank" rel="noopener"
+>【译】How to Explain Zero-Knowledge Protocols to Your Children&lt;/a>。下面简要记录文章的笔记：&lt;/p>
+&lt;h2 id="the-strange-cave-of-ali-baba">The Strange Cave of Ali Baba
+&lt;/h2>&lt;p>阿里巴巴每天都去集市上，总被小偷偷东西，每次小偷都跑到一个洞穴，里面有一个岔路口，有两条道路，阿里巴巴追着小偷来到洞穴，阿里巴巴每次只能选择一个口进入，每次小偷都能逃走。在经历悲催的40次被偷后，不科学呀，每次小偷都能选择阿里巴巴不走的那条路，那小偷得多幸运，$\frac{1}{2^{40}}$的概率，不太可能！！！洞穴一定有什么不可告人的秘密！&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-28-How-to-explain-zero-knowledge-protocols-to-your-children/Untitled.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>一天阿里巴巴提前藏在洞穴里，发现小偷说出了“芝麻开门”咒语，洞穴连接了起来。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-28-How-to-explain-zero-knowledge-protocols-to-your-children/Untitled%201.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>难怪这些小偷每次能顺利逃脱。后来阿里巴巴不断实验咒语，发现可以修改咒语，现在只有他知道新的咒语了。阿里巴巴把这个神奇的经历写在手稿上流传了下来。&lt;/p>
+&lt;h2 id="the-fate-of-the-manuscript">The Fate of the Manuscript
+&lt;/h2>&lt;p>后来，阿里巴巴的后代 Mick Ali 知道咒语的秘密，但是他不想告诉世人这个秘密，只想说服别人相信他知道这个秘密。一家电视台独家报道这个过程，实验是这样进行的：&lt;/p>
+&lt;ol>
+&lt;li>摄影团队先拍摄两个死胡同的细节&lt;/li>
+&lt;li>每个人都离开洞穴，Mick Ali 单独一人进入洞穴&lt;/li>
+&lt;li>记者进入到洞穴的岔路口，抛一枚银币，选择左边还是右边，接着大喊让Mike从选择的那一边出来&lt;/li>
+&lt;li>重复上述过程40次&lt;/li>
+&lt;/ol>
+&lt;p>Mick连续成功40次，已经能足够说服我们他知道咒语。&lt;/p>
+&lt;h2 id="the-jealous-reporter">The Jealous Reporter
+&lt;/h2>&lt;p>嫉妒的记者找来一个演员装扮成Mick的样子，但是他不知道咒语，记者也模拟上述过程，不过最后剪掉失败的片段，只展示连续成功40次的结果。&lt;/p>
+&lt;p>模拟的情况和真实的情况一同向世人进行展示，人们也无法区别孰真孰假，这不恰好说明咒语的秘密没有泄露嘛！但是人们都相信Mick知道咒语的秘密。这一过程就在证明&lt;strong>零知识&lt;/strong>！！！&lt;/p>
+&lt;h2 id="the-tests-in-parallel">The Tests in Parallel
+&lt;/h2>&lt;p>上面的证明过程要连续进行40次，有没有方法并行呢？可以建造这样一座大厦，每一层有一个洞穴，每一个洞穴都有自己的咒语，每个洞穴有一个演员，在同一时刻他们进入洞穴然后随机选择进入哪一边，最后出来。但是这样的话，需要在秘密的数量和拍摄场景数量上做一个平衡。&lt;/p>
+&lt;h2 id="the-prior-agreement">The Prior Agreement
+&lt;/h2>&lt;p>之前的模拟场景需要后期剪掉那些不成功的场景，有没有连续进行挑战成功的办法呢？那就是验证者和证明者之间事先商定随机选择走哪边，连续进行40次也能挑战成功。&lt;/p>
+&lt;h2 id="a-single-test-a-single-secret">A Single Test, A Single Secret
+&lt;/h2>&lt;p>如何只进行一次测试，就让人们足够相信拥有秘密呢？建造下面这样的洞穴：&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-28-How-to-explain-zero-knowledge-protocols-to-your-children/Untitled%202.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>只需要单独一次测试就能够让人达到连续40次测试相同水平的信服度，来相信Mick是知道这个咒语的秘密的。&lt;/p></description></item><item><title>The Incredible Machine</title><link>https://wenjin1997.github.io/2022/11/28/The-Incredible-Machine/</link><pubDate>Mon, 28 Nov 2022 00:00:00 +0000</pubDate><guid>https://wenjin1997.github.io/2022/11/28/The-Incredible-Machine/</guid><description>&lt;img src="https://wenjin1997.github.io/img/2022-11-28-The-Incredible-Machine/nicolas-houdayer-3h_uBlWlobU-unsplash.jpg" alt="Featured image of post The Incredible Machine" />&lt;p>本篇是博客《&lt;a class="link" href="https://medium.com/qed-it/the-incredible-machine-4d1270d7363a" target="_blank" rel="noopener"
+>The Incredible Machine&lt;/a>》的笔记，文章通过一个数独的故事来解释什么是零知识证明。&lt;/p>
+&lt;p>先总结一下这个过程：&lt;/p>
+&lt;ol>
+&lt;li>交互式证明。Alice知道数独的解，先将答案写在纸上，然后盖住，Bob发起一个随机挑战，可以选择行、列或者一个3 $\times$ 3的块。如果选择行，那么收集每行的纸片到一个袋子里，混合后，每个袋子打开都是1～9的数字。重复此过程让我们理由相信Alice知道数独的解，并且这一过程没有泄漏解。&lt;/li>
+&lt;li>模拟。上述过程在Alice和Bob事先商定随机挑战选择的顺序后，可以在不知道数独解的情况下通过挑战。这也正好证明了这一过程是零知识的。&lt;/li>
+&lt;li>非交互式证明。由一个机器来模拟这一过程，机器内部事先焊一个随机挑战的顺序，这个顺序可以由一个仪式来完成，保证没有人知道这个顺序。这个机器也是存在缺点的，可以通过实验得到这个随机顺序。&lt;/li>
+&lt;/ol>
+&lt;p>正文如下：&lt;/p>
+&lt;p>How Alice, Bob, and Charlie used Zero-Knowledge and Blockchains to launch The Global Sudoku Revolution.&lt;/p>
+&lt;p>This post is inspired by two great papers that make zero-knowledge proofs accessible to a wide audience:&lt;/p>
+&lt;p>[1] How to Explain Zero Knowledge Protocols to Your Children (Quisquater &lt;em>et. al.&lt;/em>)&lt;/p>
+&lt;p>[2] Cryptographic and Physical Zero-Knowledge Proof Systems for Solutions of Sudoku Puzzles (Gradwohl &lt;em>et. al.&lt;/em>).&lt;/p>
+&lt;p>Alice, Bob, and Charlie loved to solve Sudoku problems.The three friends liked challenging each other with puzzles all the time (in fact, sometimes they solved Sudoku problems that were &lt;a class="link" href="http://www.sudoku-download.net/files/Sudoku_64x64.pdf" target="_blank" rel="noopener"
+>REALLY large&lt;/a> — not just 9x9 taken from &lt;a class="link" href="http://www.sudoku-download.net/" target="_blank" rel="noopener"
+>here&lt;/a>). Alice was the cleverest of the three. She would draw a Sudoku board on paper, and fill in some of the &lt;strong>constraints&lt;/strong>. Then, she’d let Bob and Charlie try to solve the puzzle.&lt;/p>
+&lt;p>&lt;img src="https://miro.medium.com/max/585/1*KwMJAvmMQ7Zdfllic4RioA.png"
+loading="lazy"
+alt="https://miro.medium.com/max/585/1*KwMJAvmMQ7Zdfllic4RioA.png"
+>&lt;/p>
+&lt;h1 id="the-proof">&lt;strong>The Proof&lt;/strong>
+&lt;/h1>&lt;p>One day, Bob, who was working on an especially difficult Sudoku that Alice had devised（设计的） sighed with despair（绝望的）. “I swear, this puzzle has no solution! Alice just gave me one of the unsolvable ones to mess with me!”&lt;/p>
+&lt;p>He quickly came to Alice to complain.&lt;/p>
+&lt;p>“I’ll prove to you that this puzzle has a solution, and that I know it!” declared Alice. “Good!” Said Bob, who was secretly hoping to learn the answer and later taunt（嘲讽） Charlie with it.&lt;/p>
+&lt;p>“In fact, I’ll prove it to you with ‘zero-knowledge’, that is, without ever revealing the solution itself”. “I’d like to see you try”, said Bob, who was still thinking of all the fun he’d have teasing （戏弄）Charlie.&lt;/p>
+&lt;h1 id="the-commitment">&lt;strong>The Commitment&lt;/strong>
+&lt;/h1>&lt;p>Alice retrieved 81 blank index cards. She quickly wrote a single digit (from 1 to 9) on each card and carefully placed the cards on the table, in a 9-by-9 matrix, organized just like a Sudoku puzzle. All of the cards were placed face down, with the exception of the few that had the constraints that Bob had already seen written on them.&lt;/p>
+&lt;p>&lt;img src="https://miro.medium.com/max/531/1*FcUS_t2zp0qQ4Zm_wmfLTw.png"
+loading="lazy"
+alt="https://miro.medium.com/max/531/1*FcUS_t2zp0qQ4Zm_wmfLTw.png"
+>&lt;/p>
+&lt;p>随机选择行、列或者一个块来进行验证。&lt;/p>
+&lt;h1 id="the-random-challenge">&lt;strong>The Random Challenge&lt;/strong>
+&lt;/h1>&lt;p>Bob was excited. The solution was close. He’d been working on the problem for ages!&lt;/p>
+&lt;p>“Bob, you aren’t allowed to peak at the cards!” Alice exclaimed to Bob’s disappointment. “Not yet anyway. But I will let you test the solution. You can choose whether you want to check the rows, the columns, or the blocks. Pick one at random.”&lt;/p>
+&lt;p>Bob decided to pick the rows. Alice proceeded to place the cards from each row inside an opaque bag — one bag per row. She gave each bag a thorough shake, making sure the index cards inside were mixed well. She handed the bags to Bob, who gave her a quizzical look.&lt;/p>
+&lt;p>&lt;img src="https://miro.medium.com/max/700/1*p0wq334jocZQJzi1Vl8BYg.png"
+loading="lazy"
+alt="https://miro.medium.com/max/700/1*p0wq334jocZQJzi1Vl8BYg.png"
+>&lt;/p>
+&lt;h1 id="verification">&lt;strong>Verification&lt;/strong>
+&lt;/h1>&lt;p>“Well, open them!” she said. “They should each have exactly 9 cards with all the numbers 1 through 9”. Bob opened each bag and verified that this was indeed the case.&lt;/p>
+&lt;p>&lt;img src="https://miro.medium.com/max/363/1*jjLrBnvToa0i0Bg6EdJIGw.png"
+loading="lazy"
+alt="https://miro.medium.com/max/363/1*jjLrBnvToa0i0Bg6EdJIGw.png"
+>&lt;/p>
+&lt;p>“This doesn’t prove a thing!” I can also do that! I’d just have to place the numbers 1 through 9 in each row in any order i’d like!” said Bob quickly.&lt;/p>
+&lt;p>Alice explained that she couldn’t have known in advance that Bob would pick the rows. She’s not a mind reader! In fact, only a correct solution would have the numbers 1–9 in each row, column, and box and so if her solution was not correct, Bob would have at least a 1 in 3 chance of catching her.&lt;/p>
+&lt;h1 id="rinse-and-repeat">&lt;strong>Rinse and Repeat&lt;/strong>
+&lt;/h1>&lt;p>Bob thought that a 1 in 3 chance of catching Alice wasn’t good enough. He still had a gnawing suspicion that the puzzle was unsolvable. He demanded that Alice repeat the procedure with him — each time placing the same cards for the same Sudoku problem face down on the floor, but letting him pick a different test at random. After a long series of tests, Bob was forced to admit that Alice was either an extremely lucky person, or, that she simply has a solution to the Sudoku problem (or perhaps she could read his thoughts after all). He was also quite disappointed that he had gained no knowledge (zero-knowledge) about the solution. All he knew after all these tests was that it was highly likely that every row, column and block did indeed contain the numbers 1–9 exactly once, which could only be so if Alice knew the solution.&lt;/p>
+&lt;p>The three friends had made it a habit to prove to one another that their Sudoku challenges were solvable. After all, no one wants to spend his time on an unsolvable problem. Each test was long and quite exhausting, but Sudoku is after all very serious business.&lt;/p>
+&lt;p>如果只进行一次验证，那么Alice可能会有1/3概率作弊，因此需要重复进行随机试验，提高可信度。&lt;/p>
+&lt;h1 id="blockchains-and-the-global-sudoku-revolution">&lt;strong>Blockchains and The Global Sudoku Revolution&lt;/strong>
+&lt;/h1>&lt;p>One day, Alice had a great idea. Knowing that her love for Sudoku is shared by millions online, she decided to open her very own YouTube channel, where she can post her own Sudoku challenges online. She called it “The Sudoku Blockchain” (she didn’t know what blockchains were exactly, but it was such a cool buzzword（时髦术语，流行行话）). She dreamed of many channel subscribers that would send her Bitcoins and decided to include features that the competing Sudoku channels did not have: She asked Bob to verify the existence of a solution to each of the puzzles using a zero-knowledge proof. She’d film the whole thing and put it on the Sudoku Blockchain, so that everyone would know that (with high probability) each of the puzzles is indeed solvable.&lt;/p>
+&lt;h1 id="the-simulation">&lt;strong>The Simulation&lt;/strong>
+&lt;/h1>&lt;p>One day, Alice came over to Bob’s house to record the proof for a Sudoku challenge, but found that she left the solution to the puzzle at home. Since she was in a hurry to publish the new challenge online, she begged Bob to film it with her anyway. She convinced Bob to pretend to run the proof with her. Together they agreed on a sequence of tests (rows / columns / and blocks) that Bob would “randomly” pick. Since Alice too knew the sequence of tests, she could easily pass them without having the solution to the puzzle.&lt;/p>
+&lt;p>Charlie, who was travelling abroad and saw the video was later surprised when Alice and Bob told him how they filmed it. “I’ll never trust you two again!” he exclaimed. “No one should trust any of your online video proofs!”.&lt;/p>
+&lt;p>模拟，在模拟情况下有一种超能力，事先约定“随机”选择的顺序，不知道真正的解也能通过测试，这不正恰好说明没有泄漏知识嘛！&lt;/p>
+&lt;h1 id="the-incredible-machine-and-non-interactive-proofs">&lt;strong>The Incredible Machine and Non-Interactive Proofs&lt;/strong>
+&lt;/h1>&lt;p>Charlie was frustrated. He did not want to easily give up his Sudoku solving habit, but knowing that Alice and Bob were not trustworthy, he wanted a way to check proofs remotely. After a few sleepless nights, he declared to Alice and Bob that he had a new idea. He locked himself in his room for hours and labored frantically through the night. In the morning, Charlie presented Alice and Bob with his incredible new invention: “The Zero-Knowledge Sudoku Non-Interactive Proof Machine” (or zk-SNIPM as he like to refer to it).&lt;/p>
+&lt;p>The Machine was basically an automated version of Alice’s test. Alice would need to place her cards on the conveyor belt, and feed Sudoku solutions to the machine. The machine would then collect the cards from rows, columns, or boxes and place them automatically into bags that would come out on the other side (after being thoroughly mixed). Then, Alice could open the bags while the camera was still rolling and reveal their contents.&lt;/p>
+&lt;p>&lt;img src="https://miro.medium.com/max/511/1*wSsIDzJgzJHMi5CCdXFaDg.png"
+loading="lazy"
+alt="https://miro.medium.com/max/511/1*wSsIDzJgzJHMi5CCdXFaDg.png"
+>&lt;/p>
+&lt;p>The machine had a control panel with a long series of dials that set the test for each set of 81 cards that Alice would feed in. Charlie had set up his own secret series of tests and then welded the control panel’s cover shut (Alice was worried that he also booby-trapped it with explosives, or filled it up with scorpions, vials of acid, or some other similarly nasty thing. Charlie was a bit extreme when it came to securing his devices).&lt;/p>
+&lt;p>&lt;img src="https://miro.medium.com/max/564/1*jbhDHFgSlG-JRVWDOeefpQ.png"
+loading="lazy"
+alt="https://miro.medium.com/max/564/1*jbhDHFgSlG-JRVWDOeefpQ.png"
+>&lt;/p>
+&lt;p>Charlie could now trust his machine to provide a series of tests that was unknown to Alice so that he could watch youtube videos of proofs and be relatively sure that Alice had not cheated together with Bob.&lt;/p>
+&lt;h1 id="the-ceremony">&lt;strong>The Ceremony&lt;/strong>
+&lt;/h1>&lt;p>Alice and Bob were jealous of Charlie’s zk-SNIPM machine and wanted to use it to verify all puzzles (including those that Charlie invented). The only problem was that Charlie was the one who had set up the secret series of tests, and they could not let him use it for proofs (he could easily cheat since he knows the sequence of tests). Instead, Alice suggested that they conduct a multi-party set up of the machine together. A sort of “trusted setup ceremony”. She asked Charlie to open the control panel (and remove all of his nasty traps). Each of the dials on the control panel had 3 states, and you would need to rotate it to select the test.&lt;/p>
+&lt;p>She suggested that they place the machine in a dark room, and remove all the labels from the knobs. Each one of them would then go into the room with the machine in the dark (Bob also suggested that they’d be blindfolded just for good measure, and that they each wear a tinfoil hat to prevent mind reading side-channel attacks by Alice) and would turn the knobs on the machine to a random position (either turn them one-third of a turn clockwise, two-thirds of a turn clockwise, or leave them as they are). This way, the final setting of each knob would not be known to any single one of them (in fact, even if two participants colluded, they would not know the final state of the knob without the third person’s assistance). After the set-up ceremony was over, they’d weld the cover of the machine shut.&lt;/p>
+&lt;h1 id="cracking-the-machine">&lt;strong>Cracking the Machine&lt;/strong>
+&lt;/h1>&lt;p>One afternoon, when Bob and Charlie were off travelling, Alice was left alone with the machine. She started wondering if it was as secure as advertised. Thinking about it for a while she decided to feed it slightly modified Sudoku puzzle solutions in order to discover which tests the machine was using. She used a Sudoku puzzle that she could solve, and fed in many boards to see that the solution is indeed accepted by the machine. She then repeated the procedure, but changed the first board fed to the machine to simply include the numbers 1–9 in each row (without forming a legal solution in columns or boxes). The test still passed, and she then realized she can use this idea to learn the sequence of tests that were pre-set within the machine.&lt;/p>
+&lt;p>这里Alice先用一个数独的真解喂给机器，看看机器的输出结果。接着重复这一过程，但是修改解，保证每行是数字1～9，喂给机器，查看机器的输出结果，这样可以推测出之前通过仪式得到的随机顺序。&lt;/p>
+&lt;p>Alice felt very frustrated. Can you help Alice build a better zk-SNIPM? Can you think of a series of tests that would be harder to crack, or is the approach doomed to fail? Write us and tell us your ideas!&lt;/p>
+&lt;h1 id="a-note-about-the-real-world">&lt;strong>A Note About the Real World&lt;/strong>
+&lt;/h1>&lt;p>In fact, the zk-SNIPM is a tongue-in-cheek construction of a &lt;em>non-interactive zero-knowledge prover&lt;/em>, somewhere between zk-SNARKs and tamper-proof hardware. zk-SNIPM relies on a “physical” type of zero-knowledge proof. Such physical proofs could in fact be made much more powerful, for example, by using a photocopy machine to copy the cards and check the rows, columns and boxes simultaneously on the same solution. Still, we have elected to utilize a physical proving system that has some analogies to computational proofs found in cryptographic zero-knowledge constructions.&lt;/p>
+&lt;p>Alice’s initial proving method is analogous to an &lt;em>interactive&lt;/em> zero-knowledge proof protocol, where the verifier sends a random &lt;em>challenge&lt;/em> to the prover, after she commits to the solution. A prover and verifier that are colluding and share this random challenge in advance can simulate a proof, without really knowing the solutions. A &lt;em>non-interactive&lt;/em> version that must work without this challenge step, is constructed by hiding the challenge itself in some cryptographic “machinery” in advance. This prevents the prover from having access to the challenge. Indeed, one good way to generate such a trusted challenge is through a “ceremony” enacted through multiparty computation that combines the randomness from several participants into a single random challenge, encoded in the proving system.&lt;/p>
+&lt;p>开始的证明方法类似交互式零知识证明协议，验证者给证明方一个随机挑战，然后进行验证。证明方和验证方可以事先作弊商量随机挑战的顺序，这样他们在不知道解的情况下可以模拟一个证明。后来的机器验证过程是非交互式证明，实现构造一个随机顺序，可以通过仪式的方式，然后再进行证明。&lt;/p>
+&lt;p>The Sudoku example in this post is taken in slightly modified form from &lt;strong>Cryptographic and Physical Zero-Knowledge Proof Systems for Solutions of Sudoku Puzzles (Gradwohl et. al.).&lt;/strong>&lt;/p>
+&lt;p>Many thanks to Daniel Benarroch for his help with this post.&lt;/p>
+&lt;p>This post was originally published on &lt;a class="link" href="http://qed-it.com/2017/12/the-incredible-machine/" target="_blank" rel="noopener"
+>qed-it.com&lt;/a>.&lt;/p></description></item><item><title>Dan Boneh Cryptography I Week1</title><link>https://wenjin1997.github.io/2022/11/21/Dan-Boneh-Cryptography-Week1/</link><pubDate>Mon, 21 Nov 2022 00:00:00 +0000</pubDate><guid>https://wenjin1997.github.io/2022/11/21/Dan-Boneh-Cryptography-Week1/</guid><description>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/background.jpg" alt="Featured image of post Dan Boneh Cryptography I Week1" />&lt;p>开始学习密码学，这是一套不错的课程。官方课程链接&lt;a class="link" href="https://crypto.stanford.edu/~dabo/courses/OnlineCrypto/" target="_blank" rel="noopener"
+>Online Cryptography Course&lt;/a>。教材&lt;a class="link" href="http://toc.cryptobook.us/" target="_blank" rel="noopener"
+>A Graduate Course in Applied Cryptography&lt;/a>，Coursera上的链接为&lt;a class="link" href="https://www.coursera.org/learn/crypto" target="_blank" rel="noopener"
+>密码学 I&lt;/a>。&lt;/p>
+&lt;p>下面记录第一周的学习笔记。&lt;/p>
+&lt;h2 id="course-overview">&lt;strong>Course Overview&lt;/strong>
+&lt;/h2>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%201.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>密码学无处不在，DVD使用的是CSS加密，Blu-ray使用的是AACS加密。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%202.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>常用的HTTPS底层用的是SSL/TLS。安全的交流中间是没有偷听和篡改的。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%203.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%204.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%205.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>对称加密系统使用的是同一个key。加密算法是公开的，永远不要使用一个专有的加密算法。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%206.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%207.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>密码学不是所有安全问题的解决方案，例如软件漏洞或者工程上的攻击。&lt;/p>
+&lt;h2 id="what-is-cryptography">&lt;strong>What is cryptography?&lt;/strong>
+&lt;/h2>&lt;h3 id="crypto-core">Crypto core
+&lt;/h3>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%208.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>密码学的核心建立密钥，保证交流的可靠和完整性。&lt;/p>
+&lt;h3 id="but-crypto-can-do-much-more">But crypto can do much more
+&lt;/h3>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%209.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>密码学可以应用在匿名交流中，上图中的匿名是相互的，Alice不知道对方是谁，Bob也不知道对方是谁。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2010.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>密码学应用在匿名电子货币，类似于我们去商店消费，不想让商店知道我们的身份，同时在网络中，要保证电子货币不能重复消费。&lt;/p>
+&lt;h3 id="protocols">&lt;strong>Protocols&lt;/strong>
+&lt;/h3>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2011.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2012.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>在选举或者私有拍卖的例子中，有受信的第三方来进行公布结果。这里有一个重要的理论，任何可以使用受信第三方完成的事也可以不用第三方就能完成。&lt;/p>
+&lt;h3 id="crypto-magic">&lt;strong>Crypto magic&lt;/strong>
+&lt;/h3>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2013.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;h3 id="a-rigorous-science">&lt;strong>A rigorous science&lt;/strong>
+&lt;/h3>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2014.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>密码学是一门严谨的学科，要遵循以上三个步骤。&lt;/p>
+&lt;h2 id="history">&lt;strong>History&lt;/strong>
+&lt;/h2>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2015.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2016.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2017.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2018.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2019.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>替换式加密的密钥空间很大，是26个字母的全排列。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2020.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2021.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>破解替换式加密的方法是利用了英语字母出现的频率，字母e出现的频率最高，那么我们可以对截获到的密文统计出现的频率，出现频率最高的字母就对应于字母e。接着再利用二合字母出现的频率。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2022.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2023.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>当我们知道key中加密字母的长度时，就很好破解。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2024.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2025.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2026.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;h2 id="discrete-probability">&lt;strong>Discrete Probability&lt;/strong>
+&lt;/h2>&lt;p>这部分详细介绍见&lt;a class="link" href="https://en.wikibooks.org/wiki/High_School_Mathematics_Extensions/Discrete_Probability" target="_blank" rel="noopener"
+>https://en.wikibooks.org/wiki/High_School_Mathematics_Extensions/Discrete_Probability&lt;/a>。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2027.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;h3 id="events">Events
+&lt;/h3>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2028.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;h3 id="the-union-bound">The union bound
+&lt;/h3>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2029.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;h3 id="random-variables">Random Variables
+&lt;/h3>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2030.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;h3 id="the-uniform-random-variable">The uniform random variable
+&lt;/h3>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2031.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2032.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;h3 id="randomized-algorithms">Randomized algorithms
+&lt;/h3>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2033.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2034.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;h3 id="independence">Independence
+&lt;/h3>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2035.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;h3 id="xor">XOR
+&lt;/h3>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2036.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2037.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>异或中重要的一个定理是，Y是一个随机变量，X是一个独立的均匀分布变量，Y与X异或之后是一个均匀分布变量。&lt;/p>
+&lt;h3 id="the-birthday-paradox">&lt;strong>The birthday paradox&lt;/strong>
+&lt;/h3>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2038.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>当$n=1.2 \times \sqrt{|U|}$时，$U$ 中存在两个变量相等的概率大于等于$1/2$。常识认为可能是$|U|/2$，因此也叫做悖论。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2039.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;h2 id="the-one-time-pad">The One Time Pad
+&lt;/h2>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2040.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2041.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>key和要加密的消息的长度一样长。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2042.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2043.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>key也可以算出来，是m和c的异或。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2044.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2045.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>什么是安全的加密呢？香农的定义是，不能从密文中得到任何关于原文的信息。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2046.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>用概率来定义 perfect secrecy，也就是从密文中无法区分任意两个原文，得到两个不同message的概率是相同的。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2047.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2048.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>OTP是有perfect安全性的。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2049.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2050.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>OTP是没有惟密文攻击，但是有其他攻击。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2051.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;h2 id="pseudorandom-generators">&lt;strong>Pseudorandom Generators&lt;/strong>
+&lt;/h2>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2052.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2053.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>用伪随机key代替随机key。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2054.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2055.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2056.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2057.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2058.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2059.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2060.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>永远不要在加密中使用glibc中的&lt;code>random()&lt;/code>函数。&lt;/p>
+&lt;h2 id="negligible-vs-non-negligible">&lt;strong>Negligible vs. non-negligible&lt;/strong>
+&lt;/h2>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2061.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>可忽略的：意思是比多项式的逆下降地还要快。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2062.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2063.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2064.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;h2 id="attacks-on-otp-and-stream-ciphers">&lt;strong>Attacks on OTP and stream ciphers&lt;/strong>
+&lt;/h2>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2065.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2066.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>不能两次使用相同的PRG(k)。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2067.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>客户端到服务端与服务端到客户端应该使用不同的key。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2068.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2069.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2070.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2071.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2072.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2073.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2074.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>中间可以加入p，然后进行篡改。&lt;/p>
+&lt;h2 id="real-world-stream-ciphers">&lt;strong>Real-world Stream Ciphers&lt;/strong>
+&lt;/h2>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2075.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2076.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2077.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2078.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2079.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2080.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2081.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2082.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2083.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;h2 id="prg-security-defs">&lt;strong>PRG Security Defs&lt;/strong>
+&lt;/h2>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2084.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2085.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2086.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2087.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2088.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2089.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2090.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>一个安全的PRG是不可预测的。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2091.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2092.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>反过来也成立，一个不可预测的PRG是安全的。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2093.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>用到了前面定理(Yao’82)的逆否命题。不安全的PRG是可预测的。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2094.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>更一般的定义，computationally indistinguishable。&lt;/p>
+&lt;h2 id="semantic-security">Semantic security
+&lt;/h2>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2095.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2096.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2097.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>前两个定义都太强了，需要一个弱一些的定义，找到存在的 $m_0$ 与 $m_1$。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2098.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%2099.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>这里给出了semantically secure 的定义。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%20100.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%20101.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>OTP是 semantically secure 的。&lt;/p>
+&lt;h2 id="stream-ciphers-are-semantically-secure">&lt;strong>Stream ciphers are semantically secure&lt;/strong>
+&lt;/h2>&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%20102.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%20103.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%20104.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%20105.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%20106.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%20107.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-21-Dan-Boneh-Cryptography-Week1/Untitled%20108.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p></description></item><item><title>Zero Knowledge Proofs: An illustrated primer</title><link>https://wenjin1997.github.io/2022/11/16/Zero-Knowledge-Proofs-An-illustrated-primer/</link><pubDate>Wed, 16 Nov 2022 00:00:00 +0000</pubDate><guid>https://wenjin1997.github.io/2022/11/16/Zero-Knowledge-Proofs-An-illustrated-primer/</guid><description>&lt;img src="https://wenjin1997.github.io/img/2022-11-16-Zero-Knowledge-Proofs-An-illustrated-primer/background.jpg" alt="Featured image of post Zero Knowledge Proofs: An illustrated primer" />&lt;p>原文链接：&lt;a class="link" href="https://blog.cryptographyengineering.com/2014/11/27/zero-knowledge-proofs-illustrated-primer/" target="_blank" rel="noopener"
+>Zero Knowledge Proofs: An illustrated primer&lt;/a>。本篇文章通过图三色问题来介绍什么是零知识证明。&lt;/p>
+&lt;p>One of the best things about modern cryptography （密码学） is the beautiful terminology （术语）. You could start any number of punk bands（朋克乐队） (or &lt;a class="link" href="http://www.explainxkcd.com/wiki/index.php/1025:_Tumblr" target="_blank" rel="noopener"
+>Tumblrs&lt;/a>) named after cryptography terms like ‘hard-core predicate’, ‘trapdoor function’, &lt;em>‘&lt;/em> or ‘impossible differential cryptanalysis （密码分析）’. And of course, I haven’t even mentioned the one term that surpasses all of these. That term is ‘&lt;em>zero knowledge&lt;/em>‘.&lt;/p>
+&lt;p>&lt;img src="https://matthewdgreen.files.wordpress.com/2014/11/54b69-zk.jpg"
+loading="lazy"
+alt="https://matthewdgreen.files.wordpress.com/2014/11/54b69-zk.jpg"
+>&lt;/p>
+&lt;p>In fact, the term ‘zero knowledge’ is so appealing（有吸引力的） that it leads to problems. People misuse it, assuming that zero knowledge must be synonymous（同义词） with ‘&lt;em>really, really secure&lt;/em>‘. Hence it gets tacked（附加，增补） onto all kinds of stuff — like &lt;a class="link" href="https://spideroak.com/faq/questions/23/is_spideroak_really_zero_knowledge_could_you_read_a_users_data_if_forced_at_gunpoint/" target="_blank" rel="noopener"
+>encryption（加密） systems&lt;/a> and anonymity（匿名） networks — that really have nothing to do with true zero knowledge protocols.&lt;/p>
+&lt;p>澄清零知识的误区，像加密系统和匿名网络，真的和零知识协议没有关系。&lt;/p>
+&lt;p>This all serves to underscore a point: &lt;a class="link" href="http://en.wikipedia.org/wiki/Zero-knowledge_proof" target="_blank" rel="noopener"
+>zero-knowledge proofs&lt;/a> are one of the most powerful tools cryptographers have ever devised（设计的）. But unfortunately they’re also relatively poorly understood. In this series of posts I’m going try to give a (mostly) &lt;em>non&lt;/em>–&lt;em>mathematical&lt;/em> description of what ZK proofs are, and what makes them so special. In this post and the next I’ll talk about some of the ZK protocols we actually use.&lt;/p>
+&lt;h3 id="origins-of-zero-knowledge">Origins of Zero Knowledge
+&lt;/h3>&lt;p>The notion of ‘zero knowledge’ was first proposed &lt;a class="link" href="http://groups.csail.mit.edu/cis/pubs/shafi/1985-stoc.pdf" target="_blank" rel="noopener"
+>in the 1980&lt;/a>s by MIT researchers Shafi Goldwasser, Silvio Micali and Charles Rackoff. These researchers were working on problems related to &lt;a class="link" href="http://en.wikipedia.org/wiki/Interactive_proof_system" target="_blank" rel="noopener"
+>interactive proof systems&lt;/a>, theoretical systems where a first party (called a ‘Prover’) exchanges messages with a second party (‘Verifier’) to convince the Verifier that some mathematical statement is true.*&lt;/p>
+&lt;p>零知识的概念出现在1980s Shafi Goldwasser，Silvio Micali 和 Charles Rackoff发表的这篇文章中。研究者关注在交互式证明系统，一方是“Prover”，另一方是“Verifier”，Prover与Verifier交换信息，来说服Verifier在数学上（可以是概率意义下）相信一些陈述是真的。&lt;/p>
+&lt;p>Prior to Goldwasser &lt;em>et al.&lt;/em>, most work in this area focused the &lt;a class="link" href="http://en.wikipedia.org/wiki/Soundness" target="_blank" rel="noopener"
+>soundness&lt;/a> of the proof system. That is, it considered the case where a malicious（恶意的） Prover attempts to ‘trick’ a Verifier into believing a false statement. What Goldwasser, Micali and Rackoff did was to turn this problem on its head. Instead of worrying only about the Prover, they asked: what happens if you don’t trust the &lt;em>Verifier?&lt;/em>&lt;/p>
+&lt;p>之前的工作主要考虑证明系统的可靠性，考虑的是恶意的证明方，而 Goldwasser, Micali 和 Rackoff 开始考虑如果不相信验证者会发生什么？我们不能傻乎乎的就把一些秘密泄漏给prover。&lt;/p>
+&lt;p>The specific concern they raised was &lt;em>information leakage.&lt;/em> Concretely, they asked, how much extra information is the Verifier going to learn during the course of this proof, beyond the mere fact that the statement is true?&lt;/p>
+&lt;p>他们考虑的是验证者可能会泄漏信息，也就是在除了知道陈述是真的这个信息外，验证者通过这个证明过程还知道什么额外的信息？&lt;/p>
+&lt;p>It’s important to note that this is not simply of theoretical interest. There are real, practical applications where this kind of thing matters.&lt;/p>
+&lt;p>Here’s one: imagine that a real-world client wishes to log into a web server using a password. The standard ‘real world’ approach to this problem involves storing a &lt;a class="link" href="http://en.wikipedia.org/wiki/Cryptographic_hash_function#Password_verification" target="_blank" rel="noopener"
+>hashed version of the password&lt;/a> on the server. The login can thus be viewed as a sort of ‘proof’ that a given password hash is the output of a hash function on some password — and more to the point, that the client actually &lt;em>knows&lt;/em> the password.&lt;/p>
+&lt;p>Most real systems implement this ‘proof’ in the absolute worst possible way. The client simply transmits the original password to the server, which re-computes the password hash and compares it to the stored value. The problem here is obvious: at the conclusion of the protocol, &lt;em>the server has learned my cleartext password.&lt;/em> Modern password hygiene（卫生） therefore involves a good deal of praying that servers aren’t compromised（损害）.&lt;/p>
+&lt;p>这里举了现实中的一个例子，就是密码登录。大多数实际的系统中客户端简单的将原始密码发送给服务端，服务端再计算一遍密码的哈希值，然后和存储的值进行比较。这里会出现安全问题，密码不泄漏只能祈祷于服务端不会出现问题。&lt;/p>
+&lt;p>What Goldwasser, Micali and Rackoff proposed was a new hope for conducting such proofs. If fully realized, zero knowledge proofs would allow us to prove statements like the one above, while provably revealing &lt;em>no information&lt;/em> beyond the single bit of information corresponding to ‘this statement is true’.&lt;/p>
+&lt;p>零知识就是除了’this statement is true’外不会泄漏任何其他的信息。&lt;/p>
+&lt;h3 id="a-real-world-example">A ‘real world’ example
+&lt;/h3>&lt;p>So far this discussion has been pretty abstract. To make things a bit more concrete, let’s go ahead and give a ‘real’ example of a (slightly insane（疯狂的；非常愚蠢的）) zero knowledge protocol.&lt;/p>
+&lt;p>For the purposes of this example, I’d like you to imagine that I’m a telecom（电信） magnate（巨头） in the process of deploying（部署） a new cellular（蜂窝） communications network. My network structure is represented by the graph below. Each vertex（顶点） in this graph represents a cellular radio tower, and the connecting lines (edges) indicate locations where two cells &lt;em>overlap（重叠）&lt;/em>, meaning that their transmissions are likely to interfere with each other.&lt;/p>
+&lt;p>&lt;img src="https://matthewdgreen.files.wordpress.com/2014/11/d5db3-uncoloredgraph.png?w=200&amp;amp;h=122"
+loading="lazy"
+alt="https://matthewdgreen.files.wordpress.com/2014/11/d5db3-uncoloredgraph.png?w=200&amp;h=122"
+>&lt;/p>
+&lt;p>部署蜂窝网的例子，每个顶点代表一个蜂窝塔，每个边代表着两个有重叠，意味着他们之间的传输会相互影响。&lt;/p>
+&lt;p>This overlap is problematic, since it means that signals from adjacent towers are likely to scramble（争夺） reception. Fortunately my network design allows me to configure each tower to one of three different frequency bands to avoid such interference.&lt;/p>
+&lt;p>Thus the challenge in deploying my network is to assign frequency bands to the towers such that no two overlapping cells share the same frequencies. If we use colors to represent the frequency bands, we can quickly work out one solution to the problem:&lt;/p>
+&lt;p>&lt;img src="https://matthewdgreen.files.wordpress.com/2014/11/af15c-coloredgraph.png?w=200&amp;amp;h=122"
+loading="lazy"
+alt="https://matthewdgreen.files.wordpress.com/2014/11/af15c-coloredgraph.png?w=200&amp;h=122"
+>&lt;/p>
+&lt;p>两个相邻塔之间用不同的频率，也就转换为图三色问题。在计算复杂度分类上，它属于NP-complete问题。&lt;/p>
+&lt;p>Of course, many of you will notice that what I’m describing here is simply an instance of the famous theory problem called the &lt;a class="link" href="http://en.wikipedia.org/wiki/Graph_coloring" target="_blank" rel="noopener"
+>graph three-coloring&lt;/a> problem. You might also know that what makes this problem interesting is that, for some graphs, it can be quite hard to find a solution, or even to determine &lt;em>if&lt;/em> a solution exists. **In fact, graph three-coloring — specifically, the decision problem of whether a given graph supports a solution with three colors — is known to be in the complexity class &lt;a class="link" href="http://en.wikipedia.org/wiki/NP-complete" target="_blank" rel="noopener"
+>NP-complete&lt;/a>.&lt;/p>
+&lt;p>It goes without saying that the toy example above is easy to solve by hand. But what if it wasn’t? For example, imagine that my cellular network was very large and complex, so much so that the computing power at my disposal（处理） was not sufficient to find a solution. In this instance, it would be desirable to &lt;em>outsource&lt;/em> the problem to someone else who has plenty of computing power. For example, I might hire my friends at Google to solve it for me on spec.&lt;/p>
+&lt;p>But this leads to a problem.&lt;/p>
+&lt;p>Suppose that Google devotes a large percentage of their computing infrastructure to searching for a valid coloring for my graph. I’m certainly not going to pay them until I know that they really have such a coloring. At the same time, Google isn’t going to give me a copy of their solution until I’ve paid up. We’ll wind up at an impasse（僵局）.&lt;/p>
+&lt;p>In real life there’s probably a common-sense answer to this dilemma, one that involves lawyers and escrow（第三方托管） accounts. But this is not a blog about real life, it’s a blog about cryptography. And if you’ve ever read a crypto paper, you’ll understand that the right way to solve this problem is &lt;em>to dream up an absolutely crazy technical solution&lt;/em>.&lt;/p>
+&lt;h3 id="a-crazy-technical-solution-with-hats">A crazy technical solution (with hats!)
+&lt;/h3>&lt;p>The engineers at Google consult with Silvio Micali at MIT, who in consultation with his colleagues &lt;a class="link" href="http://people.csail.mit.edu/silvio/Selected%20Scientific%20Papers/Zero%20Knowledge/Proofs_That_Yield_Nothing_But_Their_Validity_or_All_Languages_in_NP_Have_Zero-Knowledge_Proof_Systems.pdf" target="_blank" rel="noopener"
+>Oded Goldreich and Avi Wigderson&lt;/a>, comes up with the following clever protocol — one so elegant that it doesn’t even require any computers. All it requires is a large warehouse, lots of crayons（蜡笔）, and plenty of paper. Oh yes, and a whole bunch of hats.**&lt;/p>
+&lt;p>Here’s how it works.&lt;/p>
+&lt;p>First I will enter the warehouse, cover the floor with paper, and draw a blank representation of my cell network graph. Then I’ll exit the warehouse. Google can now enter enter, shuffle a collection of three crayons to &lt;em>pick a random assignment of the three agreed-upon crayon colors&lt;/em> (red/blue/purple, as in the example above), and color in the graph in with their solution. Note that it doesn’t matter which specific crayons they use, only that the coloring is valid.&lt;/p>
+&lt;p>Before leaving the warehouse, Google covers up each of the vertices with a hat. When I come back in, this is what I’ll see:&lt;/p>
+&lt;p>&lt;img src="https://matthewdgreen.files.wordpress.com/2014/11/538c4-hats.png?w=200&amp;amp;h=122"
+loading="lazy"
+alt="https://matthewdgreen.files.wordpress.com/2014/11/538c4-hats.png?w=200&amp;h=122"
+>&lt;/p>
+&lt;p>Obviously this approach protects Google’s secret coloring perfectly. But it doesn’t help me at all. For all I know, Google might have filled in the graph with a random, invalid solution. They might not even have colored the graph at all.&lt;/p>
+&lt;p>To address my valid concerns, Google now gives me an opportunity to ‘challenge’ their solution to the graph coloring*.* I’m allowed to pick — at random — a single ‘edge’ of this graph (that is, one line between two adjacent hats). Google will then remove the two corresponding hats, revealing a small portion of their solution:&lt;/p>
+&lt;p>&lt;img src="https://matthewdgreen.files.wordpress.com/2014/11/12725-hatsminusone.png?w=200&amp;amp;h=122"
+loading="lazy"
+alt="https://matthewdgreen.files.wordpress.com/2014/11/12725-hatsminusone.png?w=200&amp;h=122"
+>&lt;/p>
+&lt;p>Notice that there are two outcomes to my experiment:&lt;/p>
+&lt;ol>
+&lt;li>If the two revealed vertices are the same color (or aren’t colored in at all!) then I definitely know that Google is lying to me. Clearly I’m not going to pay Google a cent.&lt;/li>
+&lt;li>If the two revealed vertices are different colors, then Google &lt;em>might&lt;/em> &lt;em>not&lt;/em> be lying to me.&lt;/li>
+&lt;/ol>
+&lt;p>Hopefully the first proposition is obvious. The second one requires a bit more consideration. The problem is that &lt;em>even after our experiment&lt;/em>, Google could still be lying to me — after all, I only looked under two of the hats. If there are &lt;em>E&lt;/em> different edges in the graph, then Google could fill in an invalid solution and still get away with it most of the time. Specifically, after one test they could succeed in cheating me with probability up to (&lt;em>E&lt;/em>-1)/&lt;em>E&lt;/em> (which for a 1,000 edge graph works out to 99.9% of the time).&lt;/p>
+&lt;p>Fortunately Google has an answer to this. We’ll just run the protocol &lt;em>again!&lt;/em>&lt;/p>
+&lt;p>We put down fresh paper with a new, blank copy of the graph. &lt;em>Google now picks a new (random) shuffle of the three crayons&lt;/em>. Next they fill in the graph with a valid solution, but using the new random ordering of the three colors.&lt;/p>
+&lt;p>The hats go back on. I come back in and repeat the challenge process, picking a new random edge. Once again the logic above applies. Only this time if all goes well, I should now be slightly more confident that Google is telling me the truth. That’s because in order to cheat me, Google would have had to get lucky twice in a row. That can happen — but it happens with relatively lower probability. The chance that Google fools me twice in a row is now (&lt;em>E&lt;/em>-1)/*E ** (&lt;em>E&lt;/em>-1)/&lt;em>E&lt;/em> (or about 99.8% probability for our 1,000 edge example above).&lt;/p>
+&lt;p>Fortunately we don’t have to stop at two challenges. In fact, we can keep trying this over and over again until I’m confident that Google is probably telling me the truth.&lt;/p>
+&lt;p>But don’t take my word for it. Thanks to some neat Javascript, you can &lt;a class="link" href="http://web.mit.edu/~ezyang/Public/graph/svg.html" target="_blank" rel="noopener"
+>go try it yourself&lt;/a>.&lt;/p>
+&lt;p>Note that I’ll never be perfectly certain that Google is being honest — there’s always going to be a tiny probability that they’re cheating me. But after a large number of iterations (&lt;em>E^2,&lt;/em> as it happens) I can eventually raise my confidence to the point where Google can only cheat me with &lt;a class="link" href="http://en.wikipedia.org/wiki/Negligible_function" target="_blank" rel="noopener"
+>negligible&lt;/a> probability — low enough that &lt;em>for all practical purposes&lt;/em> it’s not worth worrying about. And then I’ll be able to safely hand Google my money.&lt;/p>
+&lt;p>What you need to believe is that Google is also protected. Even if I try to learn something about their solution by keeping notes between protocol runs, it shouldn’t matter. I’m foiled by Google’s decision to &lt;em>randomize&lt;/em> their color choices between each iteration. The limited information I obtain does me no good, and there’s no way for me to &lt;em>link&lt;/em> the data I learn between interactions.&lt;/p>
+&lt;p>总结一下上面的过程，首先我进入房间，画出图，接着Google进入房间，随机选择三种颜色，涂上解法，盖上帽子，最后我再进入房间，取下任意一个边的两个帽子，看是否是相同颜色。重复上述过程足够多次，$E^2$次，有理由相信Google有解，而我无法通过这个交互过程获得解的信息。&lt;/p>
+&lt;h3 id="what-makes-it-zero-knowledge">What makes it ‘zero knowledge’?
+&lt;/h3>&lt;p>I’ve claimed to you that this protocol leaks no information about Google’s solution. But don’t let me get away with this! The first rule of modern cryptography is &lt;em>never to trust people&lt;/em> who claim such things without proof.&lt;/p>
+&lt;p>Goldwasser, Micali and Rackoff proposed three following properties that every zero-knowledge protocol must satisfy. Stated informally, they are:&lt;/p>
+&lt;ol>
+&lt;li>&lt;em>Completeness.&lt;/em> If Google is telling the truth, then they will eventually convince me (at least with high probability).&lt;/li>
+&lt;li>&lt;em>Soundness.&lt;/em> Google can &lt;em>only&lt;/em> convince me &lt;em>if&lt;/em> they’re actually telling the truth.&lt;/li>
+&lt;li>&lt;em>Zero-knowledgeness.&lt;/em> (Yes it’s really called this.) **I don’t learn anything else **about Google’s solution.&lt;/li>
+&lt;/ol>
+&lt;p>零知识协议需要满足：&lt;/p>
+&lt;ol>
+&lt;li>完备性。如果Google说的是事实，那么他们最终会说服我。&lt;/li>
+&lt;li>可靠性。只有当Google真的说的是事实时才能说服我。&lt;/li>
+&lt;li>零知识。我不能获得关于Google 解法的任何知识。&lt;/li>
+&lt;/ol>
+&lt;p>We’ve already discussed the argument for completeness. The protocol will eventually convince me (with a negligible error probability), provided we run it enough times. Soundness is also pretty easy to show here. If Google ever tries to cheat me, I will detect their treachery with overwhelming probability.&lt;/p>
+&lt;p>完备性证明：上述过程已经证明了，只要交互过程重复的次数足够多，最终都会以一个可以忽略的错误概率来使我信服。&lt;/p>
+&lt;p>可靠性证明：如果Google欺骗我，我会有压倒性的概率发现这一点。&lt;/p>
+&lt;p>参考BIU课程，完备性和可靠性的严格定义。&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-16-Zero-Knowledge-Proofs-An-illustrated-primer/Untitled.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;p>The hard part here is the ‘zero knowledgeness’ property. To do this, we need to conduct a very strange thought experiment.&lt;/p>
+&lt;h3 id="a-thought-experiment-with-time-machines">A thought experiment (with time machines)
+&lt;/h3>&lt;p>First, let’s start with a crazy hypothetical（假设）. Imagine that Google’s engineers aren’t quite as capable as people make them out to be. They work on this problem for weeks and weeks, &lt;em>but they never manage to come up with a solution&lt;/em>. With twelve hours to go until showtime, the Googlers get desperate. They decide to &lt;em>trick&lt;/em> me into thinking they have a coloring for the graph, even though they don’t.&lt;/p>
+&lt;p>Their idea is to sneak into the GoogleX workshop and borrow Google’s prototype &lt;a class="link" href="http://mashable.com/2014/04/23/google-street-view-time-machine/" target="_blank" rel="noopener"
+>time machine&lt;/a>. Initially the plan is to travel backwards a few years and use the extra working time to take another crack at solving the problem. Unfortunately it turns out that, like most Google prototypes, the time machine has some limitations. Most critically: it’s only capable of going backwards in time &lt;em>four and a half minutes.&lt;/em>&lt;/p>
+&lt;p>So using the time machine to manufacture more working time is out. But still, it turns out that even this very limited technology can still be used to trick me.&lt;/p>
+&lt;p>&lt;img src="https://i0.wp.com/farm5.static.flickr.com/4030/4383097320_118c18153e_m.jpg"
+loading="lazy"
+alt="I don’t really know what’s going on herebut it seemed apropos."
+>&lt;/p>
+&lt;p>I don’t really know what’s going on herebut it seemed apropos.&lt;/p>
+&lt;p>The plan is diabolically（非常） simple. Since Google &lt;em>doesn’t actually know&lt;/em> a valid coloring for the graph, they’ll simply color the paper with a bunch of random colors, then put the hats on. If by sheer luck, I challenge them on a pair of vertices that happen to be different colors, everyone will heave a sigh of relief and we’ll continue with the protocol. So far so good.&lt;/p>
+&lt;p>Inevitably（不可避免地）, though, I’m going to pull off a pair of hats and discover two vertices of the &lt;em>same&lt;/em> color. In the normal protocol, Google would now be totally busted（崩溃）. And this is where the time machine comes in. Whenever Google finds themselves in this awkward situation, they simply fix it. That is, a designated Googler pulls a switch, ‘rewinds’ time about four minutes, and the Google team recolors the graph with a completely new random solution. Now they let time roll forward and try again.&lt;/p>
+&lt;p>In effect, the time machine allows Google to ‘repair’ any accidents that happen during their bogus（虚假的） protocol execution, which makes the experience look totally legitimate to me. Since bad challenge results will occur only 1/3 of the time, the expected runtime of the protocol (from Google’s perspective) is only moderately greater than the time it takes to run the honest protocol. From my perspective I don’t even know that the extra time machine trips are happening.&lt;/p>
+&lt;p>This last point is the most important. In fact, from my perspective, being unaware that the time machine is in the picture, the resulting interaction &lt;em>is exactly the same as the real thing.&lt;/em> It’s statistically identical. And yet it’s worth pointing out again that in the time machine version, &lt;em>Google has absolutely no information about how to color the graph.&lt;/em>&lt;/p>
+&lt;p>总结一下，Google不知道图涂色的解法，但是他们有神器时间机器，可以倒退四分半的时间。
+如果在交互过程中失败，他们就使用时间机器倒退，重新涂色。
+从我的角度来看，我没有意识到他们有时间机器，因此产生的互动和真实的东西完全一样，在统计上是相同的。但是在时间机器版本，Google完全没有涂色的解法。&lt;/p>
+&lt;p>BIU课程中对HVZK的定义：&lt;/p>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-11-16-Zero-Knowledge-Proofs-An-illustrated-primer/Untitled%201.png"
+loading="lazy"
+alt="Untitled"
+>&lt;/p>
+&lt;h3 id="what-the-hell-is-the-point-of-this">What the hell is the point of this?
+&lt;/h3>&lt;p>What we’ve just shown is an example of a &lt;em>simulation&lt;/em>. Note that in a world where time runs only forward and nobody can trick me with a time machine, the hat-based protocol is correct and &lt;em>sound&lt;/em>, meaning that after &lt;em>E^2&lt;/em> rounds I should be convinced (with all but negligible probability) that the graph really is colorable and that Google is putting valid inputs into the protocol.&lt;/p>
+&lt;p>What we’ve just shown is that if time doesn’t run only forward — specifically, if Google can ‘rewind’ my view of time — then they can fake a valid protocol run &lt;em>even if they have no information at all about the actual graph coloring.&lt;/em>&lt;/p>
+&lt;p>From my perspective, what’s the difference between the two protocol transcripts? When we consider the statistical distribution of the two, there’s no difference at all*.* Both convey exactly the same amount of useful information.&lt;/p>
+&lt;p>Believe it or not, this proves something very important.&lt;/p>
+&lt;p>Specifically, assume that I (the Verifier) have some strategy that ‘extracts’ useful information about Google’s coloring after observing an execution of the honest protocol. Then my strategy should work equally well in the case where I’m being fooled with a time machine. The protocol runs are, from my perspective, statistically identical. I physically cannot tell the difference.&lt;/p>
+&lt;p>Thus if the amount of information I can extract is identical in the ‘real experiment’ and the ‘time machine experiment’, yet the amount of information Google puts into the ‘time machine’ experiment is exactly zero — then this implies that even in the real world the protocol must not leak any useful information.&lt;/p>
+&lt;p>Thus it remains only to show that computer scientists have time machines. We do! (It’s a well-kept secret.)&lt;/p>
+&lt;p>总结：从我的视角来看，两个协议是没有区别的，因为它们在统计上的分布是相同的，它们都传达了完全相同数量的有用信息。
+具体来说，如果我能在真实世界中提取一些有用的信息，那么我在时间机器版本中也能提取有用的信息，但是由于时间机器实验中的信息量为0，因此也就意味着即使是在现实世界，协议也不会泄漏任何有用的信息。
+因此，我们知道计算机科学家拥有时间机器。&lt;/p>
+&lt;h3 id="getting-rid-of-the-hats-and-time-machines">Getting rid of the hats (and time machines)
+&lt;/h3>&lt;p>Of course we don’t actually want to run a protocol with hats. And even Google (probably?) doesn’t have a literal time machine.&lt;/p>
+&lt;p>To tie things together, we first need to bring our protocol into the digital world. This requires that we construct the digital equivalent of a ‘hat’: something that both hides a digital value, while simultaneously ‘binding’ (or ‘committing’) the maker to it, so she can’t change her mind after the fact. 这里说的就是&lt;strong>binding&lt;/strong>性质，揭露之后值就固定下来了。&lt;/p>
+&lt;p>Fortunately we have a perfect tool for this application. It’s called &lt;strong>a digital &lt;a class="link" href="http://en.wikipedia.org/wiki/Commitment_scheme" target="_blank" rel="noopener"
+>commitment scheme&lt;/a>&lt;/strong>. A commitment scheme allows one party to ‘commit’ to a given message while keeping it secret, and then later ‘open’ the resulting commitment to reveal what’s inside. They can be built out of various ingredients（组成部分）, including (strong) cryptographic hash functions.******&lt;/p>
+&lt;p>这里给出了一个数字 commitment scheme。&lt;/p>
+&lt;p>Given a commitment scheme, we now have all the ingredients we need to run the zero knowledge protocol electronically. The Prover first encodes its vertex colorings as a set of digital messages (for example, the numbers 0, 1, 2), then generates digital commitments to each one. These commitments get sent over to the Verifier. When the Verifier challenges on an edge, the Prover simply reveals the opening values for the commitments corresponding to the two vertices.&lt;/p>
+&lt;p>其实就是用数字的commitment来代替之前物理上的帽子。&lt;/p>
+&lt;p>So we’ve managed to eliminate the hats. But how do we prove that this protocol is zero knowledge?&lt;/p>
+&lt;p>Fortunately now that we’re in the digital world, we no longer need a real time machine to prove things about this protocol. A key trick is to specify in our setting that the protocol is not going to be run between two &lt;em>people&lt;/em>, but rather between two different &lt;em>computer programs&lt;/em> (or, to be more formal, probabilistic &lt;a class="link" href="http://en.wikipedia.org/wiki/Probabilistic_Turing_machine" target="_blank" rel="noopener"
+>Turing machines&lt;/a>.)&lt;/p>
+&lt;p>What we can now prove is the following theorem: if you could ever come up with a computer program (for the Verifier) that extracts useful information after participating in a run of the protocol, then it would be possible to use a ‘time machine’ on that program in order to make it extract the same amount of useful information from a ‘fake’ run of the protocol where the Prover doesn’t put in any information to begin with.&lt;/p>
+&lt;p>And since we’re now talking about &lt;em>computer programs&lt;/em>, it should be obvious that rewinding time isn’t such an extraordinary feat at all. In fact, we rewind computer programs all the time. For example, consider using virtual machine software with a snapshot capability.&lt;/p>
+&lt;p>&lt;img src="https://i0.wp.com/download.parallels.com/desktop/v4/docs/en/Parallels_Desktop_Users_Guide/snapshotmanager.gif"
+loading="lazy"
+alt="Example of rewinding through VM snapshots. An initial VM is played forward, rewound to aninitial snapshot, then execution is forked to a new path."
+>&lt;/p>
+&lt;p>Example of rewinding through VM snapshots. An initial VM is played forward, rewound to aninitial snapshot, then execution is forked to a new path.&lt;/p>
+&lt;p>Even if you don’t have fancy virtual machine software, any computer program can be ‘rewound’ to an earlier state, simply by starting the program over again from the beginning and feeding it exactly the same inputs. Provided that the inputs — including all random numbers — are fixed, the program will always follow the same execution path. Thus you can rewind a program just by running it from the start and ‘forking’ its execution when it reaches some desired point.&lt;/p>
+&lt;p>Ultimately what we get is the following theorem. If there exists any Verifier computer program that successfully extracts information by interactively running this protocol with some Prover, then we can simply use the rewinding trick on that program to commit to a random solution, then ‘trick’ the Verifier by rewinding its execution whenever we can’t answer its challenge correctly. The same logic holds as we gave above: if such a Verifier succeeds in extracting information after running the real protocol, then it should be able to extract the &lt;em>same amount of information&lt;/em> from the simulated, rewinding-based protocol. But since there’s no information going into the simulated protocol, there’s no information to extract. Thus the information the Verifier can extract must always be zero.&lt;/p>
+&lt;h3 id="ok-so-what-does-this-all-mean">Ok, so what does this all mean?
+&lt;/h3>&lt;p>So let’s recap. We know that the protocol is complete and sound, based on our analysis above. The soundness argument holds in any situation where we know that nobody is fiddling（无足轻重地） with time — that is, the Verifier is running normally and nobody is rewinding its execution.&lt;/p>
+&lt;p>At the same time, the protocol is also zero knowledge. To prove this, we showed that any Verifier program that succeeds in extracting information must also be able to extract information from a protocol run where rewinding is used and &lt;em>no information is available in the first place.&lt;/em> Which leads to an obvious contradiction（矛盾）, and tells us that the protocol can’t leak information in either situation.&lt;/p>
+&lt;p>同时协议也是零知识的。为了证明这一点，我们已经展示了任何能够成功提取信息的验证程序也必须在使用了rewinding超能力的协议中成功提取信息，但是这个协议是不能获取到任何知识的。这也就告诉了我们在这两种情况下都没有泄漏知识。&lt;/p>
+&lt;p>There’s an important benefit to all this. Since it’s trivial for anyone to ‘fake’ a protocol transcript, even after Google proves to me that they have a solution, I can’t re-play a recording of the protocol transcript to prove anything to anyone else (say, a judge). That’s because the judge would have no guarantee that the video was recorded honestly, and that I didn’t simply &lt;em>edit&lt;/em> in the same way Google might have done using the time machine. This means that protocol transcripts themselves contain no information. The protocol is only meaningful if I myself participated, and I can be sure that it happened in real time.&lt;/p>
+&lt;p>模拟的和真实的是无法在真实世界中进行区分的，所以只有当我参与进去的时候，协议才是有意义的，并且我能确保实在真实时间中发生的。&lt;/p>
+&lt;h3 id="proofs-for-all-of-np">&lt;strong>Proofs for all of NP!&lt;/strong>
+&lt;/h3>&lt;p>If you’ve made it this far, I’m pretty sure you’re ready for the big news. Which is that 3-coloring cellphone networks isn’t all that interesting of a problem — at least, not in and of itself.&lt;/p>
+&lt;p>The really interesting thing about the 3-coloring problem is that it’s in the class &lt;a class="link" href="http://en.wikipedia.org/wiki/NP-complete" target="_blank" rel="noopener"
+>NP-complete&lt;/a>. To put this informally, the wonderful thing about such problems is that &lt;em>any other problem in the class &lt;a class="link" href="http://en.wikipedia.org/wiki/NP_%28complexity%29" target="_blank" rel="noopener"
+>NP&lt;/a>&lt;/em> can be translated into an instance of that problem.In a single stroke, this result — &lt;a class="link" href="http://people.csail.mit.edu/silvio/Selected%20Scientific%20Papers/Zero%20Knowledge/Proofs_That_Yield_Nothing_But_Their_Validity_or_All_Languages_in_NP_Have_Zero-Knowledge_Proof_Systems.pdf" target="_blank" rel="noopener"
+>due to Goldreich&lt;/a>, Micali and Wigderson — proves that ‘efficient’ ZK proofs exists for a vast class of useful statements, many of which are &lt;em>way more&lt;/em> interesting than assigning frequencies to cellular networks. You simply find a statement (in NP) that you wish to prove, such as our hash function example from above, then translate it into an instance of the 3-coloring problem. At that point you simply run the digital version of the hat protocol.&lt;/p>
+&lt;p>三涂色问题是NPC问题，那么对于一个想要证明的NP问题，都可以归约到这个NPC问题，然后转化成三涂色问题，用上面的数字协议进行运行就可以了。&lt;/p>
+&lt;h3 id="in-summary-and-next-time">&lt;strong>In summary, and next time&lt;/strong>
+&lt;/h3>&lt;p>Of course, actually running this protocol for interesting statements would be an insanely（疯狂地） silly thing for anyone to do, since the cost of doing so would include the total size of the original statement and witness, plus the reduction cost to convert it into a graph, plus the &lt;em>$E^2$&lt;/em> protocol rounds you’d have to conduct in order to convince someone that the proof is valid. Theoretically this is ‘efficient’, since the total cost of the proof would be polynomial in the input size, but in practice it would be anything but.&lt;/p>
+&lt;p>理论上上面的三色问题的零知识证明协议是“efficent”，但是不实用。&lt;/p>
+&lt;p>So what we’ve shown so far is that such proofs are &lt;em>possible&lt;/em>. It remains for us to actually find proofs that are practical enough for real-world use.&lt;/p>
+&lt;p>In the &lt;a class="link" href="https://blog.cryptographyengineering.com/2017/01/21/zero-knowledge-proofs-an-illustrated-primer-part-2/" target="_blank" rel="noopener"
+>next post&lt;/a> I’ll talk about some of those — specifically, the &lt;em>efficient&lt;/em> proofs that we use for various useful statements. I’ll give some examples (from real applications) where these things have been used. Also at reader request: I’ll also talk about why I dislike &lt;a class="link" href="http://en.wikipedia.org/wiki/Secure_Remote_Password_protocol" target="_blank" rel="noopener"
+>SRP&lt;/a> so much.&lt;/p>
+&lt;p>&lt;a class="link" href="https://blog.cryptographyengineering.com/2017/01/21/zero-knowledge-proofs-an-illustrated-primer-part-2/" target="_blank" rel="noopener"
+>See here&lt;/a> for Part 2.&lt;/p>
+&lt;p>&lt;em>Notes:&lt;/em>&lt;/p>
+&lt;ul>
+&lt;li>Formally, the goal of an interactive proof is to convince the Verifier that a particular string belongs to some language. Typically the Prover is very powerful (unbounded), but the Verifier is limited in computation.&lt;/li>
+&lt;li>&lt;code>*&lt;/code> This example is based on the original solution of Goldwasser, Micali and Rackoff, and the teaching example using hats is based on an explanation by Silvio Micali. I take credit only for the silly mistakes.&lt;/li>
+&lt;li>***** A simple example of a commitment can be built using a hash function. To commit to the value “x” simply generate some (suitably long) string of random numbers, which we’ll call ‘salt’, and output the commitment &lt;em>C = Hash(salt || x)&lt;/em>. To open the commitment, you simply reveal ‘x’ and ‘salt’. Anyone can check that the original commitment is valid by recomputing the hash. This is secure under some (moderately strong) assumptions about the function itself.&lt;/li>
+&lt;/ul></description></item></channel></rss>

@@ -1,0 +1,388 @@
+<!doctype html><html lang=en-us dir=ltr><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><meta name=description content='最近又把自己的博客折腾了一遍，之前用的是vuepress搭建的，奈何实在看不惯字体太小，配置字体大小半天不成功，索性想着重新搭建一下。网上搜索到的主要有hexo和hugo，之前尝试过hexo，没有很满意，这次就试着用hugo搭建。\n安装Hugo 1 brew install hugo 接着运行：\n1 hugo version 显示正常则说明安装成功。\n创建Hugo网站 1 hugo new site hugo-blog 运行效果如下：\n1 2 3 4 5 6 7 8 9 10 11 12 13 jinjin@Mac-mini test % hugo new site hugo-blog Congratulations! Your new Hugo site is created in /Users/jinjin/code/test/hugo-blog. Just a few more steps and you&#39;re ready to go: 1. Download a theme into the same-named folder. Choose a theme from https://themes.gohugo.io/ or create your own with the "hugo new theme <THEMENAME>" command. 2. Perhaps you want to add some content. You can add single files with "hugo new <SECTIONNAME>/<FILENAME>.<FORMAT>". 3. Start the built-in live server via "hugo server". Visit https://gohugo.io/ for quickstart guide and full documentation. 选择主题 在官方网站主题板块选择一个喜欢的主题，我选择的是Clean White，接着可以按照主题给的教程进行安装。为了后续方便github管理部署以及修改主题，将原主题仓库fork到自己的账户，用git submodule方式进行仓库链接。\n'><title>如何用Hugo + Github Action部署个人博客</title>
+<link rel=canonical href=https://wenjin1997.github.io/2022/11/19/hugo-post/><link rel=stylesheet href=/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css><meta property='og:title' content="如何用Hugo + Github Action部署个人博客"><meta property='og:description' content='最近又把自己的博客折腾了一遍，之前用的是vuepress搭建的，奈何实在看不惯字体太小，配置字体大小半天不成功，索性想着重新搭建一下。网上搜索到的主要有hexo和hugo，之前尝试过hexo，没有很满意，这次就试着用hugo搭建。\n安装Hugo 1 brew install hugo 接着运行：\n1 hugo version 显示正常则说明安装成功。\n创建Hugo网站 1 hugo new site hugo-blog 运行效果如下：\n1 2 3 4 5 6 7 8 9 10 11 12 13 jinjin@Mac-mini test % hugo new site hugo-blog Congratulations! Your new Hugo site is created in /Users/jinjin/code/test/hugo-blog. Just a few more steps and you&#39;re ready to go: 1. Download a theme into the same-named folder. Choose a theme from https://themes.gohugo.io/ or create your own with the "hugo new theme <THEMENAME>" command. 2. Perhaps you want to add some content. You can add single files with "hugo new <SECTIONNAME>/<FILENAME>.<FORMAT>". 3. Start the built-in live server via "hugo server". Visit https://gohugo.io/ for quickstart guide and full documentation. 选择主题 在官方网站主题板块选择一个喜欢的主题，我选择的是Clean White，接着可以按照主题给的教程进行安装。为了后续方便github管理部署以及修改主题，将原主题仓库fork到自己的账户，用git submodule方式进行仓库链接。\n'><meta property='og:url' content='https://wenjin1997.github.io/2022/11/19/hugo-post/'><meta property='og:site_name' content="Jade's Blog"><meta property='og:type' content='article'><meta property='article:section' content='Post'><meta property='article:tag' content='博客'><meta property='article:tag' content='Hugo'><meta property='article:tag' content='Github Action'><meta property='article:published_time' content='2022-11-19T00:00:00+00:00'><meta property='article:modified_time' content='2022-11-19T00:00:00+00:00'><meta property='og:image' content='https://wenjin1997.github.io/img/2022-11-19-hugo-post/background.jpg'><meta name=twitter:title content="如何用Hugo + Github Action部署个人博客"><meta name=twitter:description content='最近又把自己的博客折腾了一遍，之前用的是vuepress搭建的，奈何实在看不惯字体太小，配置字体大小半天不成功，索性想着重新搭建一下。网上搜索到的主要有hexo和hugo，之前尝试过hexo，没有很满意，这次就试着用hugo搭建。\n安装Hugo 1 brew install hugo 接着运行：\n1 hugo version 显示正常则说明安装成功。\n创建Hugo网站 1 hugo new site hugo-blog 运行效果如下：\n1 2 3 4 5 6 7 8 9 10 11 12 13 jinjin@Mac-mini test % hugo new site hugo-blog Congratulations! Your new Hugo site is created in /Users/jinjin/code/test/hugo-blog. Just a few more steps and you&#39;re ready to go: 1. Download a theme into the same-named folder. Choose a theme from https://themes.gohugo.io/ or create your own with the "hugo new theme <THEMENAME>" command. 2. Perhaps you want to add some content. You can add single files with "hugo new <SECTIONNAME>/<FILENAME>.<FORMAT>". 3. Start the built-in live server via "hugo server". Visit https://gohugo.io/ for quickstart guide and full documentation. 选择主题 在官方网站主题板块选择一个喜欢的主题，我选择的是Clean White，接着可以按照主题给的教程进行安装。为了后续方便github管理部署以及修改主题，将原主题仓库fork到自己的账户，用git submodule方式进行仓库链接。\n'><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content='https://wenjin1997.github.io/img/2022-11-19-hugo-post/background.jpg'><link rel="shortcut icon" href=/img/favicon.ico></head><body class=article-page><script>(function(){const e="StackColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"auto")})()</script><script>(function(){const t="StackColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky"><button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label>
+<span class=hamburger-box><span class=hamburger-inner></span></span></button><header><figure class=site-avatar><a href=/><img src=/img/ghost_hu15175528053352950562.jpg width=300 height=300 class=site-logo loading=lazy alt=Avatar></a></figure><div class=site-meta><h1 class=site-name><a href=/>Jade's Blog</a></h1><h2 class=site-description>Keep Learning and Thinking!</h2></div></header><ol class=menu-social><li><a href=https://github.com/wenjin1997 target=_blank title=GitHub rel=me><svg class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></a></li><li><a href=https://twitter.com/ChinnellHeish target=_blank title=Twitter rel=me><svg class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737S11.977 6.323 12 8v1c-3.245.083-6.135-1.395-8-4 0 0-4.182 7.433 4 11-1.872 1.247-3.739 2.088-6 2 3.308 1.803 6.913 2.423 10.034 1.517 3.58-1.04 6.522-3.723 7.651-7.742a13.84 13.84.0 00.497-3.753C20.18 7.773 21.692 5.25 22 4.009z"/></svg></a></li></ol><ol class=menu id=main-menu><li><a href=/><svg class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg>
+<span>Home</span></a></li><li><a href=/archives/><svg class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><rect x="3" y="4" width="18" height="4" rx="2"/><path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+<span>Archives</span></a></li><li><a href=/search/><svg class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg>
+<span>Search</span></a></li><li><a href=/links/><svg class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M10 14a3.5 3.5.0 005 0l4-4a3.5 3.5.0 00-5-5l-.5.5"/><path d="M14 10a3.5 3.5.0 00-5 0l-4 4a3.5 3.5.0 005 5l.5-.5"/></svg>
+<span>Links</span></a></li><li class=menu-bottom-section><ol class=menu><li id=dark-mode-toggle><svg class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<svg class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<span></span></li></ol></li></ol></aside><aside class="sidebar right-sidebar sticky"><section class="widget archives"><div class=widget-icon><svg class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg></div><h2 class="widget-title section-title"></h2><div class=widget--toc><nav id=TableOfContents><ol><li><a href=#安装hugo>安装Hugo</a></li><li><a href=#创建hugo网站>创建Hugo网站</a></li><li><a href=#选择主题>选择主题</a><ol><li><a href=#解决-failed-to-connect-to-githubcom-port-443>解决 Failed to connect to github.com port 443</a></li><li><a href=#解决http2-stream-1-was-not-closed-cleanly-before-end-of-the-underlying-stream>解决HTTP/2 stream 1 was not closed cleanly before end of the underlying stream</a></li><li><a href=#初始化主题配置及发布>初始化主题配置及发布</a></li><li><a href=#修改配置>修改配置</a></li></ol></li><li><a href=#github-pages发布博客>GitHub Pages发布博客</a><ol><li><a href=#手动发布>手动发布</a></li><li><a href=#自动发布>自动发布</a></li></ol></li><li><a href=#博客支持数学公式>博客支持数学公式</a></li><li><a href=#参考资料>参考资料</a></li></ol></nav></div></section></aside><main class="main full-width"><article class="has-image main-article"><header class=article-header><div class=article-image><a href=/2022/11/19/hugo-post/><img src=/img/2022-11-19-hugo-post/background.jpg loading=lazy alt="Featured image of post 如何用Hugo + Github Action部署个人博客"></a></div><div class=article-details><header class=article-category><a href=/categories/tech/>Tech</a></header><div class=article-title-wrapper><h2 class=article-title><a href=/2022/11/19/hugo-post/>如何用Hugo + Github Action部署个人博客</a></h2></div><footer class=article-time><div><svg class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg>
+<time class=article-time--published>Nov 19, 2022</time></div><div><svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<time class=article-time--reading></time></div></footer></div></header><section class=article-content><p>最近又把自己的博客折腾了一遍，之前用的是vuepress搭建的，奈何实在看不惯字体太小，配置字体大小半天不成功，索性想着重新搭建一下。网上搜索到的主要有hexo和hugo，之前尝试过hexo，没有很满意，这次就试着用hugo搭建。</p><h2 id=安装hugo>安装Hugo</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>brew install hugo
+</span></span></code></pre></td></tr></table></div></div><p>接着运行：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>hugo version
+</span></span></code></pre></td></tr></table></div></div><p>显示正常则说明安装成功。</p><h2 id=创建hugo网站>创建Hugo网站</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>hugo new site hugo-blog
+</span></span></code></pre></td></tr></table></div></div><p>运行效果如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>jinjin@Mac-mini <span class=nb>test</span> % hugo new site hugo-blog
+</span></span><span class=line><span class=cl>Congratulations! Your new Hugo site is created in /Users/jinjin/code/test/hugo-blog.
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Just a few more steps and you<span class=err>&#39;</span>re ready to go:
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>1. Download a theme into the same-named folder.
+</span></span><span class=line><span class=cl>   Choose a theme from https://themes.gohugo.io/ or
+</span></span><span class=line><span class=cl>   create your own with the <span class=s2>&#34;hugo new theme &lt;THEMENAME&gt;&#34;</span> command.
+</span></span><span class=line><span class=cl>2. Perhaps you want to add some content. You can add single files
+</span></span><span class=line><span class=cl>   with <span class=s2>&#34;hugo new &lt;SECTIONNAME&gt;/&lt;FILENAME&gt;.&lt;FORMAT&gt;&#34;</span>.
+</span></span><span class=line><span class=cl>3. Start the built-in live server via <span class=s2>&#34;hugo server&#34;</span>.
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Visit https://gohugo.io/ <span class=k>for</span> quickstart guide and full documentation.
+</span></span></code></pre></td></tr></table></div></div><h2 id=选择主题>选择主题</h2><p>在官方网站<a class=link href=https://themes.gohugo.io/ target=_blank rel=noopener>主题板块</a>选择一个喜欢的主题，我选择的是<a class=link href=https://themes.gohugo.io/themes/hugo-theme-cleanwhite/ target=_blank rel=noopener>Clean White</a>，接着可以按照主题给的教程进行安装。为了后续方便github管理部署以及修改主题，将原主题仓库<code>fork</code>到自己的账户，用<code>git submodule</code>方式进行仓库链接。</p><p>首先找到主题的github仓库，然后<code>fork</code>下来，接着在本地使用<code>git submodule</code>命令，这里仓库地址已经变成自己账户下主题仓库的地址了。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>git submodule add https://github.com/wenjin1997/hugo-theme-cleanwhite.git themes/hugo-theme-cleanwhite
+</span></span></code></pre></td></tr></table></div></div><p>在这个过程中，运行<code>git submodule</code>与<code>git clone</code>遇到了一些问题。</p><h3 id=解决-failed-to-connect-to-githubcom-port-443>解决 Failed to connect to github.com port 443</h3><p>参考<a class=link href=https://www.notion.so/github-18e3596e3b5f4c75b78c1c90ccc9594c#3bef0cc6434a4f6ea074149ebaa5aeca target=_blank rel=noopener><strong>Failed to connect to github.com port 443: Operation timed out</strong></a>解决该问题，访问<a class=link href=https://ping.chinaz.com/github.com target=_blank rel=noopener>https://ping.chinaz.com/github.com</a>，找到一个可用的ip地址，例如为140.82.121.4。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl><span class=nb>cd</span> ~
+</span></span><span class=line><span class=cl>sudo vim /etc/hosts
+</span></span></code></pre></td></tr></table></div></div><p>在host文件中进行修改。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-text data-lang=text><span class=line><span class=cl>##
+</span></span><span class=line><span class=cl># Host Database
+</span></span><span class=line><span class=cl>#
+</span></span><span class=line><span class=cl># localhost is used to configure the loopback interface
+</span></span><span class=line><span class=cl># when the system is booting.  Do not change this entry.
+</span></span><span class=line><span class=cl>##
+</span></span><span class=line><span class=cl>127.0.0.1       localhost
+</span></span><span class=line><span class=cl>255.255.255.255 broadcasthost
+</span></span><span class=line><span class=cl>::1             localhost
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>140.82.121.4 github.com
+</span></span></code></pre></td></tr></table></div></div><h3 id=解决http2-stream-1-was-not-closed-cleanly-before-end-of-the-underlying-stream>解决HTTP/2 stream 1 was not closed cleanly before end of the underlying stream</h3><p>之后使用<code>git clone</code>又出现如下错误：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>jinjin@Mac-mini themes % git clone https://github.com/zhaohuabing/hugo-theme-cleanwhite.git
+</span></span><span class=line><span class=cl>Cloning into <span class=s1>&#39;hugo-theme-cleanwhite&#39;</span>...
+</span></span><span class=line><span class=cl>fatal: unable to access <span class=s1>&#39;https://github.com/zhaohuabing/hugo-theme-cleanwhite.git/&#39;</span>: HTTP/2 stream <span class=m>1</span> was not closed cleanly before end of the underlying stream
+</span></span></code></pre></td></tr></table></div></div><p>参考<a class=link href=https://blog.csdn.net/zz00008888/article/details/123529805 target=_blank rel=noopener>解决 HTTP/2 stream 1 was not closed cleanly before end of the underlying stream</a>，需要对git进行全局配置。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>git config --global http.version HTTP/1.1
+</span></span></code></pre></td></tr></table></div></div><h3 id=初始化主题配置及发布>初始化主题配置及发布</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl><span class=nb>cd</span> themes
+</span></span><span class=line><span class=cl>cp -r hugo-theme-cleanwhite/exampleSite/** ../
+</span></span></code></pre></td></tr></table></div></div><p>接着运行<code>hugo server</code>在本地<a class=link href=http://localhost:1313/ target=_blank rel=noopener>http://localhost:1313/</a>就能看到博客的样子了。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl><span class=nb>cd</span> ..
+</span></span><span class=line><span class=cl>hugo server
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>jinjin@Mac-mini hugo-blog % hugo server
+</span></span><span class=line><span class=cl>Start building sites … 
+</span></span><span class=line><span class=cl>hugo v0.101.0+extended darwin/arm64 <span class=nv>BuildDate</span><span class=o>=</span>unknown
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                   <span class=p>|</span> EN  
+</span></span><span class=line><span class=cl>-------------------+-----
+</span></span><span class=line><span class=cl>  Pages            <span class=p>|</span> <span class=m>71</span>  
+</span></span><span class=line><span class=cl>  Paginator pages  <span class=p>|</span>  <span class=m>8</span>  
+</span></span><span class=line><span class=cl>  Non-page files   <span class=p>|</span>  <span class=m>0</span>  
+</span></span><span class=line><span class=cl>  Static files     <span class=p>|</span> <span class=m>70</span>  
+</span></span><span class=line><span class=cl>  Processed images <span class=p>|</span>  <span class=m>0</span>  
+</span></span><span class=line><span class=cl>  Aliases          <span class=p>|</span> <span class=m>17</span>  
+</span></span><span class=line><span class=cl>  Sitemaps         <span class=p>|</span>  <span class=m>1</span>  
+</span></span><span class=line><span class=cl>  Cleaned          <span class=p>|</span>  <span class=m>0</span>  
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Built in <span class=m>82</span> ms
+</span></span><span class=line><span class=cl>Watching <span class=k>for</span> changes in /Users/jinjin/code/hugo-blog/<span class=o>{</span>archetypes,content,data,layouts,static,themes<span class=o>}</span>
+</span></span><span class=line><span class=cl>Watching <span class=k>for</span> config changes in /Users/jinjin/code/hugo-blog/config.toml
+</span></span><span class=line><span class=cl>Environment: <span class=s2>&#34;development&#34;</span>
+</span></span><span class=line><span class=cl>Serving pages from memory
+</span></span><span class=line><span class=cl>Running in Fast Render Mode. For full rebuilds on change: hugo server --disableFastRender
+</span></span><span class=line><span class=cl>Web Server is available at http://localhost:1313/ <span class=o>(</span><span class=nb>bind</span> address 127.0.0.1<span class=o>)</span>
+</span></span><span class=line><span class=cl>Press Ctrl+C to stop
+</span></span><span class=line><span class=cl>^C%  
+</span></span></code></pre></td></tr></table></div></div><h3 id=修改配置>修改配置</h3><p>可以边修改博客边在本地预览效果，这里有一个很重要的修改，就是在根目录下的<code>congig.toml</code>文件中将<code>baseurl</code>修改为自己的博客地址。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-toml data-lang=toml><span class=line><span class=cl><span class=nx>baseurl</span> <span class=p>=</span> <span class=s2>&#34;https://wenjin1997.github.io&#34;</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=github-pages发布博客>GitHub Pages发布博客</h2><p>首先要在github上创建自己<code>&lt;账户名>.github.io</code>的仓库。</p><h3 id=手动发布>手动发布</h3><p>Hugo生成的静态页面会放在public文件夹下。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>hugo
+</span></span><span class=line><span class=cl><span class=nb>cd</span> public
+</span></span></code></pre></td></tr></table></div></div><p>接着向远程推送我们的git仓库。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>git init
+</span></span><span class=line><span class=cl>git remote add origin git@github.com:wenjin1997/wenjin1997.github.io
+</span></span><span class=line><span class=cl>git add .
+</span></span><span class=line><span class=cl>git commit -m <span class=s2>&#34;add test&#34;</span>
+</span></span><span class=line><span class=cl>git push origin master
+</span></span></code></pre></td></tr></table></div></div><p>如果在添加远程仓库时出现错误，参考<a class=link href=https://blog.csdn.net/top_code/article/details/50381432 target=_blank rel=noopener>Git 提示fatal: remote origin already exists 错误解决办法</a>解决方法，用下面的命令删除远程git仓库：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>git remote rm origin
+</span></span></code></pre></td></tr></table></div></div><p>接着再用<code>git remote add origin git@github.com:wenjin1997/wenjin1997.github.io</code>重新添加远程仓库。</p><p>运行效果如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>jinjin@Mac-mini hugo-blog % <span class=nb>cd</span> public
+</span></span><span class=line><span class=cl>jinjin@Mac-mini public % git init
+</span></span><span class=line><span class=cl>hint: Using <span class=s1>&#39;master&#39;</span> as the name <span class=k>for</span> the initial branch. This default branch name
+</span></span><span class=line><span class=cl>hint: is subject to change. To configure the initial branch name to use in all
+</span></span><span class=line><span class=cl>hint: of your new repositories, which will suppress this warning, call:
+</span></span><span class=line><span class=cl>hint: 
+</span></span><span class=line><span class=cl>hint: 	git config --global init.defaultBranch &lt;name&gt;
+</span></span><span class=line><span class=cl>hint: 
+</span></span><span class=line><span class=cl>hint: Names commonly chosen instead of <span class=s1>&#39;master&#39;</span> are <span class=s1>&#39;main&#39;</span>, <span class=s1>&#39;trunk&#39;</span> and
+</span></span><span class=line><span class=cl>hint: <span class=s1>&#39;development&#39;</span>. The just-created branch can be renamed via this command:
+</span></span><span class=line><span class=cl>hint: 
+</span></span><span class=line><span class=cl>hint: 	git branch -m &lt;name&gt;
+</span></span><span class=line><span class=cl>Initialized empty Git repository in /Users/jinjin/code/hugo-blog/public/.git/
+</span></span><span class=line><span class=cl>jinjin@Mac-mini public % git remote add origin git@github.com:wenjin1997/wenjin1997.github.io
+</span></span><span class=line><span class=cl>jinjin@Mac-mini public % git add .
+</span></span><span class=line><span class=cl>jinjin@Mac-mini public % git commit -m <span class=s2>&#34;add test&#34;</span>
+</span></span><span class=line><span class=cl><span class=o>[</span>master <span class=o>(</span>root-commit<span class=o>)</span> af5a609<span class=o>]</span> add <span class=nb>test</span>
+</span></span><span class=line><span class=cl> <span class=m>165</span> files changed, <span class=m>60905</span> insertions<span class=o>(</span>+<span class=o>)</span>
+</span></span><span class=line><span class=cl> create mode <span class=m>100644</span> 2017/11/03/hello-world/index.html
+</span></span><span class=line><span class=cl> create mode <span class=m>100644</span> 2017/11/04/istio-install_and_example/index.html
+</span></span><span class=line><span class=cl> create mode <span class=m>100644</span> 2017/11/07/istio-traffic-shifting/index.html
+</span></span><span class=line><span class=cl> ...（省略）
+</span></span><span class=line><span class=cl>jinjin@Mac-mini public % git push origin master
+</span></span><span class=line><span class=cl>Enumerating objects: 285, <span class=k>done</span>.
+</span></span><span class=line><span class=cl>Counting objects: 100% <span class=o>(</span>285/285<span class=o>)</span>, <span class=k>done</span>.
+</span></span><span class=line><span class=cl>Delta compression using up to <span class=m>8</span> threads
+</span></span><span class=line><span class=cl>Compressing objects: 100% <span class=o>(</span>213/213<span class=o>)</span>, <span class=k>done</span>.
+</span></span><span class=line><span class=cl>Writing objects: 100% <span class=o>(</span>285/285<span class=o>)</span>, 3.32 MiB <span class=p>|</span> 341.00 KiB/s, <span class=k>done</span>.
+</span></span><span class=line><span class=cl>Total <span class=m>285</span> <span class=o>(</span>delta 82<span class=o>)</span>, reused <span class=m>0</span> <span class=o>(</span>delta 0<span class=o>)</span>, pack-reused <span class=m>0</span>
+</span></span><span class=line><span class=cl>remote: Resolving deltas: 100% <span class=o>(</span>82/82<span class=o>)</span>, <span class=k>done</span>.
+</span></span><span class=line><span class=cl>To github.com:wenjin1997/wenjin1997.github.io
+</span></span><span class=line><span class=cl> * <span class=o>[</span>new branch<span class=o>]</span>      master -&gt; master
+</span></span></code></pre></td></tr></table></div></div><p>访问自己的博客地址<a class=link href=https://wenjin1997.github.io target=_blank rel=noopener>wenjin1997.github.io</a>，可以看到大功告成啦！</p><h3 id=自动发布>自动发布</h3><p>使用Github Action 配置自动发布博客，先要创建一个仓库，例如hugo-blog，这里放置博客的源码，包括自己的博客文章、图片等。在仓库创建<code>.github/workflows/deploy.yml</code>文件，配置如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yml data-lang=yml><span class=line><span class=cl><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>deploy</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>on</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>push</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>workflow_dispatch</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>schedule</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=c># Runs everyday at 8:00 AM</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span>- <span class=nt>cron</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;0 0 * * *&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>jobs</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>build</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>runs-on</span><span class=p>:</span><span class=w> </span><span class=l>ubuntu-latest</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>steps</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>Checkout</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>              </span><span class=nt>uses</span><span class=p>:</span><span class=w> </span><span class=l>actions/checkout@v2</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>              </span><span class=nt>with</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                  </span><span class=nt>submodules</span><span class=p>:</span><span class=w> </span><span class=kc>true</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                  </span><span class=nt>fetch-depth</span><span class=p>:</span><span class=w> </span><span class=m>0</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>Setup Hugo</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>              </span><span class=nt>uses</span><span class=p>:</span><span class=w> </span><span class=l>peaceiris/actions-hugo@v2</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>              </span><span class=nt>with</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                  </span><span class=nt>hugo-version</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;latest&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>Build Web</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>              </span><span class=nt>run</span><span class=p>:</span><span class=w> </span><span class=l>hugo</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>Deploy Web</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>              </span><span class=nt>uses</span><span class=p>:</span><span class=w> </span><span class=l>peaceiris/actions-gh-pages@v3</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>              </span><span class=nt>with</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                  </span><span class=nt>PERSONAL_TOKEN</span><span class=p>:</span><span class=w> </span><span class=l>${{ secrets.PERSONAL_TOKEN }}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                  </span><span class=nt>EXTERNAL_REPOSITORY</span><span class=p>:</span><span class=w> </span><span class=l>wenjin1997/wenjin1997.github.io</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                  </span><span class=nt>PUBLISH_BRANCH</span><span class=p>:</span><span class=w> </span><span class=l>master</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                  </span><span class=nt>PUBLISH_DIR</span><span class=p>:</span><span class=w> </span><span class=l>./public</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                  </span><span class=nt>commit_message</span><span class=p>:</span><span class=w> </span><span class=l>${{ github.event.head_commit.message }}</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>注意要修改<code> EXTERNAL_REPOSITORY: wenjin1997/wenjin1997.github.io</code>。</p><p><code>Checkout</code>步骤中的<code>with</code>中配置的<code>submoudles</code>值为<code>true</code>可以同步博客源仓库的子模块。</p><p>在GitHub账户下<code>Setting - Developer settings - Personal access tokens - Tkens(classic)</code>创建一个Token。</p><p><img src=/img/2022-11-19-hugo-post/github-token.png loading=lazy alt=github-token></p><p>权限开启<code>repo</code>和<code>workflow</code>。</p><p><img src=/img/2022-11-19-hugo-post/repo-workflow.png loading=lazy alt=repo-workflow></p><p>配置后复制生成的Token（只会出现一次），在刚刚创建的源仓库<code>hugo-blog</code>的<code>Settings - Security - Secretes - Actions</code>中添加<code>PERSON_TOKEN</code>为刚刚的Token。</p><p><img src=/img/2022-11-19-hugo-post/PERSONAL_TOKEN.png loading=lazy alt=PERSONAL_TOKEN></p><p>完成上述配置后，本地修改博客文章，向仓库<code>hugo-blog</code>进行推送，可以触发GitHub Action，会自动生成博客页面并推送到GitHub Pages仓库，GitHub Pages仓库更新后，又会自动触发官方页面部署CI，实现博客发布。</p><h2 id=博客支持数学公式>博客支持数学公式</h2><p>参考<a class=link href=https://shaohanyun.top/posts/env/hugo_mathjax/ target=_blank rel=noopener>Hugo博客添加LaTeX语法支持</a>，在主题文件<code>themes/hugo-theme-clean-white/layouts/partials</code>下创建<code>mathjax.html</code>，内容为：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-html data-lang=html><span class=line><span class=cl><span class=p>&lt;</span><span class=nt>script</span> <span class=na>type</span><span class=o>=</span><span class=s>&#34;text/javascript&#34;</span>
+</span></span><span class=line><span class=cl>        <span class=na>async</span>
+</span></span><span class=line><span class=cl>        <span class=na>src</span><span class=o>=</span><span class=s>&#34;https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML&#34;</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl><span class=nx>MathJax</span><span class=p>.</span><span class=nx>Hub</span><span class=p>.</span><span class=nx>Config</span><span class=p>({</span>
+</span></span><span class=line><span class=cl>  <span class=nx>tex2jax</span><span class=o>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>inlineMath</span><span class=o>:</span> <span class=p>[[</span><span class=s1>&#39;$&#39;</span><span class=p>,</span><span class=s1>&#39;$&#39;</span><span class=p>],</span> <span class=p>[</span><span class=s1>&#39;\\(&#39;</span><span class=p>,</span><span class=s1>&#39;\\)&#39;</span><span class=p>]],</span>
+</span></span><span class=line><span class=cl>    <span class=nx>displayMath</span><span class=o>:</span> <span class=p>[[</span><span class=s1>&#39;$$&#39;</span><span class=p>,</span><span class=s1>&#39;$$&#39;</span><span class=p>],</span> <span class=p>[</span><span class=s1>&#39;\[\[&#39;</span><span class=p>,</span><span class=s1>&#39;\]\]&#39;</span><span class=p>]],</span>
+</span></span><span class=line><span class=cl>    <span class=nx>processEscapes</span><span class=o>:</span> <span class=kc>true</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=nx>processEnvironments</span><span class=o>:</span> <span class=kc>true</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=nx>skipTags</span><span class=o>:</span> <span class=p>[</span><span class=s1>&#39;script&#39;</span><span class=p>,</span> <span class=s1>&#39;noscript&#39;</span><span class=p>,</span> <span class=s1>&#39;style&#39;</span><span class=p>,</span> <span class=s1>&#39;textarea&#39;</span><span class=p>,</span> <span class=s1>&#39;pre&#39;</span><span class=p>],</span>
+</span></span><span class=line><span class=cl>    <span class=nx>TeX</span><span class=o>:</span> <span class=p>{</span> <span class=nx>equationNumbers</span><span class=o>:</span> <span class=p>{</span> <span class=nx>autoNumber</span><span class=o>:</span> <span class=s2>&#34;AMS&#34;</span> <span class=p>},</span>
+</span></span><span class=line><span class=cl>         <span class=nx>extensions</span><span class=o>:</span> <span class=p>[</span><span class=s2>&#34;AMSmath.js&#34;</span><span class=p>,</span> <span class=s2>&#34;AMSsymbols.js&#34;</span><span class=p>]</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>});</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>MathJax</span><span class=p>.</span><span class=nx>Hub</span><span class=p>.</span><span class=nx>Queue</span><span class=p>(</span><span class=kd>function</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// Fix &lt;code&gt; tags after MathJax finishes running. This is a
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=c1>// hack to overcome a shortcoming of Markdown. Discussion at
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=c1>// https://github.com/mojombo/jekyll/issues/199
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kd>var</span> <span class=nx>all</span> <span class=o>=</span> <span class=nx>MathJax</span><span class=p>.</span><span class=nx>Hub</span><span class=p>.</span><span class=nx>getAllJax</span><span class=p>(),</span> <span class=nx>i</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span><span class=p>(</span><span class=nx>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=o>&lt;</span> <span class=nx>all</span><span class=p>.</span><span class=nx>length</span><span class=p>;</span> <span class=nx>i</span> <span class=o>+=</span> <span class=mi>1</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>all</span><span class=p>[</span><span class=nx>i</span><span class=p>].</span><span class=nx>SourceElement</span><span class=p>().</span><span class=nx>parentNode</span><span class=p>.</span><span class=nx>className</span> <span class=o>+=</span> <span class=s1>&#39; has-jax&#39;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>});</span>
+</span></span><span class=line><span class=cl><span class=p>&lt;/</span><span class=nt>script</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=p>&lt;</span><span class=nt>style</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl><span class=nt>code</span><span class=p>.</span><span class=nc>has-jax</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>font</span><span class=p>:</span> <span class=kc>inherit</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=k>font-size</span><span class=p>:</span> <span class=mi>100</span><span class=kt>%</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=k>background</span><span class=p>:</span> <span class=kc>inherit</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=k>border</span><span class=p>:</span> <span class=kc>inherit</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=k>color</span><span class=p>:</span> <span class=mh>#515151</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>&lt;/</span><span class=nt>style</span><span class=p>&gt;</span>
+</span></span></code></pre></td></tr></table></div></div><p>在<code>themes/hugo-theme-clean-white/layouts/partials/head.html</code>文件末尾添加下面一行代码：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-html data-lang=html><span class=line><span class=cl>{{ partial &#34;mathjax.html&#34; . }}
+</span></span></code></pre></td></tr></table></div></div><p>这样在每个页面都会自动插入代码，支持数学公式了。</p><p>Tips：上面使用的是MathJax，对于LaTeX公式中的换行符，要使用<code>\\\</code>三个斜杠代替<code>\\</code>，例如</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-latex data-lang=latex><span class=line><span class=cl><span class=k>\begin</span><span class=nb>{</span>aligned<span class=nb>}</span>
+</span></span><span class=line><span class=cl>    <span class=k>\begin</span><span class=nb>{</span>cases<span class=nb>}</span>
+</span></span><span class=line><span class=cl>        <span class=k>\frac</span><span class=nb>{</span>du<span class=nb>}{</span>dt<span class=nb>}</span>=-<span class=k>\frac</span><span class=nb>{</span>u<span class=nb>}{</span>t<span class=nb>}</span>,1<span class=k>\leq</span> t<span class=k>\leq</span> 2, <span class=k>\\\</span>
+</span></span><span class=line><span class=cl>        u(1)=1
+</span></span><span class=line><span class=cl>    <span class=k>\end</span><span class=nb>{</span>cases<span class=nb>}</span>	
+</span></span><span class=line><span class=cl><span class=k>\end</span><span class=nb>{</span>aligned<span class=nb>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>这样才能正常显示两行公式：</p>$$
+\begin{aligned}
+\begin{cases}
+\frac{du}{dt}=-\frac{u}{t},1\leq t\leq 2, \\\
+u(1)=1
+\end{cases}
+\end{aligned}
+$$<h2 id=参考资料>参考资料</h2><ol><li><a class=link href=https://themes.gohugo.io/ target=_blank rel=noopener>Hugo 官网</a></li><li><a class=link href=https://www.pseudoyu.com/zh/2022/05/29/deploy_your_blog_using_hugo_and_github_action/ target=_blank rel=noopener>Hugo + GitHub Action，搭建你的博客自动发布系统</a></li><li><a class=link href=https://toutiao.io/posts/npcjzh/preview target=_blank rel=noopener>如何利用 GitHub Pages 和 Hugo 轻松搭建个人博客？</a></li><li><a class=link href=https://waynerv.com/posts/setup-blog-with-hugo-and-github-pages/ target=_blank rel=noopener>使用 Hugo 和 GitHub Pages 搭建静态博客</a></li><li><a class=link href=https://themes.gohugo.io/themes/hugo-theme-cleanwhite/ target=_blank rel=noopener>Hugo Themes: Clean White</a></li><li><a class=link href=https://github.com/zhaohuabing/hugo-theme-cleanwhite target=_blank rel=noopener>zhaohuabing/hugo-theme-cleanwhite</a></li><li><a class=link href=https://www.notion.so/github-18e3596e3b5f4c75b78c1c90ccc9594c#3bef0cc6434a4f6ea074149ebaa5aeca target=_blank rel=noopener>Failed to connect to github.com port 443: Operation timed out</a></li><li><a class=link href=https://blog.csdn.net/zz00008888/article/details/123529805 target=_blank rel=noopener>解决 HTTP/2 stream 1 was not closed cleanly before end of the underlying stream</a></li><li><a class=link href=https://blog.csdn.net/top_code/article/details/50381432 target=_blank rel=noopener>Git 提示fatal: remote origin already exists 错误解决办法</a></li><li><a class=link href=https://shaohanyun.top/posts/env/hugo_mathjax/ target=_blank rel=noopener>Hugo博客添加LaTeX语法支持</a></li></ol></section><footer class=article-footer><section class=article-tags><a href=/tags/%E5%8D%9A%E5%AE%A2/>博客</a>
+<a href=/tags/hugo/>Hugo</a>
+<a href=/tags/github-action/>Github Action</a></section><section class=article-copyright><svg class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9a3.5 4 0 100 6"/></svg>
+<span>Licensed under CC BY-NC-SA 4.0</span></section></footer><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css integrity=sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV crossorigin=anonymous><script src=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js integrity=sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8 crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous defer></script><script>window.addEventListener("DOMContentLoaded",()=>{renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1},{left:"\\(",right:"\\)",display:!1},{left:"\\[",right:"\\]",display:!0}],ignoredClasses:["gist"]})})</script></article><aside class=related-content--wrapper><h2 class=section-title></h2><div class=related-content><div class="flex article-list--tile"><article><a href=/2022/03/09/mathEquationBlog/><div class=article-details><h2 class=article-title>vuepress配置博客支持数学公式</h2></div></a></article><article><a href=/2022/08/23/rust-web/><div class=article-details><h2 class=article-title>Rust异步Web框架</h2></div></a></article><article><a href=/2022/08/01/Linux-ssh/><div class=article-details><h2 class=article-title>Mac用ssh远程连接服务器</h2></div></a></article><article><a href=/2022/07/31/RustChinaConf/><div class=article-details><h2 class=article-title>Rust开发者大会</h2></div></a></article><article><a href=/2022/07/07/Rust-async/><div class=article-details><h2 class=article-title>Rust异步编程</h2></div></a></article></div></div></aside><footer class=site-footer><section class=copyright>&copy;
+2020 -
+2024 Jade's Blog</section><section class=powerby><br></section></footer><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo=" crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU=" crossorigin=anonymous defer></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css crossorigin=anonymous><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css crossorigin=anonymous></main></div><script src=https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z+KMkF24hUW8WePSA9HM=" crossorigin=anonymous></script><script type=text/javascript src=/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js defer></script><script>(function(){const e=document.createElement("link");e.href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap",e.type="text/css",e.rel="stylesheet",document.head.appendChild(e)})()</script></body></html>

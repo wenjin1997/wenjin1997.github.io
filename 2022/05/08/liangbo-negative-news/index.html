@@ -1,0 +1,714 @@
+<!doctype html><html lang=en-us dir=ltr><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><meta name=description content="梁博云实习的第一个项目，发现负面新闻。"><title>发现负面新闻</title>
+<link rel=canonical href=https://wenjin1997.github.io/2022/05/08/liangbo-negative-news/><link rel=stylesheet href=/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css><meta property='og:title' content="发现负面新闻"><meta property='og:description' content="梁博云实习的第一个项目，发现负面新闻。"><meta property='og:url' content='https://wenjin1997.github.io/2022/05/08/liangbo-negative-news/'><meta property='og:site_name' content="Jade's Blog"><meta property='og:type' content='article'><meta property='article:section' content='Post'><meta property='article:tag' content='Java'><meta property='article:tag' content='Spring Boot'><meta property='article:tag' content='服务器'><meta property='article:published_time' content='2022-05-08T00:00:00+00:00'><meta property='article:modified_time' content='2022-05-08T00:00:00+00:00'><meta name=twitter:title content="发现负面新闻"><meta name=twitter:description content="梁博云实习的第一个项目，发现负面新闻。"><link rel="shortcut icon" href=/img/favicon.ico></head><body class=article-page><script>(function(){const e="StackColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"auto")})()</script><script>(function(){const t="StackColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky"><button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label>
+<span class=hamburger-box><span class=hamburger-inner></span></span></button><header><figure class=site-avatar><a href=/><img src=/img/ghost_hu15175528053352950562.jpg width=300 height=300 class=site-logo loading=lazy alt=Avatar></a></figure><div class=site-meta><h1 class=site-name><a href=/>Jade's Blog</a></h1><h2 class=site-description>Keep Learning and Thinking!</h2></div></header><ol class=menu-social><li><a href=https://github.com/wenjin1997 target=_blank title=GitHub rel=me><svg class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></a></li><li><a href=https://twitter.com/ChinnellHeish target=_blank title=Twitter rel=me><svg class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737S11.977 6.323 12 8v1c-3.245.083-6.135-1.395-8-4 0 0-4.182 7.433 4 11-1.872 1.247-3.739 2.088-6 2 3.308 1.803 6.913 2.423 10.034 1.517 3.58-1.04 6.522-3.723 7.651-7.742a13.84 13.84.0 00.497-3.753C20.18 7.773 21.692 5.25 22 4.009z"/></svg></a></li></ol><ol class=menu id=main-menu><li><a href=/><svg class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg>
+<span>Home</span></a></li><li><a href=/archives/><svg class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><rect x="3" y="4" width="18" height="4" rx="2"/><path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+<span>Archives</span></a></li><li><a href=/search/><svg class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg>
+<span>Search</span></a></li><li><a href=/links/><svg class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M10 14a3.5 3.5.0 005 0l4-4a3.5 3.5.0 00-5-5l-.5.5"/><path d="M14 10a3.5 3.5.0 00-5 0l-4 4a3.5 3.5.0 005 5l.5-.5"/></svg>
+<span>Links</span></a></li><li class=menu-bottom-section><ol class=menu><li id=dark-mode-toggle><svg class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<svg class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<span></span></li></ol></li></ol></aside><aside class="sidebar right-sidebar sticky"><section class="widget archives"><div class=widget-icon><svg class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg></div><h2 class="widget-title section-title"></h2><div class=widget--toc><nav id=TableOfContents><ol><li><a href=#任务>任务</a></li><li><a href=#爬取百度新闻>爬取百度新闻</a></li><li><a href=#使用情感计算api>使用情感计算API</a></li><li><a href=#创建spring-boot项目>创建Spring Boot项目</a></li><li><a href=#返回json数据格式>返回JSON数据格式</a></li><li><a href=#部署到服务器>部署到服务器</a><ol><li><a href=#maven项目打包>maven项目打包</a></li><li><a href=#linux上运行>Linux上运行</a></li></ol></li><li><a href=#代码及公网地址>代码及公网地址</a></li></ol></nav></div></section></aside><main class="main full-width"><article class=main-article><header class=article-header><div class=article-details><header class=article-category><a href=/categories/tech/>Tech</a></header><div class=article-title-wrapper><h2 class=article-title><a href=/2022/05/08/liangbo-negative-news/>发现负面新闻</a></h2><h3 class=article-subtitle>梁博云实习的第一个项目，发现负面新闻。</h3></div><footer class=article-time><div><svg class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg>
+<time class=article-time--published>May 08, 2022</time></div><div><svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<time class=article-time--reading></time></div></footer></div></header><section class=article-content><h2 id=任务>任务</h2><p>这是梁博云实习的第一个项目，发现负面新闻。</p><p>实习目标</p><ol><li>学习和掌握json代码的解析和生成</li><li>学习一种http服务的方式</li><li>学习如何使用开放API</li></ol><p>第一步、学习和利用现有一个情感计算API
+<a class=link href=http://www.pullword.com/baobian/ target=_blank rel=noopener>http://www.pullword.com/baobian/</a></p><p>调用样例：Linux命令行下执行</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>curl -X POST &#39;http://baobianapi.pullword.com:9091/get.php&#39; -d&#39;十一月再见，十二月你好，2021年最后一个月总会有不期而遇的温暖，和生生不息的希望&#39; –compressed
+</span></span></code></pre></td></tr></table></div></div><p>返回的json结果要能解析，大于0.5表示正面情感，小于-0.5表明负面情感。或者使用其他自己熟悉的API也可以。推荐使用梁博公开的服务。</p><p>第二步，学习提供http服务的工具</p><p>C语言选手可以通过搜狗工作流开源工具实现。不会C和C++的同学可以用php代码或者其他自己熟悉的语言实现。</p><p>第三步，学习和了解数据源
+<a class=link href=http://news.baidu.com/ target=_blank rel=noopener>http://news.baidu.com/</a></p><p>从百度新闻首页获得当天热门新闻，用curl或者wget命令采集首页。然后提取其中的新闻标题和URL</p><p>第四步，将今日新闻标题调用情感计算API得到正负面评价，提取负面结果的新闻标题和URL，通过第二步掌握的http服务工具以json格式对外展示。展示的内容包括标题和URL的列表。在自己的linux机器上能访问即可，有公网服务器的可以开放公网URL供我们检查，没有公网服务器的截图即可。</p><h2 id=爬取百度新闻>爬取百度新闻</h2><p>打开<a class=link href=http://news.baidu.com/ target=_blank rel=noopener>百度新闻</a>，F12查看页面源码，可以看到热点新闻的<code>class=mod-tab-pane active</code>。
+<img src=/img/2022-05-08-liangbo-negative-news/baidunews.png loading=lazy alt=baidu-news>
+用如下方法得到新闻标题和链接：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=c1>// 获取热点新闻HTML代码</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>Elements</span><span class=w> </span><span class=n>hotNews</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>doc</span><span class=p>.</span><span class=na>select</span><span class=p>(</span><span class=s>&#34;[class=mod-tab-pane active]&#34;</span><span class=p>).</span><span class=na>select</span><span class=p>(</span><span class=s>&#34;a&#34;</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c1>// 获取新闻标题及链接</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>for</span><span class=w> </span><span class=p>(</span><span class=kt>int</span><span class=w> </span><span class=n>i</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>0</span><span class=p>;</span><span class=w> </span><span class=n>i</span><span class=w> </span><span class=o>&lt;</span><span class=w> </span><span class=n>hotNews</span><span class=p>.</span><span class=na>size</span><span class=p>();</span><span class=w> </span><span class=n>i</span><span class=o>++</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>     </span><span class=n>news</span><span class=p>.</span><span class=na>put</span><span class=p>(</span><span class=n>hotNews</span><span class=p>.</span><span class=na>get</span><span class=p>(</span><span class=n>i</span><span class=p>).</span><span class=na>text</span><span class=p>(),</span><span class=w> </span><span class=n>hotNews</span><span class=p>.</span><span class=na>get</span><span class=p>(</span><span class=n>i</span><span class=p>).</span><span class=na>attr</span><span class=p>(</span><span class=s>&#34;href&#34;</span><span class=p>));</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>}</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>程序的完整逻辑是先得到百度新闻的HTML文件，再从<code>class</code>筛选得到相应的标题和链接，这里<code>Elements</code>类是实现了<code>List&lt;Element></code>接口，因此是可以遍历的，在遍历时加入存放新闻的标题和链接的哈希表。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=kn>package</span><span class=w> </span><span class=nn>com.jinjin.news.controller</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=kn>import</span><span class=w> </span><span class=nn>org.jsoup.Jsoup</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=kn>import</span><span class=w> </span><span class=nn>org.jsoup.nodes.Document</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=kn>import</span><span class=w> </span><span class=nn>org.jsoup.select.Elements</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=kn>import</span><span class=w> </span><span class=nn>java.io.IOException</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=kn>import</span><span class=w> </span><span class=nn>java.util.HashMap</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=cm>/**
+</span></span></span><span class=line><span class=cl><span class=cm> * @author 文进
+</span></span></span><span class=line><span class=cl><span class=cm> * @version 1.0
+</span></span></span><span class=line><span class=cl><span class=cm> */</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=kd>public</span><span class=w> </span><span class=kd>class</span> <span class=nc>News</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=cm>/**
+</span></span></span><span class=line><span class=cl><span class=cm>     *
+</span></span></span><span class=line><span class=cl><span class=cm>     * @param url 访问路径
+</span></span></span><span class=line><span class=cl><span class=cm>     * @return
+</span></span></span><span class=line><span class=cl><span class=cm>     */</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=kd>public</span><span class=w> </span><span class=n>Document</span><span class=w> </span><span class=nf>getDocument</span><span class=w> </span><span class=p>(</span><span class=n>String</span><span class=w> </span><span class=n>url</span><span class=p>){</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=k>try</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=c1>//5000是设置连接超时时间，单位ms</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=k>return</span><span class=w> </span><span class=n>Jsoup</span><span class=p>.</span><span class=na>connect</span><span class=p>(</span><span class=n>url</span><span class=p>).</span><span class=na>timeout</span><span class=p>(</span><span class=n>5000</span><span class=p>).</span><span class=na>get</span><span class=p>();</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=p>}</span><span class=w> </span><span class=k>catch</span><span class=w> </span><span class=p>(</span><span class=n>IOException</span><span class=w> </span><span class=n>e</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>e</span><span class=p>.</span><span class=na>printStackTrace</span><span class=p>();</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=k>return</span><span class=w> </span><span class=kc>null</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=cm>/**
+</span></span></span><span class=line><span class=cl><span class=cm>     * @param url 访问网站的url
+</span></span></span><span class=line><span class=cl><span class=cm>     * @return 返回热点新闻的标题和链接
+</span></span></span><span class=line><span class=cl><span class=cm>     */</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=kd>public</span><span class=w> </span><span class=n>HashMap</span><span class=w> </span><span class=nf>getNews</span><span class=w> </span><span class=p>(</span><span class=n>String</span><span class=w> </span><span class=n>url</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=n>Document</span><span class=w> </span><span class=n>doc</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>getDocument</span><span class=p>(</span><span class=n>url</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=n>HashMap</span><span class=o>&lt;</span><span class=n>String</span><span class=p>,</span><span class=w> </span><span class=n>String</span><span class=o>&gt;</span><span class=w> </span><span class=n>news</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=k>new</span><span class=w> </span><span class=n>HashMap</span><span class=o>&lt;&gt;</span><span class=p>();</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=c1>// 获取热点新闻HTML代码</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=n>Elements</span><span class=w> </span><span class=n>hotNews</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>doc</span><span class=p>.</span><span class=na>select</span><span class=p>(</span><span class=s>&#34;[class=mod-tab-pane active]&#34;</span><span class=p>).</span><span class=na>select</span><span class=p>(</span><span class=s>&#34;a&#34;</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=c1>// 获取新闻标题及链接</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=k>for</span><span class=w> </span><span class=p>(</span><span class=kt>int</span><span class=w> </span><span class=n>i</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>0</span><span class=p>;</span><span class=w> </span><span class=n>i</span><span class=w> </span><span class=o>&lt;</span><span class=w> </span><span class=n>hotNews</span><span class=p>.</span><span class=na>size</span><span class=p>();</span><span class=w> </span><span class=n>i</span><span class=o>++</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>news</span><span class=p>.</span><span class=na>put</span><span class=p>(</span><span class=n>hotNews</span><span class=p>.</span><span class=na>get</span><span class=p>(</span><span class=n>i</span><span class=p>).</span><span class=na>text</span><span class=p>(),</span><span class=w> </span><span class=n>hotNews</span><span class=p>.</span><span class=na>get</span><span class=p>(</span><span class=n>i</span><span class=p>).</span><span class=na>attr</span><span class=p>(</span><span class=s>&#34;href&#34;</span><span class=p>));</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c1>//            System.out.println(hotNews.get(i).text() + &#34;   &#34; + hotNews.get(i).attr(&#34;href&#34;));</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=k>return</span><span class=w> </span><span class=n>news</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>}</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>参考资料：<a class=link href=https://blog.csdn.net/sinat_35626559/article/details/78285007 target=_blank rel=noopener>Java爬取网页内容的简单例子</a></p><h2 id=使用情感计算api>使用情感计算API</h2><p>情感计算API链接是：http://www.pullword.com/baobian/</p><p>我们要做的是将爬取到的新闻标题用POST方法向上述链接发请求，最后得到一个json结果，提取其中的情感数值，将负的情感值对应的新闻标题保存下来，由于之前存取的新闻是HashMap，因此得到负面新闻的URL也不是难事了。</p><p>参考<a class=link href=https://blog.csdn.net/qq_34706514/article/details/82658380 target=_blank rel=noopener>java向指定URL发送GET或POST请求</a>，我们用到了UrlUtils工具类，我们需要用的是<code>public static String sendPost(String url, String param){}</code>这个带参数的发送POST请求的方法。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>  1
+</span><span class=lnt>  2
+</span><span class=lnt>  3
+</span><span class=lnt>  4
+</span><span class=lnt>  5
+</span><span class=lnt>  6
+</span><span class=lnt>  7
+</span><span class=lnt>  8
+</span><span class=lnt>  9
+</span><span class=lnt> 10
+</span><span class=lnt> 11
+</span><span class=lnt> 12
+</span><span class=lnt> 13
+</span><span class=lnt> 14
+</span><span class=lnt> 15
+</span><span class=lnt> 16
+</span><span class=lnt> 17
+</span><span class=lnt> 18
+</span><span class=lnt> 19
+</span><span class=lnt> 20
+</span><span class=lnt> 21
+</span><span class=lnt> 22
+</span><span class=lnt> 23
+</span><span class=lnt> 24
+</span><span class=lnt> 25
+</span><span class=lnt> 26
+</span><span class=lnt> 27
+</span><span class=lnt> 28
+</span><span class=lnt> 29
+</span><span class=lnt> 30
+</span><span class=lnt> 31
+</span><span class=lnt> 32
+</span><span class=lnt> 33
+</span><span class=lnt> 34
+</span><span class=lnt> 35
+</span><span class=lnt> 36
+</span><span class=lnt> 37
+</span><span class=lnt> 38
+</span><span class=lnt> 39
+</span><span class=lnt> 40
+</span><span class=lnt> 41
+</span><span class=lnt> 42
+</span><span class=lnt> 43
+</span><span class=lnt> 44
+</span><span class=lnt> 45
+</span><span class=lnt> 46
+</span><span class=lnt> 47
+</span><span class=lnt> 48
+</span><span class=lnt> 49
+</span><span class=lnt> 50
+</span><span class=lnt> 51
+</span><span class=lnt> 52
+</span><span class=lnt> 53
+</span><span class=lnt> 54
+</span><span class=lnt> 55
+</span><span class=lnt> 56
+</span><span class=lnt> 57
+</span><span class=lnt> 58
+</span><span class=lnt> 59
+</span><span class=lnt> 60
+</span><span class=lnt> 61
+</span><span class=lnt> 62
+</span><span class=lnt> 63
+</span><span class=lnt> 64
+</span><span class=lnt> 65
+</span><span class=lnt> 66
+</span><span class=lnt> 67
+</span><span class=lnt> 68
+</span><span class=lnt> 69
+</span><span class=lnt> 70
+</span><span class=lnt> 71
+</span><span class=lnt> 72
+</span><span class=lnt> 73
+</span><span class=lnt> 74
+</span><span class=lnt> 75
+</span><span class=lnt> 76
+</span><span class=lnt> 77
+</span><span class=lnt> 78
+</span><span class=lnt> 79
+</span><span class=lnt> 80
+</span><span class=lnt> 81
+</span><span class=lnt> 82
+</span><span class=lnt> 83
+</span><span class=lnt> 84
+</span><span class=lnt> 85
+</span><span class=lnt> 86
+</span><span class=lnt> 87
+</span><span class=lnt> 88
+</span><span class=lnt> 89
+</span><span class=lnt> 90
+</span><span class=lnt> 91
+</span><span class=lnt> 92
+</span><span class=lnt> 93
+</span><span class=lnt> 94
+</span><span class=lnt> 95
+</span><span class=lnt> 96
+</span><span class=lnt> 97
+</span><span class=lnt> 98
+</span><span class=lnt> 99
+</span><span class=lnt>100
+</span><span class=lnt>101
+</span><span class=lnt>102
+</span><span class=lnt>103
+</span><span class=lnt>104
+</span><span class=lnt>105
+</span><span class=lnt>106
+</span><span class=lnt>107
+</span><span class=lnt>108
+</span><span class=lnt>109
+</span><span class=lnt>110
+</span><span class=lnt>111
+</span><span class=lnt>112
+</span><span class=lnt>113
+</span><span class=lnt>114
+</span><span class=lnt>115
+</span><span class=lnt>116
+</span><span class=lnt>117
+</span><span class=lnt>118
+</span><span class=lnt>119
+</span><span class=lnt>120
+</span><span class=lnt>121
+</span><span class=lnt>122
+</span><span class=lnt>123
+</span><span class=lnt>124
+</span><span class=lnt>125
+</span><span class=lnt>126
+</span><span class=lnt>127
+</span><span class=lnt>128
+</span><span class=lnt>129
+</span><span class=lnt>130
+</span><span class=lnt>131
+</span><span class=lnt>132
+</span><span class=lnt>133
+</span><span class=lnt>134
+</span><span class=lnt>135
+</span><span class=lnt>136
+</span><span class=lnt>137
+</span><span class=lnt>138
+</span><span class=lnt>139
+</span><span class=lnt>140
+</span><span class=lnt>141
+</span><span class=lnt>142
+</span><span class=lnt>143
+</span><span class=lnt>144
+</span><span class=lnt>145
+</span><span class=lnt>146
+</span><span class=lnt>147
+</span><span class=lnt>148
+</span><span class=lnt>149
+</span><span class=lnt>150
+</span><span class=lnt>151
+</span><span class=lnt>152
+</span><span class=lnt>153
+</span><span class=lnt>154
+</span><span class=lnt>155
+</span><span class=lnt>156
+</span><span class=lnt>157
+</span><span class=lnt>158
+</span><span class=lnt>159
+</span><span class=lnt>160
+</span><span class=lnt>161
+</span><span class=lnt>162
+</span><span class=lnt>163
+</span><span class=lnt>164
+</span><span class=lnt>165
+</span><span class=lnt>166
+</span><span class=lnt>167
+</span><span class=lnt>168
+</span><span class=lnt>169
+</span><span class=lnt>170
+</span><span class=lnt>171
+</span><span class=lnt>172
+</span><span class=lnt>173
+</span><span class=lnt>174
+</span><span class=lnt>175
+</span><span class=lnt>176
+</span><span class=lnt>177
+</span><span class=lnt>178
+</span><span class=lnt>179
+</span><span class=lnt>180
+</span><span class=lnt>181
+</span><span class=lnt>182
+</span><span class=lnt>183
+</span><span class=lnt>184
+</span><span class=lnt>185
+</span><span class=lnt>186
+</span><span class=lnt>187
+</span><span class=lnt>188
+</span><span class=lnt>189
+</span><span class=lnt>190
+</span><span class=lnt>191
+</span><span class=lnt>192
+</span><span class=lnt>193
+</span><span class=lnt>194
+</span><span class=lnt>195
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=kn>package</span><span class=w> </span><span class=nn>com.jinjin.news.controller</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=kn>import</span><span class=w> </span><span class=nn>com.sun.org.slf4j.internal.Logger</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=kn>import</span><span class=w> </span><span class=nn>com.sun.org.slf4j.internal.LoggerFactory</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=kn>import</span><span class=w> </span><span class=nn>java.io.*</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=kn>import</span><span class=w> </span><span class=nn>java.net.URL</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=kn>import</span><span class=w> </span><span class=nn>java.net.URLConnection</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=kn>import</span><span class=w> </span><span class=nn>java.util.Iterator</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=kn>import</span><span class=w> </span><span class=nn>java.util.List</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=kn>import</span><span class=w> </span><span class=nn>java.util.Map</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=cm>/**
+</span></span></span><span class=line><span class=cl><span class=cm> * @author 文进
+</span></span></span><span class=line><span class=cl><span class=cm> * @version 1.0
+</span></span></span><span class=line><span class=cl><span class=cm> */</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=kd>public</span><span class=w> </span><span class=kd>class</span> <span class=nc>UrlUtils</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=kd>private</span><span class=w> </span><span class=kd>static</span><span class=w> </span><span class=kd>final</span><span class=w> </span><span class=n>Logger</span><span class=w> </span><span class=n>log</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>LoggerFactory</span><span class=p>.</span><span class=na>getLogger</span><span class=p>(</span><span class=n>UrlUtils</span><span class=p>.</span><span class=na>class</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=cm>/**
+</span></span></span><span class=line><span class=cl><span class=cm>     * 向指定URL发送GET方法的请求
+</span></span></span><span class=line><span class=cl><span class=cm>     *
+</span></span></span><span class=line><span class=cl><span class=cm>     * @param url   发送请求的URL
+</span></span></span><span class=line><span class=cl><span class=cm>     * @param param 请求参数，请求参数应该是 name1=value1&amp;name2=value2 的形式。
+</span></span></span><span class=line><span class=cl><span class=cm>     * @return URL 所代表远程资源的响应结果
+</span></span></span><span class=line><span class=cl><span class=cm>     */</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=kd>public</span><span class=w> </span><span class=kd>static</span><span class=w> </span><span class=n>String</span><span class=w> </span><span class=nf>sendGet</span><span class=p>(</span><span class=n>String</span><span class=w> </span><span class=n>url</span><span class=p>,</span><span class=w> </span><span class=n>String</span><span class=w> </span><span class=n>param</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=n>String</span><span class=w> </span><span class=n>result</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=s>&#34;&#34;</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=n>BufferedReader</span><span class=w> </span><span class=n>in</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=kc>null</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=k>try</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>String</span><span class=w> </span><span class=n>urlNameString</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>url</span><span class=w> </span><span class=o>+</span><span class=w> </span><span class=s>&#34;?&#34;</span><span class=w> </span><span class=o>+</span><span class=w> </span><span class=n>param</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>URL</span><span class=w> </span><span class=n>realUrl</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=k>new</span><span class=w> </span><span class=n>URL</span><span class=p>(</span><span class=n>urlNameString</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=c1>// 打开和URL之间的连接</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>URLConnection</span><span class=w> </span><span class=n>connection</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>realUrl</span><span class=p>.</span><span class=na>openConnection</span><span class=p>();</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=c1>// 设置通用的请求属性</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>connection</span><span class=p>.</span><span class=na>setRequestProperty</span><span class=p>(</span><span class=s>&#34;accept&#34;</span><span class=p>,</span><span class=w> </span><span class=s>&#34;*/*&#34;</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>connection</span><span class=p>.</span><span class=na>setRequestProperty</span><span class=p>(</span><span class=s>&#34;connection&#34;</span><span class=p>,</span><span class=w> </span><span class=s>&#34;Keep-Alive&#34;</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>connection</span><span class=p>.</span><span class=na>setRequestProperty</span><span class=p>(</span><span class=s>&#34;user-agent&#34;</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                    </span><span class=s>&#34;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)&#34;</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=c1>// 建立实际的连接</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>connection</span><span class=p>.</span><span class=na>connect</span><span class=p>();</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=c1>// 获取所有响应头字段</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>Map</span><span class=o>&lt;</span><span class=n>String</span><span class=p>,</span><span class=w> </span><span class=n>List</span><span class=o>&lt;</span><span class=n>String</span><span class=o>&gt;&gt;</span><span class=w> </span><span class=n>map</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>connection</span><span class=p>.</span><span class=na>getHeaderFields</span><span class=p>();</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=c1>// 遍历所有的响应头字段</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c1>//            for (String key : map.keySet()) {</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c1>//                System.out.println(key + &#34;---&gt;&#34; + map.get(key));</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c1>//            }</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=c1>// 定义 BufferedReader输入流来读取URL的响应</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>in</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=k>new</span><span class=w> </span><span class=n>BufferedReader</span><span class=p>(</span><span class=k>new</span><span class=w> </span><span class=n>InputStreamReader</span><span class=p>(</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                    </span><span class=n>connection</span><span class=p>.</span><span class=na>getInputStream</span><span class=p>()));</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>String</span><span class=w> </span><span class=n>line</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=k>while</span><span class=w> </span><span class=p>((</span><span class=n>line</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>in</span><span class=p>.</span><span class=na>readLine</span><span class=p>())</span><span class=w> </span><span class=o>!=</span><span class=w> </span><span class=kc>null</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                </span><span class=n>result</span><span class=w> </span><span class=o>+=</span><span class=w> </span><span class=n>line</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=p>}</span><span class=w> </span><span class=k>catch</span><span class=w> </span><span class=p>(</span><span class=n>Exception</span><span class=w> </span><span class=n>e</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>log</span><span class=p>.</span><span class=na>error</span><span class=p>(</span><span class=s>&#34;发送GET请求出现异常！&#34;</span><span class=w> </span><span class=o>+</span><span class=w> </span><span class=n>e</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>e</span><span class=p>.</span><span class=na>printStackTrace</span><span class=p>();</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=c1>// 使用finally块来关闭输入流</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=k>finally</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=k>try</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                </span><span class=k>if</span><span class=w> </span><span class=p>(</span><span class=n>in</span><span class=w> </span><span class=o>!=</span><span class=w> </span><span class=kc>null</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                    </span><span class=n>in</span><span class=p>.</span><span class=na>close</span><span class=p>();</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=p>}</span><span class=w> </span><span class=k>catch</span><span class=w> </span><span class=p>(</span><span class=n>Exception</span><span class=w> </span><span class=n>e2</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                </span><span class=n>e2</span><span class=p>.</span><span class=na>printStackTrace</span><span class=p>();</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=k>return</span><span class=w> </span><span class=n>result</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=cm>/**
+</span></span></span><span class=line><span class=cl><span class=cm>     * 向指定 URL 发送POST方法的请求
+</span></span></span><span class=line><span class=cl><span class=cm>     *
+</span></span></span><span class=line><span class=cl><span class=cm>     * @param url      发送请求的 URL
+</span></span></span><span class=line><span class=cl><span class=cm>     * @param paramMap 请求参数
+</span></span></span><span class=line><span class=cl><span class=cm>     * @return 所代表远程资源的响应结果
+</span></span></span><span class=line><span class=cl><span class=cm>     */</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=kd>public</span><span class=w> </span><span class=kd>static</span><span class=w> </span><span class=n>String</span><span class=w> </span><span class=nf>sendPost</span><span class=p>(</span><span class=n>String</span><span class=w> </span><span class=n>url</span><span class=p>,</span><span class=w> </span><span class=n>Map</span><span class=o>&lt;</span><span class=n>String</span><span class=p>,</span><span class=w> </span><span class=o>?&gt;</span><span class=w> </span><span class=n>paramMap</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=n>PrintWriter</span><span class=w> </span><span class=n>out</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=kc>null</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=n>BufferedReader</span><span class=w> </span><span class=n>in</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=kc>null</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=n>String</span><span class=w> </span><span class=n>result</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=s>&#34;&#34;</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=n>String</span><span class=w> </span><span class=n>param</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=s>&#34;&#34;</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=n>Iterator</span><span class=o>&lt;</span><span class=n>String</span><span class=o>&gt;</span><span class=w> </span><span class=n>it</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>paramMap</span><span class=p>.</span><span class=na>keySet</span><span class=p>().</span><span class=na>iterator</span><span class=p>();</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=k>while</span><span class=w> </span><span class=p>(</span><span class=n>it</span><span class=p>.</span><span class=na>hasNext</span><span class=p>())</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>String</span><span class=w> </span><span class=n>key</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>it</span><span class=p>.</span><span class=na>next</span><span class=p>();</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>param</span><span class=w> </span><span class=o>+=</span><span class=w> </span><span class=n>key</span><span class=w> </span><span class=o>+</span><span class=w> </span><span class=s>&#34;=&#34;</span><span class=w> </span><span class=o>+</span><span class=w> </span><span class=n>paramMap</span><span class=p>.</span><span class=na>get</span><span class=p>(</span><span class=n>key</span><span class=p>)</span><span class=w> </span><span class=o>+</span><span class=w> </span><span class=s>&#34;&amp;&#34;</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=k>try</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>URL</span><span class=w> </span><span class=n>realUrl</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=k>new</span><span class=w> </span><span class=n>URL</span><span class=p>(</span><span class=n>url</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=c1>// 打开和URL之间的连接</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>URLConnection</span><span class=w> </span><span class=n>conn</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>realUrl</span><span class=p>.</span><span class=na>openConnection</span><span class=p>();</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=c1>// 设置通用的请求属性</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>conn</span><span class=p>.</span><span class=na>setRequestProperty</span><span class=p>(</span><span class=s>&#34;accept&#34;</span><span class=p>,</span><span class=w> </span><span class=s>&#34;*/*&#34;</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>conn</span><span class=p>.</span><span class=na>setRequestProperty</span><span class=p>(</span><span class=s>&#34;connection&#34;</span><span class=p>,</span><span class=w> </span><span class=s>&#34;Keep-Alive&#34;</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>conn</span><span class=p>.</span><span class=na>setRequestProperty</span><span class=p>(</span><span class=s>&#34;Accept-Charset&#34;</span><span class=p>,</span><span class=w> </span><span class=s>&#34;utf-8&#34;</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>conn</span><span class=p>.</span><span class=na>setRequestProperty</span><span class=p>(</span><span class=s>&#34;user-agent&#34;</span><span class=p>,</span><span class=w> </span><span class=s>&#34;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)&#34;</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=c1>// 发送POST请求必须设置如下两行</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>conn</span><span class=p>.</span><span class=na>setDoOutput</span><span class=p>(</span><span class=kc>true</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>conn</span><span class=p>.</span><span class=na>setDoInput</span><span class=p>(</span><span class=kc>true</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=c1>// 获取URLConnection对象对应的输出流</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>out</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=k>new</span><span class=w> </span><span class=n>PrintWriter</span><span class=p>(</span><span class=n>conn</span><span class=p>.</span><span class=na>getOutputStream</span><span class=p>());</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=c1>// 发送请求参数</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>out</span><span class=p>.</span><span class=na>print</span><span class=p>(</span><span class=n>param</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=c1>// flush输出流的缓冲</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>out</span><span class=p>.</span><span class=na>flush</span><span class=p>();</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=c1>// 定义BufferedReader输入流来读取URL的响应</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>in</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=k>new</span><span class=w> </span><span class=n>BufferedReader</span><span class=p>(</span><span class=k>new</span><span class=w> </span><span class=n>InputStreamReader</span><span class=p>(</span><span class=n>conn</span><span class=p>.</span><span class=na>getInputStream</span><span class=p>(),</span><span class=w> </span><span class=s>&#34;UTF-8&#34;</span><span class=p>));</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>String</span><span class=w> </span><span class=n>line</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=k>while</span><span class=w> </span><span class=p>((</span><span class=n>line</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>in</span><span class=p>.</span><span class=na>readLine</span><span class=p>())</span><span class=w> </span><span class=o>!=</span><span class=w> </span><span class=kc>null</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                </span><span class=n>result</span><span class=w> </span><span class=o>+=</span><span class=w> </span><span class=n>line</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=p>}</span><span class=w> </span><span class=k>catch</span><span class=w> </span><span class=p>(</span><span class=n>Exception</span><span class=w> </span><span class=n>e</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>log</span><span class=p>.</span><span class=na>error</span><span class=p>(</span><span class=n>e</span><span class=p>.</span><span class=na>getMessage</span><span class=p>(),</span><span class=w> </span><span class=n>e</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=c1>//使用finally块来关闭输出流、输入流</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=k>finally</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=k>try</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                </span><span class=k>if</span><span class=w> </span><span class=p>(</span><span class=n>out</span><span class=w> </span><span class=o>!=</span><span class=w> </span><span class=kc>null</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                    </span><span class=n>out</span><span class=p>.</span><span class=na>close</span><span class=p>();</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                </span><span class=k>if</span><span class=w> </span><span class=p>(</span><span class=n>in</span><span class=w> </span><span class=o>!=</span><span class=w> </span><span class=kc>null</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                    </span><span class=n>in</span><span class=p>.</span><span class=na>close</span><span class=p>();</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=p>}</span><span class=w> </span><span class=k>catch</span><span class=w> </span><span class=p>(</span><span class=n>IOException</span><span class=w> </span><span class=n>ex</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                </span><span class=n>ex</span><span class=p>.</span><span class=na>printStackTrace</span><span class=p>();</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=k>return</span><span class=w> </span><span class=n>result</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=cm>/**
+</span></span></span><span class=line><span class=cl><span class=cm>     * 发送post请求 json格式
+</span></span></span><span class=line><span class=cl><span class=cm>     *
+</span></span></span><span class=line><span class=cl><span class=cm>     * @param url
+</span></span></span><span class=line><span class=cl><span class=cm>     * @param param json字符串
+</span></span></span><span class=line><span class=cl><span class=cm>     * @return
+</span></span></span><span class=line><span class=cl><span class=cm>     */</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=kd>public</span><span class=w> </span><span class=kd>static</span><span class=w> </span><span class=n>String</span><span class=w> </span><span class=nf>sendPost</span><span class=p>(</span><span class=n>String</span><span class=w> </span><span class=n>url</span><span class=p>,</span><span class=w> </span><span class=n>String</span><span class=w> </span><span class=n>param</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=n>PrintWriter</span><span class=w> </span><span class=n>out</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=kc>null</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=n>BufferedReader</span><span class=w> </span><span class=n>in</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=kc>null</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=n>StringBuilder</span><span class=w> </span><span class=n>result</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=k>new</span><span class=w> </span><span class=n>StringBuilder</span><span class=p>();</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=k>try</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>URL</span><span class=w> </span><span class=n>realUrl</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=k>new</span><span class=w> </span><span class=n>URL</span><span class=p>(</span><span class=n>url</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c1>//            // 忽略https功能，普通使用可以删除</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c1>//            if (&#34;https&#34;.equalsIgnoreCase(realUrl.getProtocol())) {</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c1>//</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c1>//                SslUtils.ignoreSsl();</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=c1>//            }</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=c1>// 打开和URL之间的连接</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>URLConnection</span><span class=w> </span><span class=n>conn</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>realUrl</span><span class=p>.</span><span class=na>openConnection</span><span class=p>();</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=c1>// 设置通用的请求属性</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>conn</span><span class=p>.</span><span class=na>setRequestProperty</span><span class=p>(</span><span class=s>&#34;accept&#34;</span><span class=p>,</span><span class=w> </span><span class=s>&#34;*/*&#34;</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>conn</span><span class=p>.</span><span class=na>setRequestProperty</span><span class=p>(</span><span class=s>&#34;connection&#34;</span><span class=p>,</span><span class=w> </span><span class=s>&#34;Keep-Alive&#34;</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>conn</span><span class=p>.</span><span class=na>setRequestProperty</span><span class=p>(</span><span class=s>&#34;Accept-Charset&#34;</span><span class=p>,</span><span class=w> </span><span class=s>&#34;utf-8&#34;</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>conn</span><span class=p>.</span><span class=na>setRequestProperty</span><span class=p>(</span><span class=s>&#34;user-agent&#34;</span><span class=p>,</span><span class=w> </span><span class=s>&#34;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)&#34;</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=c1>// 发送POST请求必须设置如下两行</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>conn</span><span class=p>.</span><span class=na>setDoOutput</span><span class=p>(</span><span class=kc>true</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>conn</span><span class=p>.</span><span class=na>setDoInput</span><span class=p>(</span><span class=kc>true</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=c1>// 获取URLConnection对象对应的输出流</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=c1>//out = new PrintWriter(conn.getOutputStream());</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>out</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=k>new</span><span class=w> </span><span class=n>PrintWriter</span><span class=p>(</span><span class=k>new</span><span class=w> </span><span class=n>OutputStreamWriter</span><span class=p>(</span><span class=n>conn</span><span class=p>.</span><span class=na>getOutputStream</span><span class=p>(),</span><span class=w> </span><span class=s>&#34;UTF-8&#34;</span><span class=p>));</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=c1>// 发送请求参数</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>out</span><span class=p>.</span><span class=na>print</span><span class=p>(</span><span class=n>param</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=c1>// flush输出流的缓冲</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>out</span><span class=p>.</span><span class=na>flush</span><span class=p>();</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=c1>// 定义BufferedReader输入流来读取URL的响应</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>in</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=k>new</span><span class=w> </span><span class=n>BufferedReader</span><span class=p>(</span><span class=k>new</span><span class=w> </span><span class=n>InputStreamReader</span><span class=p>(</span><span class=n>conn</span><span class=p>.</span><span class=na>getInputStream</span><span class=p>(),</span><span class=w> </span><span class=s>&#34;UTF-8&#34;</span><span class=p>));</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>String</span><span class=w> </span><span class=n>line</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=k>while</span><span class=w> </span><span class=p>((</span><span class=n>line</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>in</span><span class=p>.</span><span class=na>readLine</span><span class=p>())</span><span class=w> </span><span class=o>!=</span><span class=w> </span><span class=kc>null</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                </span><span class=c1>//result += line;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                </span><span class=n>result</span><span class=p>.</span><span class=na>append</span><span class=p>(</span><span class=n>line</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=p>}</span><span class=w> </span><span class=k>catch</span><span class=w> </span><span class=p>(</span><span class=n>Exception</span><span class=w> </span><span class=n>e</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>System</span><span class=p>.</span><span class=na>out</span><span class=p>.</span><span class=na>println</span><span class=p>(</span><span class=s>&#34;发送 POST 请求出现异常!&#34;</span><span class=w> </span><span class=o>+</span><span class=w> </span><span class=n>e</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>e</span><span class=p>.</span><span class=na>printStackTrace</span><span class=p>();</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=c1>//使用finally块来关闭输出流、输入流</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=k>finally</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=k>try</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                </span><span class=k>if</span><span class=w> </span><span class=p>(</span><span class=n>out</span><span class=w> </span><span class=o>!=</span><span class=w> </span><span class=kc>null</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                    </span><span class=n>out</span><span class=p>.</span><span class=na>close</span><span class=p>();</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                </span><span class=k>if</span><span class=w> </span><span class=p>(</span><span class=n>in</span><span class=w> </span><span class=o>!=</span><span class=w> </span><span class=kc>null</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                    </span><span class=n>in</span><span class=p>.</span><span class=na>close</span><span class=p>();</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=p>}</span><span class=w> </span><span class=k>catch</span><span class=w> </span><span class=p>(</span><span class=n>IOException</span><span class=w> </span><span class=n>ex</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                </span><span class=n>ex</span><span class=p>.</span><span class=na>printStackTrace</span><span class=p>();</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=c1>//log.info(&#34;url返回: &#34; +result);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=k>return</span><span class=w> </span><span class=n>result</span><span class=p>.</span><span class=na>toString</span><span class=p>();</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>}</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><h2 id=创建spring-boot项目>创建Spring Boot项目</h2><p>上述模块都测试好之后，最后就是返回JSON数据格式，参考<a class=link href=https://juejin.cn/post/6873288147820609550 target=_blank rel=noopener>&lt;后端初学者>Spring Boot 返回 JSON 数据及数据封装</a>，有多种方法，其中一种用Spring Boot中的<code>@RestController</code>注解来返回JSON数据，那么我们创建一个Spring Boot项目，再把上述模块的代码迁移过来就好啦。</p><p>创建Spring Boot项目的步骤参考<a class=link href=https://blog.csdn.net/lxyoucan/article/details/111128415 target=_blank rel=noopener>2020入门教程macOS 使用Intellj IDEA 创建spring boot项目</a>。</p><h2 id=返回json数据格式>返回JSON数据格式</h2><p>首先为了方便返回JSON数据格式，我们先将<code>NegativeNews</code>封装成一个类，其主要的属性就两个：新闻的标题<code>title</code>和对应的<code>url</code>。剩下的就是常见的构造器以及get、set方法。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=kn>package</span><span class=w> </span><span class=nn>com.jinjin.news.controller</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=cm>/**
+</span></span></span><span class=line><span class=cl><span class=cm> * @author 文进
+</span></span></span><span class=line><span class=cl><span class=cm> * @version 1.0
+</span></span></span><span class=line><span class=cl><span class=cm> */</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=kd>public</span><span class=w> </span><span class=kd>class</span> <span class=nc>NegativeNews</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=kd>private</span><span class=w> </span><span class=n>String</span><span class=w> </span><span class=n>title</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=kd>private</span><span class=w> </span><span class=n>String</span><span class=w> </span><span class=n>url</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=kd>public</span><span class=w> </span><span class=nf>NegativeNews</span><span class=p>(</span><span class=n>String</span><span class=w> </span><span class=n>title</span><span class=p>,</span><span class=w> </span><span class=n>String</span><span class=w> </span><span class=n>url</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=k>this</span><span class=p>.</span><span class=na>title</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>title</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=k>this</span><span class=p>.</span><span class=na>url</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>url</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=kd>public</span><span class=w> </span><span class=n>String</span><span class=w> </span><span class=nf>getTitle</span><span class=p>()</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=k>return</span><span class=w> </span><span class=n>title</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=kd>public</span><span class=w> </span><span class=kt>void</span><span class=w> </span><span class=nf>setTitle</span><span class=p>(</span><span class=n>String</span><span class=w> </span><span class=n>title</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=k>this</span><span class=p>.</span><span class=na>title</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>title</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=kd>public</span><span class=w> </span><span class=n>String</span><span class=w> </span><span class=nf>getUrl</span><span class=p>()</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=k>return</span><span class=w> </span><span class=n>url</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=kd>public</span><span class=w> </span><span class=kt>void</span><span class=w> </span><span class=nf>setUrl</span><span class=p>(</span><span class=n>String</span><span class=w> </span><span class=n>url</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=k>this</span><span class=p>.</span><span class=na>url</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>url</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>}</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>返回JSON数据格式可以选择多种形式，这里由于要返回的新闻有多条，因此我们返回一个<code>List&lt;NegativeNews></code>。</p><p>在返回JSON数据格式方法的前面加上注解<code>@RequestMapping("/negativeNews")</code>，在请求该页面时，就会执行其中的代码，因此我们将上述爬取百度新闻标题，向情感计算API发送POST请求，得到负面新闻，综合到该方法中一起执行。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=kn>package</span><span class=w> </span><span class=nn>com.jinjin.news.controller</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=kn>import</span><span class=w> </span><span class=nn>com.sun.net.httpserver.HttpServer</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=kn>import</span><span class=w> </span><span class=nn>org.springframework.web.bind.annotation.RequestMapping</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=kn>import</span><span class=w> </span><span class=nn>org.springframework.web.bind.annotation.RestController</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=kn>import</span><span class=w> </span><span class=nn>java.io.IOException</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=kn>import</span><span class=w> </span><span class=nn>java.net.InetSocketAddress</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=kn>import</span><span class=w> </span><span class=nn>java.util.ArrayList</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=kn>import</span><span class=w> </span><span class=nn>java.util.HashMap</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=kn>import</span><span class=w> </span><span class=nn>java.util.List</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=kn>import</span><span class=w> </span><span class=nn>java.util.Map</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=cm>/**
+</span></span></span><span class=line><span class=cl><span class=cm> * @author 文进
+</span></span></span><span class=line><span class=cl><span class=cm> * @version 1.0
+</span></span></span><span class=line><span class=cl><span class=cm> */</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nd>@RestController</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=kd>public</span><span class=w> </span><span class=kd>class</span> <span class=nc>HttpServers</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nd>@RequestMapping</span><span class=p>(</span><span class=s>&#34;/negativeNews&#34;</span><span class=p>)</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=kd>public</span><span class=w> </span><span class=n>List</span><span class=o>&lt;</span><span class=n>NegativeNews</span><span class=o>&gt;</span><span class=w> </span><span class=nf>returnJson</span><span class=p>(</span><span class=w> </span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=c1>// 获取百度新闻中热点新闻的标题和链接</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=n>HashMap</span><span class=o>&lt;</span><span class=n>String</span><span class=p>,</span><span class=w> </span><span class=n>String</span><span class=o>&gt;</span><span class=w> </span><span class=n>news</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=k>new</span><span class=w> </span><span class=n>News</span><span class=p>().</span><span class=na>getNews</span><span class=p>(</span><span class=s>&#34;http://news.baidu.com/&#34;</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=c1>// 负面新闻</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=n>HashMap</span><span class=o>&lt;</span><span class=n>String</span><span class=p>,</span><span class=w> </span><span class=n>String</span><span class=o>&gt;</span><span class=w> </span><span class=n>negativeNews</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=k>new</span><span class=w> </span><span class=n>HashMap</span><span class=o>&lt;&gt;</span><span class=p>();</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=c1>// 通过新闻标题得到的情感值，将负面新闻添加到 negativeNews 中</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=k>for</span><span class=w> </span><span class=p>(</span><span class=n>Map</span><span class=p>.</span><span class=na>Entry</span><span class=o>&lt;</span><span class=n>String</span><span class=p>,</span><span class=w> </span><span class=n>String</span><span class=o>&gt;</span><span class=w> </span><span class=n>entry</span><span class=w> </span><span class=p>:</span><span class=w> </span><span class=n>news</span><span class=p>.</span><span class=na>entrySet</span><span class=p>())</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=c1>// 得到情感API返回的结果，例如 data = {&#34;result&#34;:0.739306}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>String</span><span class=w> </span><span class=n>data</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>UrlUtils</span><span class=p>.</span><span class=na>sendPost</span><span class=p>(</span><span class=s>&#34;http://baobianapi.pullword.com:9091/get.php&#34;</span><span class=p>,</span><span class=w> </span><span class=n>entry</span><span class=p>.</span><span class=na>getKey</span><span class=p>());</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=c1>// 提取结果中的分数值 data = {&#34;result&#34;: score}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>String</span><span class=w> </span><span class=n>score</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>data</span><span class=p>.</span><span class=na>substring</span><span class=p>(</span><span class=n>10</span><span class=p>,</span><span class=w> </span><span class=n>data</span><span class=p>.</span><span class=na>length</span><span class=p>()</span><span class=w> </span><span class=o>-</span><span class=w> </span><span class=n>1</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=c1>// 将分数值 score 转换成double数值，方便找到负面情绪的新闻</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=kt>double</span><span class=w> </span><span class=n>emotion</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>Double</span><span class=p>.</span><span class=na>parseDouble</span><span class=p>(</span><span class=n>score</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=c1>// 将负面新闻添加到 negativeNews 中</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=k>if</span><span class=w> </span><span class=p>(</span><span class=n>emotion</span><span class=w> </span><span class=o>&lt;</span><span class=w> </span><span class=o>-</span><span class=n>0</span><span class=p>.</span><span class=na>5</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                </span><span class=n>negativeNews</span><span class=p>.</span><span class=na>put</span><span class=p>(</span><span class=n>entry</span><span class=p>.</span><span class=na>getKey</span><span class=p>(),</span><span class=w> </span><span class=n>entry</span><span class=p>.</span><span class=na>getValue</span><span class=p>());</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=c1>// 返回 JSON 数据格式</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=n>List</span><span class=o>&lt;</span><span class=n>NegativeNews</span><span class=o>&gt;</span><span class=w> </span><span class=n>negativeNewsList</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=k>new</span><span class=w> </span><span class=n>ArrayList</span><span class=o>&lt;&gt;</span><span class=p>();</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=k>for</span><span class=w> </span><span class=p>(</span><span class=n>Map</span><span class=p>.</span><span class=na>Entry</span><span class=o>&lt;</span><span class=n>String</span><span class=p>,</span><span class=w> </span><span class=n>String</span><span class=o>&gt;</span><span class=w> </span><span class=n>entry</span><span class=w> </span><span class=p>:</span><span class=w> </span><span class=n>negativeNews</span><span class=p>.</span><span class=na>entrySet</span><span class=p>())</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>NegativeNews</span><span class=w> </span><span class=n>nNews</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=k>new</span><span class=w> </span><span class=n>NegativeNews</span><span class=p>(</span><span class=n>entry</span><span class=p>.</span><span class=na>getKey</span><span class=p>(),</span><span class=w> </span><span class=n>entry</span><span class=p>.</span><span class=na>getValue</span><span class=p>());</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>            </span><span class=n>negativeNewsList</span><span class=p>.</span><span class=na>add</span><span class=p>(</span><span class=n>nNews</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=k>return</span><span class=w> </span><span class=n>negativeNewsList</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>}</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><h2 id=部署到服务器>部署到服务器</h2><p>部署到服务器有两种方式，参考：</p><ul><li><a class=link href=https://blog.csdn.net/qq_22638399/article/details/81506448 target=_blank rel=noopener>spring boot 项目部署到服务器 两种方式</a></li><li><a class=link href=https://blog.csdn.net/CSDN2497242041/article/details/106911182 target=_blank rel=noopener>SpringBoot 项目部署到服务器的两种方式</a></li></ul><h3 id=maven项目打包>maven项目打包</h3><p>我们选择打包成jar包，其中，有可能遇到发生一些类找不到的错误，需要将本地jar包打包进去，参考<a class=link href=https://cloud.tencent.com/developer/article/1746822 target=_blank rel=noopener>maven项目引入本地jar包史上最详细实践方法</a>。</p><p>解决如下类找不到的情况：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=kn>import</span><span class=w> </span><span class=nn>com.sun.org.slf4j.internal.Logger</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=kn>import</span><span class=w> </span><span class=nn>com.sun.org.slf4j.internal.LoggerFactory</span><span class=p>;</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>经过跟踪，这两个都在<code>rt.jar</code>类中，用引入本地jar包的方法还是不成功，最终参考<a class=link href=https://blog.csdn.net/qq_33666602/article/details/103438713 target=_blank rel=noopener>Idea本地maven打包，程序包不存在</a>解决了，将<code>rt.jar</code>复制到<code>jdk/jre/lib/ext</code>中。</p><p>引入<code>org.json</code>，从中获取相应版本的依赖代码，添加到pom.xml配置文件中。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=o>&lt;</span><span class=n>dependency</span><span class=o>&gt;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>     </span><span class=o>&lt;!--</span><span class=w> </span><span class=n>jsoup</span><span class=w> </span><span class=n>HTML</span><span class=w> </span><span class=n>parser</span><span class=w> </span><span class=n>library</span><span class=w> </span><span class=err>@</span><span class=w> </span><span class=n>http</span><span class=p>:</span><span class=c1>//jsoup.org/ --&gt;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>     </span><span class=o>&lt;</span><span class=n>groupId</span><span class=o>&gt;</span><span class=n>org</span><span class=p>.</span><span class=na>jsoup</span><span class=o>&lt;/</span><span class=n>groupId</span><span class=o>&gt;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>     </span><span class=o>&lt;</span><span class=n>artifactId</span><span class=o>&gt;</span><span class=n>jsoup</span><span class=o>&lt;/</span><span class=n>artifactId</span><span class=o>&gt;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>     </span><span class=o>&lt;</span><span class=n>version</span><span class=o>&gt;</span><span class=n>1</span><span class=p>.</span><span class=na>6</span><span class=p>.</span><span class=na>1</span><span class=o>&lt;/</span><span class=n>version</span><span class=o>&gt;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=o>&lt;/</span><span class=n>dependency</span><span class=o>&gt;</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>添加后，在maven中按刷新按钮，如下图：</p><p><img src=/img/2022-05-08-liangbo-negative-news/maven.png loading=lazy alt=maven></p><p>打包好后现在本地测试一下，终端进入到jar所在的路径，运行如下代码：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>java -jar 包名.jar
+</span></span></code></pre></td></tr></table></div></div><h3 id=linux上运行>Linux上运行</h3><p>参考<a class=link href=https://blog.csdn.net/CSDg166/article/details/109386959 target=_blank rel=noopener>在Linux上运行springboot项目</a>。</p><p>为了让服务端关闭SSH连接后依然运行，运行时执行如下命令：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>nohup java -jar 包名.jar &amp;
+</span></span></code></pre></td></tr></table></div></div><p>杀掉运行中的进程，首先查看：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>ps aux|grep getCimiss-surf.jar
+</span></span></code></pre></td></tr></table></div></div><p>接着杀掉进程：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>kill -9 30768
+</span></span></code></pre></td></tr></table></div></div><p>MacOS上查看对应端口的进程：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>lsof -i tcp:端口号
+</span></span></code></pre></td></tr></table></div></div><p>杀掉对应进程：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>kill -9 PID号
+</span></span></code></pre></td></tr></table></div></div><h2 id=代码及公网地址>代码及公网地址</h2><p>至此整个过程就完成了:)</p><ul><li>代码：<a class=link href=https://github.com/wenjin1997/liangbo-internship/tree/main/negativeNews target=_blank rel=noopener>negativeNews</a></li><li>公网地址：<a class=link href=http://139.155.0.15/negativeNews target=_blank rel=noopener>http://139.155.0.15/negativeNews</a></li><li>公网请求负面新闻截图：
+<img src=/img/2022-05-08-liangbo-negative-news/negativeNews.png loading=lazy alt=negativeNews></li></ul></section><footer class=article-footer><section class=article-tags><a href=/tags/java/>Java</a>
+<a href=/tags/spring-boot/>Spring Boot</a>
+<a href=/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/>服务器</a></section><section class=article-copyright><svg class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9a3.5 4 0 100 6"/></svg>
+<span>Licensed under CC BY-NC-SA 4.0</span></section></footer><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css integrity=sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV crossorigin=anonymous><script src=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js integrity=sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8 crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous defer></script><script>window.addEventListener("DOMContentLoaded",()=>{renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1},{left:"\\(",right:"\\)",display:!1},{left:"\\[",right:"\\]",display:!0}],ignoredClasses:["gist"]})})</script></article><aside class=related-content--wrapper><h2 class=section-title></h2><div class=related-content><div class="flex article-list--tile"><article><a href=/2022/08/01/Linux-ssh/><div class=article-details><h2 class=article-title>Mac用ssh远程连接服务器</h2></div></a></article><article><a href=/2022/05/07/Algorithms-sliding-window/><div class=article-details><h2 class=article-title>滑动窗口相关算法</h2></div></a></article><article><a href=/2022/05/06/ConcurrentHashMap/><div class=article-details><h2 class=article-title>ConcurrentHashMap源码分析</h2></div></a></article><article><a href=/2022/05/06/interview-hotstar1/><div class=article-details><h2 class=article-title>Hotstar一面</h2></div></a></article><article><a href=/2022/05/06/Algorithms-graph/><div class=article-details><h2 class=article-title>图相关算法</h2></div></a></article></div></div></aside><footer class=site-footer><section class=copyright>&copy;
+2020 -
+2024 Jade's Blog</section><section class=powerby><br></section></footer><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo=" crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU=" crossorigin=anonymous defer></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css crossorigin=anonymous><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css crossorigin=anonymous></main></div><script src=https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z+KMkF24hUW8WePSA9HM=" crossorigin=anonymous></script><script type=text/javascript src=/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js defer></script><script>(function(){const e=document.createElement("link");e.href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap",e.type="text/css",e.rel="stylesheet",document.head.appendChild(e)})()</script></body></html>

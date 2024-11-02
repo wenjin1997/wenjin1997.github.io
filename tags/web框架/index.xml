@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Web框架 on Jade's Blog</title><link>https://wenjin1997.github.io/tags/web%E6%A1%86%E6%9E%B6/</link><description>Recent content in Web框架 on Jade's Blog</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Tue, 23 Aug 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://wenjin1997.github.io/tags/web%E6%A1%86%E6%9E%B6/index.xml" rel="self" type="application/rss+xml"/><item><title>Rust异步Web框架</title><link>https://wenjin1997.github.io/2022/08/23/rust-web/</link><pubDate>Tue, 23 Aug 2022 00:00:00 +0000</pubDate><guid>https://wenjin1997.github.io/2022/08/23/rust-web/</guid><description>&lt;h2 id="异步web框架生态">异步Web框架生态
+&lt;/h2>&lt;ul>
+&lt;li>&lt;a class="link" href="https://github.com/SergioBenitez/Rocket" target="_blank" rel="noopener"
+>Rocket&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://github.com/http-rs/tide" target="_blank" rel="noopener"
+>tide&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://github.com/seanmonstar/warp" target="_blank" rel="noopener"
+>warp&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://github.com/carllerche/tower-web" target="_blank" rel="noopener"
+>tower-web&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://github.com/thruster-rs/Thruster" target="_blank" rel="noopener"
+>Thruster&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://github.com/gotham-rs/gotham" target="_blank" rel="noopener"
+>gotham&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://github.com/actix/actix-web" target="_blank" rel="noopener"
+>actix-web&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://github.com/ntex-rs/ntex" target="_blank" rel="noopener"
+>ntex&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://github.com/tokio-rs/axum" target="_blank" rel="noopener"
+>axum&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h2 id="rocket框架">Rocket框架
+&lt;/h2>&lt;p>官方教程：&lt;a class="link" href="https://rocket.rs/v0.5-rc/guide/" target="_blank" rel="noopener"
+>The Rocket Programming Guide&lt;/a>&lt;/p>
+&lt;p>Rocket设计核心哲学：&lt;/p>
+&lt;ul>
+&lt;li>Security, correctness, and developer experience are paramount.&lt;/li>
+&lt;li>All request handling information should be typed and self-contained.&lt;/li>
+&lt;li>Decisions should not be forced.&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Lifecycle&lt;/strong>&lt;/p>
+&lt;p>Rocket&amp;rsquo;s main task is to listen for incoming web requests, dispatch the request to the application code, and return a response to the client. We call the process that goes from request to response the &amp;ldquo;lifecycle&amp;rdquo;. We summarize the lifecycle as the following sequence of steps:&lt;/p>
+&lt;ol>
+&lt;li>Routing 路由&lt;/li>
+&lt;li>Validation 验证&lt;/li>
+&lt;li>Processing 处理&lt;/li>
+&lt;li>Response 回复&lt;/li>
+&lt;/ol>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-rust" data-lang="rust">&lt;span class="line">&lt;span class="cl">&lt;span class="cp">#[get(&lt;/span>&lt;span class="s">&amp;#34;/world&amp;#34;&lt;/span>&lt;span class="cp">)]&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c1">// &amp;lt;- route attribute
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="k">fn&lt;/span> &lt;span class="nf">world&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>-&amp;gt; &lt;span class="kp">&amp;amp;&lt;/span>&lt;span class="nb">&amp;#39;static&lt;/span> &lt;span class="kt">str&lt;/span> &lt;span class="p">{&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c1">// &amp;lt;- request handler
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s">&amp;#34;hello, world!&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>&lt;strong>Lanuching&lt;/strong>&lt;/p>
+&lt;p>Rocket begins serving requests after being launched, which starts a multi-threaded asynchronous server and dispatches requests to matching routes as they arrive.&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-rust" data-lang="rust">&lt;span class="line">&lt;span class="cl">&lt;span class="cp">#[macro_use]&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">extern&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">crate&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">rocket&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="cp">#[get(&lt;/span>&lt;span class="s">&amp;#34;/world&amp;#34;&lt;/span>&lt;span class="cp">)]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">fn&lt;/span> &lt;span class="nf">world&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>-&amp;gt; &lt;span class="kp">&amp;amp;&lt;/span>&lt;span class="nb">&amp;#39;static&lt;/span> &lt;span class="kt">str&lt;/span> &lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="s">&amp;#34;Hello, world!&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="cp">#[launch]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">fn&lt;/span> &lt;span class="nf">rocket&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>-&amp;gt; &lt;span class="nc">_&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">rocket&lt;/span>::&lt;span class="n">build&lt;/span>&lt;span class="p">().&lt;/span>&lt;span class="n">mount&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;/hello&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="fm">routes!&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">world&lt;/span>&lt;span class="p">])&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>&lt;strong>Dynamic Paths&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-rust" data-lang="rust">&lt;span class="line">&lt;span class="cl">&lt;span class="cp">#[get(&lt;/span>&lt;span class="s">&amp;#34;/hello/&amp;lt;name&amp;gt;&amp;#34;&lt;/span>&lt;span class="cp">)]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">fn&lt;/span> &lt;span class="nf">hello&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">name&lt;/span>: &lt;span class="kp">&amp;amp;&lt;/span>&lt;span class="kt">str&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>-&amp;gt; &lt;span class="nb">String&lt;/span> &lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="fm">format!&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;Hello, &lt;/span>&lt;span class="si">{}&lt;/span>&lt;span class="s">!&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">name&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>&lt;strong>Forwarding&lt;/strong>&lt;/p>
+&lt;p>Routes are attempted in increasing rank order. Rocket chooses a default ranking from -12 to -1, detailed in the next section, but a route&amp;rsquo;s rank can also be manually set with the rank attribute. To illustrate, consider the following routes:&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-rust" data-lang="rust">&lt;span class="line">&lt;span class="cl">&lt;span class="cp">#[get(&lt;/span>&lt;span class="s">&amp;#34;/user/&amp;lt;id&amp;gt;&amp;#34;&lt;/span>&lt;span class="cp">)]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">fn&lt;/span> &lt;span class="nf">user&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">id&lt;/span>: &lt;span class="kt">usize&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="cm">/* ... */&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="cp">#[get(&lt;/span>&lt;span class="s">&amp;#34;/user/&amp;lt;id&amp;gt;&amp;#34;&lt;/span>&lt;span class="cp">, rank = 2)]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">fn&lt;/span> &lt;span class="nf">user_int&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">id&lt;/span>: &lt;span class="kt">isize&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="cm">/* ... */&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="cp">#[get(&lt;/span>&lt;span class="s">&amp;#34;/user/&amp;lt;id&amp;gt;&amp;#34;&lt;/span>&lt;span class="cp">, rank = 3)]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">fn&lt;/span> &lt;span class="nf">user_str&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">id&lt;/span>: &lt;span class="kp">&amp;amp;&lt;/span>&lt;span class="kt">str&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="cm">/* ... */&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="cp">#[launch]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">fn&lt;/span> &lt;span class="nf">rocket&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>-&amp;gt; &lt;span class="nc">_&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">rocket&lt;/span>::&lt;span class="n">build&lt;/span>&lt;span class="p">().&lt;/span>&lt;span class="n">mount&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;/&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="fm">routes!&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">user&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">user_int&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">user_str&lt;/span>&lt;span class="p">])&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="actix-web">actix-web
+&lt;/h2>&lt;p>官方文档：&lt;a class="link" href="https://docs.rs/actix-web/4.1.0/actix_web/" target="_blank" rel="noopener"
+>actix_web&lt;/a>&lt;/p>
+&lt;p>可以通过宏来创建提取器。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-rust" data-lang="rust">&lt;span class="line">&lt;span class="cl">&lt;span class="k">use&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">actix_web&lt;/span>::&lt;span class="p">{&lt;/span>&lt;span class="n">get&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">web&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">App&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">HttpServer&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Responder&lt;/span>&lt;span class="p">};&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="cp">#[get(&lt;/span>&lt;span class="s">&amp;#34;/hello/{name}&amp;#34;&lt;/span>&lt;span class="cp">)]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">async&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">fn&lt;/span> &lt;span class="nf">greet&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">name&lt;/span>: &lt;span class="nc">web&lt;/span>::&lt;span class="n">Path&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="nb">String&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>-&amp;gt; &lt;span class="nc">impl&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Responder&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="fm">format!&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;Hello &lt;/span>&lt;span class="si">{}&lt;/span>&lt;span class="s">!&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">name&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="cp">#[actix_web::main]&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c1">// or #[tokio::main]
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="k">async&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">fn&lt;/span> &lt;span class="nf">main&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>-&amp;gt; &lt;span class="nc">std&lt;/span>::&lt;span class="n">io&lt;/span>::&lt;span class="nb">Result&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">HttpServer&lt;/span>::&lt;span class="n">new&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">||&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">App&lt;/span>::&lt;span class="n">new&lt;/span>&lt;span class="p">().&lt;/span>&lt;span class="n">service&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">greet&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">})&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">bind&lt;/span>&lt;span class="p">((&lt;/span>&lt;span class="s">&amp;#34;127.0.0.1&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">8080&lt;/span>&lt;span class="p">))&lt;/span>&lt;span class="o">?&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">run&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="k">await&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>其他&lt;/p>
+&lt;ul>
+&lt;li>&lt;a class="link" href="https://github.com/LemmyNet/lemmy" target="_blank" rel="noopener"
+>Lemmy论坛&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://github.com/actix/actix-extras" target="_blank" rel="noopener"
+>actix-extras&lt;/a>：actix中间件&lt;/li>
+&lt;/ul>
+&lt;p>actix-web底层基于&lt;a class="link" href="https://github.com/actix/actix-net" target="_blank" rel="noopener"
+>actix-net&lt;/a>中间库，封装了和网络相关的东西。&lt;/p>
+&lt;p>在actix-net/actix-rt/src/arbiter.rs下每个arbiter对应一个线程。&lt;/p>
+&lt;h2 id="gotham">gotham
+&lt;/h2>&lt;p>比较早的框架，基于tokio实现。&lt;/p>
+&lt;h2 id="thruster">Thruster
+&lt;/h2>&lt;p>构建于hyper之上，这个中间件在请求过程中设置上下文。&lt;/p>
+&lt;h2 id="tower">tower
+&lt;/h2>&lt;p>文档： &lt;a class="link" href="https://docs.rs/tower/0.4.13/tower/" target="_blank" rel="noopener"
+>tower&lt;/a>&lt;/p>
+&lt;p>Tower is a library of modular and reusable components for building robust networking clients and servers.&lt;/p>
+&lt;h2 id="hyper">hyper
+&lt;/h2>&lt;p>官方文档：&lt;a class="link" href="https://docs.rs/hyper/0.14.20/hyper/" target="_blank" rel="noopener"
+>hyper&lt;/a>&lt;/p>
+&lt;p>关于路由用到&lt;a class="link" href="https://github.com/http-rs/route-recognizer" target="_blank" rel="noopener"
+>route-recognizer&lt;/a>，它的底层是&lt;a class="link" href="https://zh.m.wikipedia.org/zh-hans/%E9%9D%9E%E7%A1%AE%E5%AE%9A%E6%9C%89%E9%99%90%E7%8A%B6%E6%80%81%E8%87%AA%E5%8A%A8%E6%9C%BA" target="_blank" rel="noopener"
+>非确定有限状态自动机&lt;/a>。&lt;/p>
+&lt;h2 id="warp">warp
+&lt;/h2>&lt;p>github仓库地址：&lt;a class="link" href="https://github.com/seanmonstar/warp" target="_blank" rel="noopener"
+>warp&lt;/a>。&lt;/p>
+&lt;p>filter的工作机制，基于hyper。&lt;a class="link" href="https://github.com/steadylearner/Rust-Warp-Example" target="_blank" rel="noopener"
+>Rust-Warp-Example&lt;/a>是一个应用实例。&lt;/p>
+&lt;h2 id="一些底层的库">一些底层的库
+&lt;/h2>&lt;ul>
+&lt;li>&lt;a class="link" href="https://docs.rs/http/0.2.8/http/" target="_blank" rel="noopener"
+>http&lt;/a>：解析处理HTTP协议，对http请求和响应做了一个类型抽象。&lt;/li>
+&lt;li>&lt;a class="link" href="https://docs.rs/http-body/0.4.5/http_body/" target="_blank" rel="noopener"
+>http-body&lt;/a>：做异步http请求和响应。&lt;/li>
+&lt;li>&lt;a class="link" href="https://github.com/http-rs/http-types" target="_blank" rel="noopener"
+>http-types&lt;/a>：基于async-std。&lt;/li>
+&lt;li>&lt;a class="link" href="https://github.com/tower-rs/tower-http" target="_blank" rel="noopener"
+>tower-http&lt;/a>：基于tower、http、http-body、的中间件。&lt;/li>
+&lt;li>&lt;a class="link" href="https://github.com/hyperium/hyper" target="_blank" rel="noopener"
+>hyper&lt;/a>：HTTP的实现，没有整合tower-http。&lt;/li>
+&lt;/ul>
+&lt;h2 id="rust异步web框架">Rust异步Web框架
+&lt;/h2>&lt;p>结构：&lt;/p>
+&lt;ul>
+&lt;li>框架接口设计&lt;/li>
+&lt;li>路由结构实现&lt;/li>
+&lt;li>实现Handler&lt;/li>
+&lt;li>添加tracing打印日志&lt;/li>
+&lt;li>实现提取器&lt;/li>
+&lt;li>实现中间件&lt;/li>
+&lt;li>错误处理&lt;/li>
+&lt;/ul>
+&lt;h2 id="补充学习">补充学习
+&lt;/h2>&lt;ul>
+&lt;li>&lt;a class="link" href="https://www.runoob.com/regexp/regexp-tutorial.html" target="_blank" rel="noopener"
+>正则表达式&lt;/a>&lt;/li>
+&lt;li>Cow&lt;/li>
+&lt;li>and_then、and&lt;/li>
+&lt;li>dyn&lt;/li>
+&lt;li>pin、unpin&lt;/li>
+&lt;li>Oneshot&lt;/li>
+&lt;li>pin_project!&lt;/li>
+&lt;li>网络中的请求方法有哪些？区别是什么？&lt;/li>
+&lt;li>&lt;a class="link" href="https://doc.rust-lang.org/core/any/index.html" target="_blank" rel="noopener"
+>Any&lt;/a>&lt;/li>
+&lt;li>终端命令 curl，参考&lt;a class="link" href="https://www.cnblogs.com/duhuo/p/5695256.html" target="_blank" rel="noopener"
+>Linux curl命令详解&lt;/a>&lt;/li>
+&lt;li>DSL是什么？参考&lt;a class="link" href="https://draveness.me/dsl/" target="_blank" rel="noopener"
+>谈谈 DSL 以及 DSL 的应用（以 CocoaPods 为例）&lt;/a>&lt;/li>
+&lt;li>uri&lt;/li>
+&lt;li>async_trait&lt;/li>
+&lt;li>map、map_err&lt;/li>
+&lt;li>&lt;code>curl http://... -I -HEAD&lt;/code>&lt;/li>
+&lt;li>tower&lt;/li>
+&lt;li>阅读axum源码&lt;/li>
+&lt;li>kv-serve 和 web 如何连接在一起？&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="https://wenjin1997.github.io/img/2022-08-23-rust-web/rust-web-%e8%af%be%e7%a8%8b%e5%9b%9e%e9%a1%be.png"
+loading="lazy"
+alt="课程回顾"
+>&lt;/p>
+&lt;h2 id="参考资料">参考资料
+&lt;/h2>&lt;p>&lt;a class="link" href="https://time.geekbang.org/course/intro/348" target="_blank" rel="noopener"
+>张汉东的Rust实战课&lt;/a>&lt;/p>
+&lt;p>&lt;a class="link" href="https://github.com/ZhangHanDong/inviting-rust" target="_blank" rel="noopener"
+>张汉东的Rust实战课视频课程代码示例&lt;/a>&lt;/p></description></item></channel></rss>
