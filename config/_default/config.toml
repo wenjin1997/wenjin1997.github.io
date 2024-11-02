@@ -1,11 +1,11 @@
 # Change baseurl before deploy
 baseurl = "https://wenjin1997.github.io"
 languageCode = "en-us"
-title = "Hugo Theme Stack Starter"
+title = "Jade's Blog"
 
 # Theme i18n support
 # Available values: en, fr, id, ja, ko, pt-br, zh-cn, zh-tw, es, de, nl, it, th, el, uk, ar
-defaultContentLanguage = "en"
+defaultContentLanguage = "en, zh-cn"
 
 # Set hasCJKLanguage to true if DefaultContentLanguage is in [zh-cn ja ko]
 # This will make .Summary and .WordCount behave correctly for CJK languages.
